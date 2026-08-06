@@ -23,6 +23,7 @@ export default function App() {
   // Master Active Tab Routing State
   const [activeTab, setActiveTab] = useState('overview'); // Defaulting to Overview page as requested
   const [searchQuery, setSearchQuery] = useState('');
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   // Toast Notification State
   const [toast, setToast] = useState(null);
@@ -194,6 +195,8 @@ export default function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onQuickAddClient={() => setIsQuickAddClientOpen(true)}
+        isMobileOpen={isMobileSidebarOpen}
+        onCloseMobile={() => setIsMobileSidebarOpen(false)}
       />
 
       {/* Main App Workspace */}
@@ -204,10 +207,11 @@ export default function App() {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           selectedClient={selectedClient}
+          onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
         />
 
         {/* Dynamic Page Router Content */}
-        <main className="p-6 md:p-8 flex-1">
+        <main className="p-4 sm:p-6 md:p-8 flex-1">
           {/* 1. NUTRITION ENGINE PAGE */}
           {activeTab === 'nutrition-engine' && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">

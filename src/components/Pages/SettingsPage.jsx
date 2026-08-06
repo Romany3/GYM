@@ -19,7 +19,7 @@ export default function SettingsPage({ showToast }) {
             Coach Account Profile
           </h3>
 
-          <div className="grid grid-cols-2 gap-4 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             <div>
               <label className="block text-slate-400 font-semibold mb-1">Coach Name</label>
               <input
