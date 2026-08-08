@@ -1,40 +1,66 @@
 import React, { useState } from 'react';
-import { X, UserPlus } from 'lucide-react';
+import { X, UserPlus, Key, Globe, Phone, Mail, Calendar, User, Activity } from 'lucide-react';
 
 export default function QuickAddClientModal({ isOpen, onClose, onAddClient }) {
+  // 10 Comprehensive Fields
   const [name, setName] = useState('');
+  const [country, setCountry] = useState('Egypt');
+  const [phone, setPhone] = useState('+20 ');
   const [email, setEmail] = useState('');
-  const [tier, setTier] = useState('PRO CLIENT');
-  const [targetKcal, setTargetKcal] = useState(2450);
+  const [age, setAge] = useState(25);
+  const [gender, setGender] = useState('Male');
+  const [heightCm, setHeightCm] = useState(178);
+  const [weightKg, setWeightKg] = useState(82);
+  const [goal, setGoal] = useState('Muscle Gain');
+  const [duration, setDuration] = useState('3 Months');
 
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!name.trim()) return;
-    onAddClient({
+    const generatedPasskey = `FA-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    const calculatedTargetKcal = goal === 'Weight Loss' ? 2100 : goal === 'Muscle Gain' ? 2800 : 2450;
+    
+    const newClient = {
       id: Date.now().toString(),
-      name,
-      email,
-      tier,
-      targetKcal: Number(targetKcal),
-    });
+      name: name.trim(),
+      country,
+      phone,
+      email: email.trim() || `${name.toLowerCase().replace(/\s+/g, '')}@fitarch.app`,
+      age: Number(age),
+      gender,
+      heightCm: Number(heightCm),
+      weightKg: Number(weightKg),
+      goal,
+      duration,
+      tier: 'PRO CLIENT',
+      targetKcal: calculatedTargetKcal,
+      passkey: generatedPasskey,
+      status: 'Active',
+      joinedDate: new Date().toISOString().split('T')[0],
+    };
+
+    onAddClient(newClient);
     setName('');
     setEmail('');
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-      <div className="bg-[#121724] border border-slate-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-        <div className="flex items-center justify-between p-5 border-b border-slate-800">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
+      <div className="bg-[#121724] border border-slate-800 rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200 my-8">
+        {/* Header */}
+        <div className="flex items-center justify-between p-5 border-b border-slate-800 bg-gradient-to-r from-blue-950/40 via-indigo-950/30 to-slate-900">
           <div className="flex items-center gap-2.5">
-            <UserPlus className="w-5 h-5 text-blue-400" />
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
+              <UserPlus className="w-5 h-5" />
+            </div>
             <div>
               <h3 className="font-serif-header text-lg font-semibold text-slate-100">
-                Quick Add Client
+                Register New Client Profile
               </h3>
-              <p className="text-xs text-slate-400">Register a new client into FitArch Engine</p>
+              <p className="text-xs text-slate-400">Collect metrics & auto-generate client login passkey</p>
             </div>
           </div>
           <button
@@ -45,58 +71,157 @@ export default function QuickAddClientModal({ isOpen, onClose, onAddClient }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Full Name</label>
-            <input
-              type="text"
-              required
-              placeholder="e.g. Marcus Jensen"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl px-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
-            />
+        {/* Multi-Column Form */}
+        <form onSubmit={handleSubmit} className="p-5 space-y-4 text-xs">
+          {/* Row 1: Full Name & Email */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block font-semibold text-slate-300 mb-1">Full Name *</label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Marcus Jensen"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full bg-[#171e2e] text-slate-200 rounded-xl px-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-slate-300 mb-1">Email Address</label>
+              <input
+                type="email"
+                placeholder="marcus@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-[#171e2e] text-slate-200 rounded-xl px-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
-            <input
-              type="email"
-              placeholder="client@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl px-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
-            />
+          {/* Row 2: Country & Phone Number */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block font-semibold text-slate-300 mb-1">Country</label>
+              <select
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                className="w-full bg-[#171e2e] text-slate-200 rounded-xl px-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
+              >
+                <option value="Egypt">Egypt (مصر)</option>
+                <option value="Saudi Arabia">Saudi Arabia (السعودية)</option>
+                <option value="United Arab Emirates">United Arab Emirates (الإمارات)</option>
+                <option value="Kuwait">Kuwait (الكويت)</option>
+                <option value="United States">United States</option>
+                <option value="United Kingdom">United Kingdom</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block font-semibold text-slate-300 mb-1">Phone Number</label>
+              <input
+                type="tel"
+                placeholder="+20 100 123 4567"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full bg-[#171e2e] text-slate-200 rounded-xl px-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500 font-mono"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Client Tier</label>
-            <select
-              value={tier}
-              onChange={(e) => setTier(e.target.value)}
-              className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl px-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
-            >
-              <option value="PRO CLIENT">PRO CLIENT</option>
-              <option value="ELITE ATHLETE">ELITE ATHLETE</option>
-              <option value="STANDARD">STANDARD</option>
-            </select>
+          {/* Row 3: Age & Gender */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block font-semibold text-slate-300 mb-1">Age (Years)</label>
+              <input
+                type="number"
+                min="14"
+                max="85"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+                className="w-full bg-[#171e2e] text-slate-200 rounded-xl px-3.5 py-2.5 border border-slate-700/60"
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-slate-300 mb-1">Gender</label>
+              <select
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                className="w-full bg-[#171e2e] text-slate-200 rounded-xl px-3.5 py-2.5 border border-slate-700/60"
+              >
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Target Daily Calorie Goal (kcal)</label>
-            <input
-              type="number"
-              value={targetKcal}
-              onChange={(e) => setTargetKcal(e.target.value)}
-              className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl px-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
-            />
+          {/* Row 4: Height & Weight */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block font-semibold text-slate-300 mb-1">Height (cm)</label>
+              <input
+                type="number"
+                value={heightCm}
+                onChange={(e) => setHeightCm(e.target.value)}
+                className="w-full bg-[#171e2e] text-slate-200 rounded-xl px-3.5 py-2.5 border border-slate-700/60 font-mono"
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-slate-300 mb-1">Weight (kg)</label>
+              <input
+                type="number"
+                step="0.5"
+                value={weightKg}
+                onChange={(e) => setWeightKg(e.target.value)}
+                className="w-full bg-[#171e2e] text-slate-200 rounded-xl px-3.5 py-2.5 border border-slate-700/60 font-mono"
+              />
+            </div>
+          </div>
+
+          {/* Row 5: Primary Goal & Subscription Duration */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block font-semibold text-slate-300 mb-1">Primary Fitness Goal</label>
+              <select
+                value={goal}
+                onChange={(e) => setGoal(e.target.value)}
+                className="w-full bg-[#171e2e] text-slate-200 rounded-xl px-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
+              >
+                <option value="Weight Loss">Weight Loss / Fat Loss</option>
+                <option value="Muscle Gain">Muscle Gain / Hypertrophy</option>
+                <option value="Body Recomposition">Body Recomposition</option>
+                <option value="Athletic Performance">Athletic Conditioning</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block font-semibold text-slate-300 mb-1">Subscription Duration</label>
+              <select
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+                className="w-full bg-[#171e2e] text-slate-200 rounded-xl px-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
+              >
+                <option value="1 Month">1 Month</option>
+                <option value="3 Months">3 Months</option>
+                <option value="6 Months">6 Months</option>
+                <option value="12 Months">12 Months (1 Year)</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Auto Credentials Info Box */}
+          <div className="p-3 bg-blue-950/20 border border-blue-900/40 rounded-xl flex items-center gap-2 text-[11px] text-blue-200">
+            <Key className="w-4 h-4 text-blue-400 shrink-0" />
+            <span>Submitting will automatically generate a single-client login passkey & invite link.</span>
           </div>
 
           <button
             type="submit"
-            className="w-full py-3 bg-gradient-to-r from-blue-300 via-sky-200 to-blue-200 hover:from-blue-200 hover:to-sky-100 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all mt-2"
+            className="w-full py-3.5 bg-gradient-to-r from-blue-300 via-sky-200 to-blue-200 hover:from-blue-200 hover:to-sky-100 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all mt-2 cursor-pointer"
           >
-            Add Client
+            Register Client & Generate Credentials Passkey
           </button>
         </form>
       </div>

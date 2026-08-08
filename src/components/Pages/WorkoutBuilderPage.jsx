@@ -9,12 +9,19 @@ import {
   Check, 
   Pencil,
   Edit3,
-  X
+  X,
+  RefreshCw,
+  Users
 } from 'lucide-react';
 import WatchVideoModal from '../Modals/WatchVideoModal';
 import AddEditLibraryExerciseModal from '../Modals/AddEditLibraryExerciseModal';
 
-export default function WorkoutBuilderPage({ showToast }) {
+export default function WorkoutBuilderPage({ 
+  showToast,
+  onOpenChangeRequestsModal,
+  onOpenBatchAssignModal,
+  changeRequestsCount = 2
+}) {
   // Category Filter State
   const [activeCategory, setActiveCategory] = useState('All');
 
@@ -242,7 +249,46 @@ export default function WorkoutBuilderPage({ showToast }) {
             Build custom multi-day training splits, set tempos, supersets, and assign technique videos.
           </p>
         </div>
+
+        {/* Top Header Quick Actions */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => onOpenBatchAssignModal && onOpenBatchAssignModal('Hypertrophy Split 4-Day Protocol')}
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 text-xs font-semibold transition-all cursor-pointer shadow-sm"
+          >
+            <Users className="w-4 h-4 text-blue-400" />
+            <span>Batch Copy Routine</span>
+          </button>
+        </div>
       </div>
+
+      {/* Exercise Substitution Request Alert Banner */}
+      {changeRequestsCount > 0 && (
+        <div className="bg-gradient-to-r from-amber-950/40 via-amber-900/20 to-slate-900 border border-amber-500/30 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg animate-in fade-in duration-300">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+              <RefreshCw className="w-5 h-5 animate-spin-slow" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-950 px-2 py-0.5 rounded border border-amber-800/80">
+                  {changeRequestsCount} Pending Request{changeRequestsCount > 1 ? 's' : ''}
+                </span>
+                <span className="text-xs font-semibold text-slate-200">Client Exercise Substitutions</span>
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Clients submitted requests to swap exercises due to missing gym equipment or discomfort.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onOpenChangeRequestsModal}
+            className="px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer shrink-0"
+          >
+            Review & Swap ({changeRequestsCount})
+          </button>
+        </div>
+      )}
 
       {/* Main 2-Column Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">

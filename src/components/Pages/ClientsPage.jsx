@@ -7,6 +7,7 @@ import {
   Plus, 
   MessageSquare, 
   User, 
+  Key,
   X, 
   TrendingDown, 
   Calendar,
@@ -17,6 +18,7 @@ import {
 
 export default function ClientsPage({ 
   onQuickAddClient, 
+  onOpenClientCredentials,
   showToast,
   onNavigate 
 }) {
@@ -165,6 +167,7 @@ export default function ClientsPage({
             <option value="ACTIVE">Active</option>
             <option value="AT RISK">At Risk</option>
             <option value="ONBOARDING">Onboarding</option>
+            <option value="FROZEN">Frozen / Suspended</option>
           </select>
 
           {/* Add New Client Button */}
@@ -343,6 +346,21 @@ export default function ClientsPage({
                       {/* Actions */}
                       <td className="py-3.5 px-3 text-right">
                         <div className="flex items-center justify-end gap-2 text-slate-400">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (onOpenClientCredentials) {
+                                onOpenClientCredentials(client);
+                              } else if (showToast) {
+                                showToast(`Passkey for ${client.name}: ${client.passkey || 'FA-9B2X71'}`);
+                              }
+                            }}
+                            className="px-2.5 py-1 bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 border border-blue-800/60 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all"
+                            title="View Client Passkey & Invite Link"
+                          >
+                            <Key className="w-3.5 h-3.5 text-blue-400" />
+                            <span>Passkey</span>
+                          </button>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();

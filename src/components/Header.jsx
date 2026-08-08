@@ -6,7 +6,8 @@ export default function Header({
   searchQuery, 
   setSearchQuery, 
   selectedClient,
-  onOpenMobileSidebar
+  onOpenMobileSidebar,
+  onNavigate
 }) {
   const getHeaderTitle = () => {
     switch (activeTab) {
@@ -18,10 +19,14 @@ export default function Header({
         return 'Workout Builder Engine';
       case 'nutrition-engine':
         return 'Nutrition Dashboard';
+      case 'food-library':
+        return 'Master Food Library';
       case 'analytics':
         return 'Performance Analytics';
       case 'schedule':
         return 'Schedule Manager';
+      case 'notifications':
+        return 'Notification Center';
       case 'settings':
         return 'System Settings';
       default:
@@ -75,14 +80,31 @@ export default function Header({
           />
         </div>
 
+        {/* Coach Subscription & Capacity Badge */}
+        <div className="hidden xl:flex items-center gap-3 px-3 py-1.5 rounded-xl bg-[#131926] border border-blue-500/20 shadow-sm">
+          <div className="flex flex-col text-right">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 px-1.5 py-0.2 rounded border border-emerald-800/60 uppercase">
+                PRO COACH
+              </span>
+              <span className="text-xs font-semibold text-slate-200">18 / 25 Clients</span>
+            </div>
+            <span className="text-[10px] text-slate-400">21 Days Left • Auto-renews</span>
+          </div>
+          <div className="w-12 bg-slate-800 h-1.5 rounded-full overflow-hidden border border-slate-700">
+            <div className="bg-gradient-to-r from-blue-500 to-indigo-500 h-full w-[72%]" />
+          </div>
+        </div>
+
         {/* Icons */}
         <div className="flex items-center gap-1.5 sm:gap-3">
           <button 
+            onClick={() => onNavigate && onNavigate('notifications')}
             className="relative p-2 sm:p-2.5 text-slate-400 hover:text-slate-200 bg-[#131926] hover:bg-slate-800/60 rounded-xl border border-slate-800 transition-all cursor-pointer"
-            title="Notifications"
+            title="Notifications & Change Requests"
           >
-            <Bell className="w-4 h-4" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-pink-500 rounded-full ring-2 ring-[#0b0e17]" />
+            <Bell className="w-4 h-4 text-amber-400" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-amber-400 rounded-full ring-2 ring-[#0b0e17] animate-pulse" />
           </button>
 
           <button 
@@ -92,38 +114,6 @@ export default function Header({
             <Mail className="w-4 h-4" />
           </button>
         </div>
-
-        {/* Divider */}
-        <div className="hidden sm:block h-6 w-px bg-slate-800" />
-
-        {/* User Context Badge */}
-        {isScheduleView ? (
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="text-right hidden lg:block">
-              <h4 className="text-xs font-semibold text-slate-100">Alex Thorne</h4>
-              <span className="text-[10px] tracking-wider text-blue-400 font-bold uppercase">
-                HEAD COACH
-              </span>
-            </div>
-            <img
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-              alt="Alex Thorne"
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover ring-2 ring-blue-500/40"
-            />
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="text-right hidden lg:block">
-              <h4 className="text-xs font-semibold text-slate-200">{selectedClient.name}</h4>
-              <span className="text-[10px] tracking-wider text-blue-400 font-medium uppercase">
-                {selectedClient.tier || 'PRO CLIENT'}
-              </span>
-            </div>
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 shadow-inner">
-              <User className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-          </div>
-        )}
       </div>
     </header>
   );

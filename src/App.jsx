@@ -10,6 +10,8 @@ import ClientsPage from './components/Pages/ClientsPage';
 import WorkoutBuilderPage from './components/Pages/WorkoutBuilderPage';
 import AnalyticsPage from './components/Pages/AnalyticsPage';
 import SettingsPage from './components/Pages/SettingsPage';
+import FoodLibraryPage from './components/Pages/FoodLibraryPage';
+import NotificationsPage from './components/Pages/NotificationsPage';
 import AddMealModal from './components/Modals/AddMealModal';
 import AddExerciseModal from './components/Modals/AddExerciseModal';
 import QuickAddClientModal from './components/Modals/QuickAddClientModal';
@@ -17,11 +19,28 @@ import FeedbackModal from './components/Modals/FeedbackModal';
 import SetHoursModal from './components/Modals/SetHoursModal';
 import BlockTimeModal from './components/Modals/BlockTimeModal';
 import AnnouncementModal from './components/Modals/AnnouncementModal';
-import { CheckCircle2 } from 'lucide-react';
+import ClientCredentialsModal from './components/Modals/ClientCredentialsModal';
+import ExerciseChangeRequestModal from './components/Modals/ExerciseChangeRequestModal';
+import BatchAssignModal from './components/Modals/BatchAssignModal';
+import CoachAuthPage from './components/Pages/CoachAuthPage';
+import ClientAuthPage from './components/Pages/ClientAuthPage';
+import ClientPortalPage from './components/Pages/ClientPortalPage';
+import { CheckCircle2, Shield, User, Monitor } from 'lucide-react';
 
 export default function App() {
-  // Master Active Tab Routing State
-  const [activeTab, setActiveTab] = useState('overview'); // Defaulting to Overview page as requested
+  // Master Application Mode State ('coach_panel' | 'coach_auth' | 'client_auth' | 'client_portal')
+  const [appMode, setAppMode] = useState('coach_panel');
+  const [currentClientData, setCurrentClientData] = useState({
+    id: 'c1',
+    name: 'Marcus Jensen',
+    email: 'marcus@fitarch.com',
+    tier: 'PRO ATHLETE',
+    targetKcal: 2450,
+    passkey: 'FA-9B2X71',
+  });
+
+  // Master Active Tab Routing State (For Coach Panel)
+  const [activeTab, setActiveTab] = useState('overview');
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
@@ -124,6 +143,33 @@ export default function App() {
   const [isBlockTimeOpen, setIsBlockTimeOpen] = useState(false);
   const [isAnnouncementOpen, setIsAnnouncementOpen] = useState(false);
 
+  // New Modals State
+  const [isCredentialsOpen, setIsCredentialsOpen] = useState(false);
+  const [createdClientCredentials, setCreatedClientCredentials] = useState(null);
+  const [isChangeRequestsOpen, setIsChangeRequestsOpen] = useState(false);
+  const [changeRequests, setChangeRequests] = useState([
+    {
+      id: 'req1',
+      clientName: 'Sarah Connor',
+      originalExercise: 'Barbell Squat',
+      suggestedReplacement: 'Leg Press (Machine)',
+      reasonCategory: 'Knee Strain',
+      reasonNote: 'Slight patellar discomfort under heavy axial load',
+      requestedAt: '15 mins ago',
+    },
+    {
+      id: 'req2',
+      clientName: 'Marcus Jensen',
+      originalExercise: 'Cable Crossover',
+      suggestedReplacement: 'Dumbbell Flyes',
+      reasonCategory: 'Equipment Missing',
+      reasonNote: 'Gym cable crossover machine is undergoing maintenance',
+      requestedAt: '45 mins ago',
+    },
+  ]);
+  const [isBatchAssignOpen, setIsBatchAssignOpen] = useState(false);
+  const [batchAssignProgramTitle, setBatchAssignProgramTitle] = useState('Hypertrophy Split 4-Day Protocol');
+
   // Handlers
   const handleOpenAddMeal = (mealCategory) => {
     setActiveMealCategory(mealCategory);
@@ -163,7 +209,24 @@ export default function App() {
   const handleQuickAddClient = (newClient) => {
     setClients((prev) => [...prev, newClient]);
     setSelectedClientIndex(clients.length);
+    setCreatedClientCredentials(newClient);
+    setIsCredentialsOpen(true);
     showToast(`Added new client: ${newClient.name}`);
+  };
+
+  const handleApproveChangeRequest = (reqId, replacement) => {
+    setChangeRequests((prev) => prev.filter((r) => r.id !== reqId));
+    showToast(`Approved "${replacement}" substitution!`);
+  };
+
+  const handleRejectChangeRequest = (reqId) => {
+    setChangeRequests((prev) => prev.filter((r) => r.id !== reqId));
+    showToast('Rejected exercise change request', 'info');
+  };
+
+  const handleOpenBatchAssign = (programTitle = 'Current Training Routine') => {
+    setBatchAssignProgramTitle(programTitle);
+    setIsBatchAssignOpen(true);
   };
 
   const handleCycleClient = () => {
@@ -172,32 +235,122 @@ export default function App() {
     showToast(`Switched client to ${clients[nextIdx].name}`, 'info');
   };
 
-  return (
-    <div className="min-h-screen bg-[#0b0e17] text-slate-200 flex flex-col md:flex-row antialiased selection:bg-blue-500 selection:text-white">
-      {/* Toast Notification Banner */}
-      {toast && (
-        <div className="fixed top-5 right-5 z-50 animate-in fade-in slide-in-from-top-3 duration-300">
-          <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border shadow-xl text-xs font-semibold ${
-            toast.type === 'warning'
-              ? 'bg-amber-950/90 border-amber-800 text-amber-200'
-              : toast.type === 'info'
-              ? 'bg-slate-900/90 border-slate-700 text-slate-200'
-              : 'bg-emerald-950/90 border-emerald-800 text-emerald-200'
-          }`}>
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <span>{toast.message}</span>
+  // Render Coach Login / Register Screen
+  if (appMode === 'coach_auth') {
+    return (
+      <div className="flex flex-col min-h-screen">
+        {/* Mode Switcher Demo Bar */}
+        <div className="bg-[#121724] border-b border-slate-800 py-2 px-4 flex items-center justify-between text-xs font-semibold select-none z-50">
+          <span className="text-blue-300 font-bold flex items-center gap-1.5">
+            <Monitor className="w-4 h-4" /> Demo Mode Switcher:
+          </span>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setAppMode('coach_panel')} className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">🏋️ Coach Panel</button>
+            <button onClick={() => setAppMode('coach_auth')} className="px-3 py-1 rounded-lg bg-blue-600 text-white font-bold">🔐 Coach Sign In</button>
+            <button onClick={() => setAppMode('client_auth')} className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">🔑 Client Passkey Login</button>
+            <button onClick={() => setAppMode('client_portal')} className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">📱 Client Portal View</button>
           </div>
         </div>
-      )}
+        <CoachAuthPage 
+          onLoginSuccess={() => setAppMode('coach_panel')} 
+          onSwitchToClientAuth={() => setAppMode('client_auth')}
+        />
+      </div>
+    );
+  }
 
-      {/* Shared Master Sidebar */}
-      <Sidebar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onQuickAddClient={() => setIsQuickAddClientOpen(true)}
-        isMobileOpen={isMobileSidebarOpen}
-        onCloseMobile={() => setIsMobileSidebarOpen(false)}
-      />
+  // Render Client Passkey Activation Login Screen
+  if (appMode === 'client_auth') {
+    return (
+      <div className="flex flex-col min-h-screen">
+        {/* Mode Switcher Demo Bar */}
+        <div className="bg-[#121724] border-b border-slate-800 py-2 px-4 flex items-center justify-between text-xs font-semibold select-none z-50">
+          <span className="text-blue-300 font-bold flex items-center gap-1.5">
+            <Monitor className="w-4 h-4" /> Demo Mode Switcher:
+          </span>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setAppMode('coach_panel')} className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">🏋️ Coach Panel</button>
+            <button onClick={() => setAppMode('coach_auth')} className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">🔐 Coach Sign In</button>
+            <button onClick={() => setAppMode('client_auth')} className="px-3 py-1 rounded-lg bg-blue-600 text-white font-bold">🔑 Client Passkey Login</button>
+            <button onClick={() => setAppMode('client_portal')} className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">📱 Client Portal View</button>
+          </div>
+        </div>
+        <ClientAuthPage
+          onClientLoginSuccess={(clientInfo) => {
+            setCurrentClientData(clientInfo);
+            setAppMode('client_portal');
+          }}
+          onSwitchToCoachAuth={() => setAppMode('coach_auth')}
+        />
+      </div>
+    );
+  }
+
+  // Render Single-Client Portal Workspace View
+  if (appMode === 'client_portal') {
+    return (
+      <div className="flex flex-col min-h-screen">
+        {/* Mode Switcher Demo Bar */}
+        <div className="bg-[#121724] border-b border-slate-800 py-2 px-4 flex items-center justify-between text-xs font-semibold select-none z-50">
+          <span className="text-blue-300 font-bold flex items-center gap-1.5">
+            <Monitor className="w-4 h-4" /> Demo Mode Switcher:
+          </span>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setAppMode('coach_panel')} className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">🏋️ Coach Panel</button>
+            <button onClick={() => setAppMode('coach_auth')} className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">🔐 Coach Sign In</button>
+            <button onClick={() => setAppMode('client_auth')} className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">🔑 Client Passkey Login</button>
+            <button onClick={() => setAppMode('client_portal')} className="px-3 py-1 rounded-lg bg-blue-600 text-white font-bold">📱 Client Portal View</button>
+          </div>
+        </div>
+        <ClientPortalPage
+          clientData={currentClientData}
+          onLogout={() => setAppMode('client_auth')}
+          showToast={showToast}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#0b0e17] text-slate-200 flex flex-col antialiased selection:bg-blue-500 selection:text-white">
+      {/* Top Application Mode Demo Switcher Bar */}
+      <div className="bg-[#121724] border-b border-slate-800 py-2 px-4 flex items-center justify-between text-xs font-semibold select-none z-50">
+        <span className="text-blue-300 font-bold flex items-center gap-1.5">
+          <Monitor className="w-4 h-4 text-blue-400" /> Demo Mode Switcher:
+        </span>
+        <div className="flex items-center gap-2">
+          <button onClick={() => setAppMode('coach_panel')} className="px-3 py-1 rounded-lg bg-blue-600 text-white font-bold cursor-pointer">🏋️ Coach Panel</button>
+          <button onClick={() => setAppMode('coach_auth')} className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 cursor-pointer">🔐 Coach Sign In</button>
+          <button onClick={() => setAppMode('client_auth')} className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 cursor-pointer">🔑 Client Passkey Login</button>
+          <button onClick={() => setAppMode('client_portal')} className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 cursor-pointer">📱 Client Portal View</button>
+        </div>
+      </div>
+
+      <div className="flex flex-col md:flex-row flex-1">
+        {/* Toast Notification Banner */}
+        {toast && (
+          <div className="fixed top-12 right-5 z-50 animate-in fade-in slide-in-from-top-3 duration-300">
+            <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border shadow-xl text-xs font-semibold ${
+              toast.type === 'warning'
+                ? 'bg-amber-950/90 border-amber-800 text-amber-200'
+                : toast.type === 'info'
+                ? 'bg-slate-900/90 border-slate-700 text-slate-200'
+                : 'bg-emerald-950/90 border-emerald-800 text-emerald-200'
+            }`}>
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span>{toast.message}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Shared Master Sidebar */}
+        <Sidebar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          onQuickAddClient={() => setIsQuickAddClientOpen(true)}
+          isMobileOpen={isMobileSidebarOpen}
+          onCloseMobile={() => setIsMobileSidebarOpen(false)}
+        />
 
       {/* Main App Workspace */}
       <div className="flex-1 flex flex-col min-w-0">
@@ -208,6 +361,7 @@ export default function App() {
           setSearchQuery={setSearchQuery}
           selectedClient={selectedClient}
           onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
+          onNavigate={setActiveTab}
         />
 
         {/* Dynamic Page Router Content */}
@@ -282,27 +436,51 @@ export default function App() {
               clients={clients}
               onSelectClient={setSelectedClientIndex}
               onQuickAddClient={() => setIsQuickAddClientOpen(true)}
+              onOpenClientCredentials={(clientData) => {
+                setCreatedClientCredentials(clientData);
+                setIsCredentialsOpen(true);
+              }}
               onNavigate={setActiveTab}
               showToast={showToast}
             />
           )}
 
-          {/* 5. WORKOUT BUILDER PAGE */}
+          {/* 5. FOOD LIBRARY PAGE */}
+          {activeTab === 'food-library' && (
+            <FoodLibraryPage showToast={showToast} />
+          )}
+
+          {/* 6. WORKOUT BUILDER PAGE */}
           {activeTab === 'workout-builder' && (
-            <WorkoutBuilderPage showToast={showToast} />
+            <WorkoutBuilderPage 
+              showToast={showToast}
+              onOpenChangeRequestsModal={() => setIsChangeRequestsOpen(true)}
+              onOpenBatchAssignModal={handleOpenBatchAssign}
+              changeRequestsCount={changeRequests.length}
+            />
           )}
 
-          {/* 6. ANALYTICS PAGE */}
+          {/* 7. ANALYTICS PAGE */}
           {activeTab === 'analytics' && (
-            <AnalyticsPage />
+            <AnalyticsPage showToast={showToast} />
           )}
 
-          {/* 7. SETTINGS PAGE */}
+          {/* 8. NOTIFICATIONS PAGE */}
+          {activeTab === 'notifications' && (
+            <NotificationsPage
+              onNavigate={setActiveTab}
+              onOpenChangeRequests={() => setIsChangeRequestsOpen(true)}
+              showToast={showToast}
+            />
+          )}
+
+          {/* 9. SETTINGS PAGE */}
           {activeTab === 'settings' && (
             <SettingsPage showToast={showToast} />
           )}
         </main>
       </div>
+    </div>
 
       {/* Global Shared Modals */}
       <AddMealModal
@@ -322,6 +500,30 @@ export default function App() {
         isOpen={isQuickAddClientOpen}
         onClose={() => setIsQuickAddClientOpen(false)}
         onAddClient={handleQuickAddClient}
+      />
+
+      <ClientCredentialsModal
+        isOpen={isCredentialsOpen}
+        onClose={() => setIsCredentialsOpen(false)}
+        clientData={createdClientCredentials}
+        showToast={showToast}
+      />
+
+      <ExerciseChangeRequestModal
+        isOpen={isChangeRequestsOpen}
+        onClose={() => setIsChangeRequestsOpen(false)}
+        requests={changeRequests}
+        onApprove={handleApproveChangeRequest}
+        onReject={handleRejectChangeRequest}
+      />
+
+      <BatchAssignModal
+        isOpen={isBatchAssignOpen}
+        onClose={() => setIsBatchAssignOpen(false)}
+        clients={clients}
+        programTitle={batchAssignProgramTitle}
+        onConfirmBatch={(clientIds, title) => showToast(`Assigned ${title} to ${clientIds.length} client(s)!`)}
+        showToast={showToast}
       />
 
       <FeedbackModal

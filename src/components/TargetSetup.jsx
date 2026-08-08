@@ -1,5 +1,5 @@
 import React from 'react';
-import { SlidersHorizontal, Info, ChevronRight, User } from 'lucide-react';
+import { SlidersHorizontal, Info, ChevronRight, User, Sparkles } from 'lucide-react';
 
 export default function TargetSetup({ 
   targetKcal = 2450, 
@@ -170,17 +170,36 @@ export default function TargetSetup({
           </div>
         </div>
 
-        {/* Lock Targets Button */}
-        <button
-          onClick={() => setIsLocked(!isLocked)}
-          className={`w-full mt-5 py-3 rounded-xl font-semibold text-xs transition-all border ${
-            isLocked
-              ? 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
-              : 'bg-[#1b253b] hover:bg-[#23304c] text-blue-200 border-blue-500/40 shadow-lg shadow-blue-900/20'
-          }`}
-        >
-          {isLocked ? '🔒 Targets Locked' : 'Lock Targets'}
-        </button>
+        {/* Auto-Generate & Lock Targets Buttons */}
+        <div className="space-y-2 mt-5">
+          <button
+            onClick={() => {
+              // Auto-calculate 30% Protein, 45% Carbs, 25% Fats
+              const pGrams = Math.round((targetKcal * 0.30) / 4);
+              const cGrams = Math.round((targetKcal * 0.45) / 4);
+              const fGrams = Math.round((targetKcal * 0.25) / 9);
+              setProteinGrams(pGrams);
+              setCarbsGrams(cGrams);
+              setFatsGrams(fGrams);
+            }}
+            disabled={isLocked}
+            className="w-full py-2.5 px-3 rounded-xl font-bold text-xs bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white flex items-center justify-center gap-2 shadow-md disabled:opacity-50 transition-all cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 text-sky-300" />
+            <span>Auto-Balance Macros</span>
+          </button>
+
+          <button
+            onClick={() => setIsLocked(!isLocked)}
+            className={`w-full py-2.5 rounded-xl font-semibold text-xs transition-all border ${
+              isLocked
+                ? 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+                : 'bg-[#1b253b] hover:bg-[#23304c] text-blue-200 border-blue-500/40 shadow-lg shadow-blue-900/20'
+            }`}
+          >
+            {isLocked ? '🔒 Targets Locked' : 'Lock Targets'}
+          </button>
+        </div>
       </div>
 
       {/* Selected Client Card */}

@@ -26,6 +26,8 @@ export default function DailyPlanCreator({
   onDeleteExercise,
   onDuplicateDays
 }) {
+  const [planType, setPlanType] = React.useState('digital'); // 'digital' | 'pdf'
+  const [pdfFileName, setPdfFileName] = React.useState('Custom_Nutrition_Plan_3000kcal.pdf');
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   const mealIcons = {
@@ -51,41 +53,97 @@ export default function DailyPlanCreator({
 
   return (
     <div className="space-y-6">
-      {/* Header & Day Selector Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h2 className="font-serif-header text-xl font-semibold text-slate-100">
-          Daily Plan Creator
-        </h2>
+      {/* Header & Delivery Mode Selector */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#121724] border border-slate-800 p-4 rounded-2xl">
+        <div>
+          <h2 className="font-serif-header text-xl font-semibold text-slate-100">
+            Daily Plan Creator
+          </h2>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Configure meal schedules or upload external PDF/Image guides.
+          </p>
+        </div>
 
-        {/* Day Pills & Duplicate Action */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center bg-[#131926] p-1 rounded-xl border border-slate-800">
-            {days.map((day) => (
-              <button
-                key={day}
-                onClick={() => setSelectedDay(day)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  selectedDay === day
-                    ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                {day}
-              </button>
-            ))}
-          </div>
-
-          {/* Duplicate to all days button */}
+        {/* Delivery Format Toggle Pills */}
+        <div className="flex items-center bg-[#131926] p-1 rounded-xl border border-slate-800 text-xs font-semibold">
           <button
-            onClick={onDuplicateDays}
-            className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-300 font-medium px-2 py-1 transition-colors"
-            title="Copy plan to all days"
+            onClick={() => setPlanType('digital')}
+            className={`px-3 py-1.5 rounded-lg transition-all ${
+              planType === 'digital'
+                ? 'bg-blue-600/40 text-blue-200 border border-blue-500/40'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
           >
-            <Copy className="w-3.5 h-3.5" />
-            <span className="hidden md:inline">Duplicate to all days</span>
+            Structured Digital Meals
+          </button>
+          <button
+            onClick={() => setPlanType('pdf')}
+            className={`px-3 py-1.5 rounded-lg transition-all ${
+              planType === 'pdf'
+                ? 'bg-blue-600/40 text-blue-200 border border-blue-500/40'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            PDF / Image Upload
           </button>
         </div>
       </div>
+
+      {/* PDF / Custom Attachment View */}
+      {planType === 'pdf' ? (
+        <div className="bg-[#121724] border border-slate-800 rounded-2xl p-6 text-center space-y-4">
+          <div className="w-16 h-16 rounded-2xl bg-blue-950/60 border border-blue-500/30 flex items-center justify-center text-blue-400 mx-auto">
+            <Copy className="w-8 h-8" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-slate-100">External Plan Attached</h3>
+            <p className="text-xs text-slate-400 mt-1 font-mono">{pdfFileName}</p>
+          </div>
+          <div className="flex justify-center gap-3">
+            <label className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl cursor-pointer transition-all shadow-md">
+              <span>Change PDF/Image File</span>
+              <input
+                type="file"
+                accept="application/pdf,image/*"
+                className="hidden"
+                onChange={(e) => {
+                  if (e.target.files?.[0]) setPdfFileName(e.target.files[0].name);
+                }}
+              />
+            </label>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Day Selector Bar */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center bg-[#131926] p-1 rounded-xl border border-slate-800">
+              {days.map((day) => (
+                <button
+                  key={day}
+                  onClick={() => setSelectedDay(day)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    selectedDay === day
+                      ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  {day}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={onDuplicateDays}
+              className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-300 font-medium px-2 py-1 transition-colors"
+              title="Copy plan to all days"
+            >
+              <Copy className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">Duplicate to all days</span>
+            </button>
+          </div>
+        </>
+      )}
 
       {/* Meals List */}
       <div className="space-y-4">
