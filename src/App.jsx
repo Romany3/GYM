@@ -1,31 +1,33 @@
-import React, { useState } from 'react';
-import Sidebar from './components/Sidebar';
+import { useState } from 'react';
 import Header from './components/Header';
+import Sidebar from './components/Sidebar';
 import TargetSetup from './components/TargetSetup';
 import DailyPlanCreator from './components/DailyPlanCreator';
 import LogReview from './components/LogReview';
-import ScheduleManager from './components/Pages/ScheduleManager';
-import OverviewPage from './components/Pages/OverviewPage';
-import ClientsPage from './components/Pages/ClientsPage';
-import WorkoutBuilderPage from './components/Pages/WorkoutBuilderPage';
-import AnalyticsPage from './components/Pages/AnalyticsPage';
-import SettingsPage from './components/Pages/SettingsPage';
-import FoodLibraryPage from './components/Pages/FoodLibraryPage';
-import NotificationsPage from './components/Pages/NotificationsPage';
 import AddMealModal from './components/Modals/AddMealModal';
 import AddExerciseModal from './components/Modals/AddExerciseModal';
 import QuickAddClientModal from './components/Modals/QuickAddClientModal';
 import FeedbackModal from './components/Modals/FeedbackModal';
-import SetHoursModal from './components/Modals/SetHoursModal';
-import BlockTimeModal from './components/Modals/BlockTimeModal';
 import AnnouncementModal from './components/Modals/AnnouncementModal';
 import ClientCredentialsModal from './components/Modals/ClientCredentialsModal';
 import ExerciseChangeRequestModal from './components/Modals/ExerciseChangeRequestModal';
 import BatchAssignModal from './components/Modals/BatchAssignModal';
+import OverviewPage from './components/Pages/OverviewPage';
+import ClientsPage from './components/Pages/ClientsPage';
+import FoodLibraryPage from './components/Pages/FoodLibraryPage';
+import AnalyticsPage from './components/Pages/AnalyticsPage';
+import WorkoutBuilderPage from './components/Pages/WorkoutBuilderPage';
+import SettingsPage from './components/Pages/SettingsPage';
+import AiMealGeneratorPage from './components/Pages/AiMealGeneratorPage';
+import NotificationsPage from './components/Pages/NotificationsPage';
+import ExerciseSwapRequestsPage from './components/Pages/ExerciseSwapRequestsPage';
+import FoodSwapRequestsPage from './components/Pages/FoodSwapRequestsPage';
+import CoachChatPage from './components/Pages/CoachChatPage';
+import TrainerSubscriptionPage from './components/Pages/TrainerSubscriptionPage';
 import CoachAuthPage from './components/Pages/CoachAuthPage';
 import ClientAuthPage from './components/Pages/ClientAuthPage';
 import ClientPortalPage from './components/Pages/ClientPortalPage';
-import { CheckCircle2, Shield, User, Monitor } from 'lucide-react';
+import { CheckCircle2, Monitor } from 'lucide-react';
 
 export default function App() {
   // Master Application Mode State ('coach_panel' | 'coach_auth' | 'client_auth' | 'client_portal')
@@ -44,6 +46,15 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
+  // Coach Subscription State
+  const [coachSubscription, setCoachSubscription] = useState({
+    planId: 'pro_25',
+    planName: 'Pro Trainer',
+    maxClients: 25,
+    priceEgp: 300,
+    isTrial: false,
+  });
+
   // Toast Notification State
   const [toast, setToast] = useState(null);
 
@@ -54,9 +65,111 @@ export default function App() {
 
   // Clients Data
   const [clients, setClients] = useState([
-    { id: '1', name: 'Marcus Jensen', email: 'marcus@fitarch.com', tier: 'PRO CLIENT', targetKcal: 2450 },
-    { id: '2', name: 'Sarah Connor', email: 'sarah@fitarch.com', tier: 'ELITE ATHLETE', targetKcal: 2100 },
-    { id: '3', name: 'David Miller', email: 'david@fitarch.com', tier: 'STANDARD', targetKcal: 2800 },
+    {
+      id: 'c1',
+      code: '#MJ-0942',
+      name: 'Marcus Jensen',
+      email: 'marcus@fitarch.com',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+      goal: 'Hypertrophy Phase 2',
+      plan: 'Pro Tier - 12 Wk',
+      planType: 'pro',
+      lastActive: 'Today',
+      compliance: 92,
+      status: 'ACTIVE',
+      joined: 'Active since Jan 2024',
+      streak: 14,
+      sessions: 48,
+      passkey: 'FA-9B2X71',
+      note: 'Marcus is responding well to the volume increase in Phase 2. Slight impingement reported in left shoulder during overhead press.',
+      lastUpdated: 'Yesterday',
+      tier: 'PRO ATHLETE',
+      targetKcal: 2450
+    },
+    {
+      id: 'c2',
+      code: '#SC-1104',
+      name: 'Sarah Connor',
+      email: 'sarah@fitarch.com',
+      avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80',
+      goal: 'Endurance Prep',
+      plan: 'Basic - 4 Wk',
+      planType: 'basic',
+      lastActive: '2 days ago',
+      compliance: 45,
+      status: 'AT RISK',
+      joined: 'Active since Feb 2024',
+      streak: 3,
+      sessions: 18,
+      passkey: 'FA-3K8P99',
+      note: 'Compliance dropped this week due to business travel. Needs encouragement for hotel room mobility & bodyweight workouts.',
+      lastUpdated: '3 days ago',
+      tier: 'ELITE ATHLETE',
+      targetKcal: 2100
+    },
+    {
+      id: 'c3',
+      code: '#DM-8832',
+      name: 'David Miller',
+      email: 'david@fitarch.com',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
+      goal: 'Weight Loss',
+      plan: 'Onboarding',
+      planType: 'onboarding',
+      lastActive: 'Just now',
+      compliance: 80,
+      status: 'ONBOARDING',
+      joined: 'Joined Today',
+      streak: 1,
+      sessions: 2,
+      passkey: 'FA-7L2M11',
+      note: 'Initial intake call completed. Target daily calorie deficit set to 500 kcal.',
+      lastUpdated: 'Today',
+      tier: 'STANDARD',
+      targetKcal: 2800
+    },
+    {
+      id: 'c4',
+      code: '#ER-2291',
+      name: 'Elena Rodriguez',
+      email: 'elena@fitarch.com',
+      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80',
+      goal: 'Strength Building',
+      plan: 'Pro Tier - 12 Wk',
+      planType: 'pro',
+      lastActive: 'Yesterday',
+      compliance: 88,
+      status: 'ACTIVE',
+      joined: 'Active since Nov 2023',
+      streak: 21,
+      sessions: 64,
+      passkey: 'FA-88K2P0',
+      note: 'Hit a new deadlift personal record (225 lbs x 5 reps). Excellent recovery metrics.',
+      lastUpdated: 'Yesterday',
+      tier: 'PRO ATHLETE',
+      targetKcal: 2200
+    },
+    {
+      id: 'c5',
+      code: '#ML-4410',
+      name: 'Michael Lee',
+      email: 'michael@fitarch.com',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80',
+      goal: 'Marathon Prep',
+      plan: 'Basic - 8 Wk',
+      planType: 'basic',
+      lastActive: '3 days ago',
+      compliance: 75,
+      status: 'ACTIVE',
+      joined: 'Active since Dec 2023',
+      streak: 9,
+      sessions: 32,
+      passkey: 'FA-11M9L4',
+      note: 'Long weekend run (18 miles) logged successfully. Hydration & carb loading protocol followed.',
+      lastUpdated: '4 days ago',
+      tier: 'STANDARD',
+      targetKcal: 2900
+    }
   ]);
   const [selectedClientIndex, setSelectedClientIndex] = useState(0);
   const selectedClient = clients[selectedClientIndex] || clients[0];
@@ -109,7 +222,7 @@ export default function App() {
   ]);
 
   // Log Review Timeline Items (Nutrition)
-  const [logItems, setLogItems] = useState([
+  const [logItems] = useState([
     {
       id: 'log1',
       time: '08:30 AM',
@@ -139,8 +252,6 @@ export default function App() {
   const [isAddExerciseOpen, setIsAddExerciseOpen] = useState(false);
   const [isQuickAddClientOpen, setIsQuickAddClientOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
-  const [isSetHoursOpen, setIsSetHoursOpen] = useState(false);
-  const [isBlockTimeOpen, setIsBlockTimeOpen] = useState(false);
   const [isAnnouncementOpen, setIsAnnouncementOpen] = useState(false);
 
   // New Modals State
@@ -412,16 +523,7 @@ export default function App() {
             </div>
           )}
 
-          {/* 2. MY SCHEDULE (SCHEDULE MANAGER) PAGE */}
-          {activeTab === 'schedule' && (
-            <ScheduleManager
-              onSetHours={() => setIsSetHoursOpen(true)}
-              onBlockTime={() => setIsBlockTimeOpen(true)}
-              showToast={showToast}
-            />
-          )}
-
-          {/* 3. OVERVIEW PAGE */}
+          {/* 2. OVERVIEW PAGE */}
           {activeTab === 'overview' && (
             <OverviewPage
               onNavigate={setActiveTab}
@@ -445,19 +547,37 @@ export default function App() {
             />
           )}
 
+          {/* 4.5. COACH CHAT PAGE */}
+          {activeTab === 'coach-chat' && (
+            <CoachChatPage showToast={showToast} />
+          )}
+
           {/* 5. FOOD LIBRARY PAGE */}
           {activeTab === 'food-library' && (
             <FoodLibraryPage showToast={showToast} />
+          )}
+
+          {/* 5.5. AI MEAL TEMPLATE GENERATOR PAGE */}
+          {activeTab === 'ai-meal-generator' && (
+            <AiMealGeneratorPage showToast={showToast} />
           )}
 
           {/* 6. WORKOUT BUILDER PAGE */}
           {activeTab === 'workout-builder' && (
             <WorkoutBuilderPage 
               showToast={showToast}
-              onOpenChangeRequestsModal={() => setIsChangeRequestsOpen(true)}
               onOpenBatchAssignModal={handleOpenBatchAssign}
-              changeRequestsCount={changeRequests.length}
             />
+          )}
+
+          {/* 7. EXERCISE CHANGE REQUESTS PAGE */}
+          {activeTab === 'exercise-swaps' && (
+            <ExerciseSwapRequestsPage showToast={showToast} />
+          )}
+
+          {/* 7.1. FOOD SWAP REQUESTS PAGE */}
+          {activeTab === 'food-swaps' && (
+            <FoodSwapRequestsPage showToast={showToast} />
           )}
 
           {/* 7. ANALYTICS PAGE */}
@@ -477,6 +597,19 @@ export default function App() {
           {/* 9. SETTINGS PAGE */}
           {activeTab === 'settings' && (
             <SettingsPage showToast={showToast} />
+          )}
+
+          {/* 10. TRAINER SUBSCRIPTION PLANS PAGE */}
+          {activeTab === 'subscription-plans' && (
+            <TrainerSubscriptionPage
+              currentSubscription={coachSubscription}
+              activeClientCount={clients.length}
+              onSelectPlan={(newPlan) => {
+                setCoachSubscription(newPlan);
+                showToast(`Switched to ${newPlan.planName} (${newPlan.priceEgp} EGP/mo for ${newPlan.maxClients} clients)!`);
+              }}
+              showToast={showToast}
+            />
           )}
         </main>
       </div>
@@ -500,6 +633,9 @@ export default function App() {
         isOpen={isQuickAddClientOpen}
         onClose={() => setIsQuickAddClientOpen(false)}
         onAddClient={handleQuickAddClient}
+        currentSubscription={coachSubscription}
+        currentClientCount={clients.length}
+        onNavigateToSubscription={() => setActiveTab('subscription-plans')}
       />
 
       <ClientCredentialsModal
@@ -529,20 +665,8 @@ export default function App() {
       <FeedbackModal
         isOpen={isFeedbackOpen}
         onClose={() => setIsFeedbackOpen(false)}
-        onSubmitFeedback={(note) => showToast(`Feedback sent to ${selectedClient.name}`)}
+        onSubmitFeedback={() => showToast(`Feedback sent to ${selectedClient.name}`)}
         clientName={selectedClient.name}
-      />
-
-      <SetHoursModal
-        isOpen={isSetHoursOpen}
-        onClose={() => setIsSetHoursOpen(false)}
-        showToast={showToast}
-      />
-
-      <BlockTimeModal
-        isOpen={isBlockTimeOpen}
-        onClose={() => setIsBlockTimeOpen(false)}
-        showToast={showToast}
       />
 
       <AnnouncementModal

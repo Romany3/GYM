@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
   Dumbbell, 
   Utensils, 
@@ -11,20 +11,24 @@ import {
   Send, 
   X, 
   Flame, 
-  Award,
-  ChevronRight,
   Sun,
   Moon,
   Cookie,
-  UserCheck,
   FileText,
   Bell,
   Check,
-  CheckCheck,
   Menu,
-  Search
+  Search,
+  LogOut,
+  ArrowLeftRight,
+  Apple,
+  Image as ImageIcon,
+  Trash2,
+  ExternalLink
 } from 'lucide-react';
 import WatchVideoModal from '../Modals/WatchVideoModal';
+import ClientSubstitutionsPage from './ClientSubstitutionsPage';
+import ClientFoodSwapsPage from './ClientFoodSwapsPage';
 
 export default function ClientPortalPage({ clientData, onLogout, showToast }) {
   const [activeTab, setActiveTab] = useState('workout'); // 'workout' | 'nutrition' | 'checkin' | 'notifications'
@@ -38,6 +42,10 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
         return "Today's Workout Protocol";
       case 'nutrition':
         return 'Nutrition & Meals Plan';
+      case 'food-swaps':
+        return 'Food & Meal Substitutions';
+      case 'substitutions':
+        return 'Exercise Substitutions & Swaps';
       case 'checkin':
         return 'Weekly Progress Check-In';
       case 'notifications':
@@ -50,30 +58,64 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
     { id: 1, sender: 'coach', text: 'Hey Marcus! Great job on hitting 225 lbs on deadlifts yesterday. How are your knees feeling today?', time: '09:15 AM' },
     { id: 2, sender: 'client', text: 'Knees feel great coach! Ready for today\'s push session.', time: '09:20 AM' },
   ]);
-  const [newMessageText, setNewMessageText] = useState('');
 
-  // Client Notifications State
+  // Client Notifications Filter & Master State
+  const [clientNotifFilter, setClientNotifFilter] = useState('ALL');
   const [clientNotifications, setClientNotifications] = useState([
     {
       id: 'cn1',
+      type: 'exercise_swap',
       title: 'Exercise Swap Approved',
-      message: 'Coach Alex Thorne approved your substitution request for Barbell Squat.',
+      message: 'Coach Alex Thorne approved your substitution request for Barbell Squat with Leg Press Machine.',
       time: '20 mins ago',
       unread: true,
+      category: 'EXERCISE',
+      actionLabel: 'View Exercise Swaps',
+      targetTab: 'substitutions',
     },
     {
       id: 'cn2',
-      title: 'New Program Split Assigned',
-      message: 'Push Hypertrophy Week 4 split was assigned to your schedule.',
+      type: 'workout_assigned',
+      title: 'New Workout Protocol Assigned',
+      message: 'Push Hypertrophy Week 4 split was assigned to your daily workout schedule.',
       time: '2 hours ago',
       unread: true,
+      category: 'WORKOUT',
+      actionLabel: "Open Today's Workout",
+      targetTab: 'workout',
     },
     {
       id: 'cn3',
+      type: 'food_swap',
+      title: 'Food Swap Approved',
+      message: 'Coach Alex approved your request to substitute Brown Rice with Sweet Potato.',
+      time: '5 hours ago',
+      unread: true,
+      category: 'NUTRITION',
+      actionLabel: 'View Food Swaps',
+      targetTab: 'food-swaps',
+    },
+    {
+      id: 'cn4',
+      type: 'coach_feedback',
       title: 'Coach Feedback on Progress Photo',
       message: 'Great shoulder width progress! Keep protein target at 180g.',
       time: '1 day ago',
       unread: false,
+      category: 'COACH',
+      actionLabel: 'Open Coach Chat',
+      targetTab: 'chat',
+    },
+    {
+      id: 'cn5',
+      type: 'checkin',
+      title: 'Weekly Check-In Due',
+      message: 'Your Sunday progress evaluation form and photos are due today.',
+      time: '2 days ago',
+      unread: false,
+      category: 'CHECKIN',
+      actionLabel: 'Complete Check-In',
+      targetTab: 'checkin',
     },
   ]);
 
@@ -145,8 +187,6 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
   // Weekly Checkin State
   const [energyScore, setEnergyScore] = useState(8);
   const [sleepScore, setSleepScore] = useState(7);
-  const [stressScore, setStressScore] = useState(3);
-  const [uploadedPhotos, setUploadedPhotos] = useState({ front: false, side: false, back: false });
 
   // Handlers
   const handleToggleSet = (exId, setIdx) => {
@@ -208,13 +248,35 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
     });
   };
 
+  const [newMessageText, setNewMessageText] = useState('');
+  const [clientChatImage, setClientChatImage] = useState(null);
+  const [clientLightboxImage, setClientLightboxImage] = useState(null);
+
+  const handleClientImageFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setClientChatImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSendMessage = () => {
-    if (!newMessageText.trim()) return;
+    if (!newMessageText.trim() && !clientChatImage) return;
     setChatMessages((prev) => [
       ...prev,
-      { id: Date.now(), sender: 'client', text: newMessageText, time: 'Just now' },
+      { 
+        id: Date.now(), 
+        sender: 'client', 
+        text: newMessageText, 
+        image: clientChatImage || null,
+        time: 'Just now' 
+      },
     ]);
     setNewMessageText('');
+    setClientChatImage(null);
   };
 
   return (
@@ -229,7 +291,7 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
 
       {/* Client Master Sidebar (Sticky Desktop + Mobile Drawer) */}
       <aside 
-        className={`bg-[#0a0d16] border-r border-slate-800/80 flex flex-col justify-between select-none shrink-0 z-50 w-72 max-w-[85vw] md:w-64 fixed inset-y-0 left-0 h-full md:sticky md:top-0 md:h-screen transition-transform duration-300 ease-in-out ${
+        className={`bg-[#0a0d16] border-r border-slate-800/80 flex flex-col justify-between select-none shrink-0 z-50 w-72 max-w-[85vw] md:w-72 fixed inset-y-0 left-0 h-full md:sticky md:top-0 md:h-screen transition-transform duration-300 ease-in-out ${
           isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
@@ -265,6 +327,8 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
             {[
               { id: 'workout', label: "Today's Workout", icon: Dumbbell },
               { id: 'nutrition', label: 'Nutrition & Meals', icon: Utensils },
+              { id: 'food-swaps', label: 'Food Swaps', icon: Apple },
+              { id: 'substitutions', label: 'Exercise Swaps', icon: ArrowLeftRight },
               { id: 'checkin', label: 'Weekly Check-In', icon: Calendar },
               { id: 'notifications', label: 'Notifications', icon: Bell },
             ].map((item) => {
@@ -287,8 +351,8 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
                   {isActive && (
                     <span className="absolute left-0 top-2 bottom-2 w-1 bg-gradient-to-b from-blue-400 to-indigo-500 rounded-r-full shadow-sm shadow-blue-400/50" />
                   )}
-                  <Icon className={`w-4 h-4 transition-transform group-hover:scale-110 ${isActive ? 'text-blue-400' : 'text-slate-400'}`} />
-                  <span>{item.label}</span>
+                  <Icon className={`w-4 h-4 transition-transform group-hover:scale-110 shrink-0 ${isActive ? 'text-blue-400' : 'text-slate-400'}`} />
+                  <span className="whitespace-nowrap">{item.label}</span>
                 </button>
               );
             })}
@@ -322,19 +386,30 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
           </div>
 
           {/* Athlete Profile Badge */}
-          <div className="flex items-center gap-3 pt-1">
-            <div className="relative">
-              <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-                alt="Marcus Jensen"
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/40"
-              />
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-[#090b13] rounded-full" />
+          <div className="flex items-center justify-between pt-1">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <img
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+                  alt="Marcus Jensen"
+                  className="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/40"
+                />
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-[#090b13] rounded-full" />
+              </div>
+              <div className="overflow-hidden">
+                <h4 className="text-xs font-semibold text-slate-100 truncate">{clientData?.name || 'Marcus Jensen'}</h4>
+                <p className="text-[11px] text-blue-400 font-mono truncate">{clientData?.tier || 'PRO ATHLETE'}</p>
+              </div>
             </div>
-            <div className="overflow-hidden">
-              <h4 className="text-xs font-semibold text-slate-100 truncate">{clientData?.name || 'Marcus Jensen'}</h4>
-              <p className="text-[11px] text-blue-400 font-mono truncate">{clientData?.tier || 'PRO ATHLETE'}</p>
-            </div>
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                title="Log out of client portal"
+                className="p-2 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-slate-800 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </div>
       </aside>
@@ -372,19 +447,6 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
               />
             </div>
 
-            {/* Client Tier & Connected Coach Badge */}
-            <div className="hidden lg:flex items-center gap-3 px-3 py-1.5 rounded-xl bg-[#131926] border border-blue-500/20 shadow-sm">
-              <div className="flex flex-col text-right">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-bold text-blue-400 bg-blue-950/80 px-1.5 py-0.5 rounded border border-blue-800/60 uppercase">
-                    {clientData?.tier || 'PRO ATHLETE'}
-                  </span>
-                  <span className="text-xs font-semibold text-slate-200">{clientData?.name || 'Marcus Jensen'}</span>
-                </div>
-                <span className="text-[10px] text-slate-400">Coach: Alex Thorne</span>
-              </div>
-            </div>
-
             {/* Action Buttons */}
             <div className="flex items-center gap-1.5 sm:gap-3">
               {/* Notification Bell Button */}
@@ -417,7 +479,7 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
         </header>
 
         {/* Main Client Content Area */}
-        <main className="p-4 sm:p-6 md:p-8 flex-1 space-y-6 max-w-5xl">
+        <main className="p-4 sm:p-6 md:p-8 flex-1 space-y-6 w-full">
 
         {/* TAB 1: WORKOUT EXECUTION VIEW */}
         {activeTab === 'workout' && (
@@ -460,8 +522,8 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
                     {/* Exercise Header */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
                       <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-bold text-slate-100">{ex.name}</h3>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="text-base font-bold text-slate-100">{ex.name}</h3>
                           <span className="text-[10px] font-semibold text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
                             {ex.target}
                           </span>
@@ -471,24 +533,25 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-slate-400 mt-0.5">
-                          Prescribed: <strong className="text-slate-200">{ex.sets} Sets x {ex.reps} Reps</strong> • Tempo: <span className="font-mono text-blue-300">{ex.tempo}</span>
+                        <p className="text-xs text-slate-400 mt-1">
+                          Prescribed: <strong className="text-slate-200">{ex.sets} Sets x {ex.reps} Reps</strong> • Tempo: <span className="font-mono text-blue-300 font-bold">{ex.tempo}</span>
                         </p>
                       </div>
 
-                      <div className="flex items-center gap-2 flex-wrap">
+                      {/* Action Buttons Row - Equal 3 Columns on Mobile, Flex on Desktop */}
+                      <div className="grid grid-cols-3 sm:flex sm:items-center sm:w-auto gap-2 w-full">
                         {/* Whole Exercise Complete Check Button */}
                         <button
                           onClick={() => handleToggleWholeExercise(ex.id)}
-                          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                          className={`flex items-center justify-center gap-1 px-2.5 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
                             isAllSetsComplete
                               ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
                               : 'bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700'
                           }`}
                           title="Mark all sets in this exercise completed"
                         >
-                          <Check className="w-4 h-4" />
-                          <span>{isAllSetsComplete ? 'Done ✅' : 'Check Exercise'}</span>
+                          <Check className="w-3.5 h-3.5 shrink-0" />
+                          <span className="truncate">{isAllSetsComplete ? 'Done ✅' : 'Check All'}</span>
                         </button>
 
                         {/* Video Tutorial Trigger */}
@@ -497,26 +560,86 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
                             setSelectedVideoExercise(ex);
                             setIsVideoOpen(true);
                           }}
-                          className="flex items-center gap-1 px-2.5 py-1.5 bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 border border-blue-800/60 text-xs font-semibold rounded-xl transition-all cursor-pointer"
+                          className="flex items-center justify-center gap-1 px-2.5 py-2 bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 border border-blue-800/60 text-xs font-semibold rounded-xl transition-all cursor-pointer"
                         >
-                          <Play className="w-3.5 h-3.5" />
-                          <span>Watch Demo</span>
+                          <Play className="w-3.5 h-3.5 shrink-0" />
+                          <span className="truncate">Demo</span>
                         </button>
 
                         {/* Request Substitution Trigger */}
                         <button
                           onClick={() => handleOpenSwapModal(ex)}
-                          className="flex items-center gap-1 px-2.5 py-1.5 bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-800/60 text-xs font-semibold rounded-xl transition-all cursor-pointer"
+                          className="flex items-center justify-center gap-1 px-2.5 py-2 bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-800/60 text-xs font-semibold rounded-xl transition-all cursor-pointer"
                           title="Request machine swap or alternative"
                         >
-                          <RefreshCw className="w-3.5 h-3.5" />
-                          <span>Request Swap</span>
+                          <RefreshCw className="w-3.5 h-3.5 shrink-0" />
+                          <span className="truncate">Swap</span>
                         </button>
                       </div>
                     </div>
 
-                    {/* Interactive Sets Table */}
-                    <div className="space-y-2 text-xs">
+                    {/* 1. MOBILE NATIVE SET LOGGING CARDS (Visible on < md) */}
+                    <div className="space-y-2.5 md:hidden">
+                      {ex.loggedSets.map((set, idx) => (
+                        <div
+                          key={idx}
+                          className={`p-3 rounded-xl border space-y-2.5 transition-all ${
+                            set.completed
+                              ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-100 font-semibold'
+                              : 'bg-[#171e2e] border-slate-800 text-slate-300'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-xs text-blue-300">Set {set.setNum}</span>
+                            <button
+                              onClick={() => handleToggleSet(ex.id, idx)}
+                              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                                set.completed
+                                  ? 'bg-emerald-500 text-slate-950 shadow-sm'
+                                  : 'bg-[#121724] hover:bg-slate-800 text-slate-300 border border-slate-700/60'
+                              }`}
+                            >
+                              <Check className="w-3.5 h-3.5" />
+                              <span>{set.completed ? 'Done ✅' : 'Check Set'}</span>
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-3 gap-2 text-xs">
+                            <div>
+                              <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">Reps</label>
+                              <input
+                                type="number"
+                                value={set.reps}
+                                onChange={(e) => handleUpdateSetField(ex.id, idx, 'reps', e.target.value)}
+                                className="w-full bg-[#111622] text-slate-100 text-xs p-2 rounded-lg border border-slate-700/60 text-center font-mono font-bold"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">Weight (kg)</label>
+                              <input
+                                type="number"
+                                value={set.weight}
+                                onChange={(e) => handleUpdateSetField(ex.id, idx, 'weight', e.target.value)}
+                                className="w-full bg-[#111622] text-slate-100 text-xs p-2 rounded-lg border border-slate-700/60 text-center font-mono font-bold"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">RPE (1-10)</label>
+                              <input
+                                type="number"
+                                step="0.5"
+                                value={set.rpe}
+                                onChange={(e) => handleUpdateSetField(ex.id, idx, 'rpe', e.target.value)}
+                                className="w-full bg-[#111622] text-slate-100 text-xs p-2 rounded-lg border border-slate-700/60 text-center font-mono font-bold"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* 2. DESKTOP INTERACTIVE SETS TABLE (Visible on >= md) */}
+                    <div className="hidden md:block space-y-2 text-xs">
                       <div className="grid grid-cols-5 text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3">
                         <span>Set</span>
                         <span>Reps</span>
@@ -558,18 +681,26 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
                             className="w-16 bg-[#111622] text-slate-100 text-xs p-1.5 rounded-lg border border-slate-700/60 text-center font-semibold"
                           />
 
-                          <div className="flex justify-end">
+                          <div className="text-right">
                             <button
                               onClick={() => handleToggleSet(ex.id, idx)}
-                              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                              className={`px-3 py-1.5 rounded-lg font-bold text-xs transition-all cursor-pointer inline-flex items-center gap-1 ${
                                 set.completed
-                                  ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-md shadow-emerald-500/20'
-                                  : 'bg-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-700 border border-slate-700'
+                                  ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-sm'
+                                  : 'bg-[#121724] hover:bg-slate-800 text-slate-300 border border-slate-700/60'
                               }`}
-                              title={set.completed ? 'Set completed' : 'Mark set complete'}
                             >
-                              <Check className="w-3.5 h-3.5" />
-                              <span>{set.completed ? 'Done' : 'Check'}</span>
+                              {set.completed ? (
+                                <>
+                                  <Check className="w-3.5 h-3.5" />
+                                  <span>Done</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Check className="w-3.5 h-3.5 text-slate-400" />
+                                  <span>Check</span>
+                                </>
+                              )}
                             </button>
                           </div>
                         </div>
@@ -668,7 +799,17 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
           </div>
         )}
 
-        {/* TAB 3: WEEKLY CHECK-IN VIEW */}
+        {/* TAB 2.5: FOOD SUBSTITUTIONS VIEW */}
+        {activeTab === 'food-swaps' && (
+          <ClientFoodSwapsPage showToast={showToast} />
+        )}
+
+        {/* TAB 3: EXERCISE SUBSTITUTIONS VIEW */}
+        {activeTab === 'substitutions' && (
+          <ClientSubstitutionsPage showToast={showToast} activeExercises={exercises} />
+        )}
+
+        {/* TAB 4: WEEKLY CHECK-IN VIEW */}
         {activeTab === 'checkin' && (
           <div className="space-y-6">
             <div className="bg-[#121724] border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
@@ -735,48 +876,161 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
 
         {/* TAB 4: CLIENT NOTIFICATIONS VIEW */}
         {activeTab === 'notifications' && (
-          <div className="bg-[#121724] border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <div className="flex items-center gap-2">
-                <Bell className="w-5 h-5 text-amber-400" />
-                <h3 className="font-serif-header text-lg font-bold text-slate-100">
-                  Client Alerts & Notifications
-                </h3>
+          <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 md:p-6 shadow-xl space-y-5">
+            {/* Header & Quick Action Buttons */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                  <Bell className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-serif-header text-lg font-bold text-slate-100">
+                      Notifications & Activity Log
+                    </h3>
+                    {clientNotifications.filter((n) => n.unread).length > 0 && (
+                      <span className="text-[10px] font-bold text-amber-300 bg-amber-950 px-2 py-0.5 rounded-full border border-amber-800">
+                        {clientNotifications.filter((n) => n.unread).length} Unread
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Click any notification action to navigate directly to the requested section.
+                  </p>
+                </div>
               </div>
-              <button
-                onClick={() => {
-                  setClientNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
-                  if (showToast) showToast('Marked all notifications as read!');
-                }}
-                className="text-xs text-blue-400 hover:text-blue-300 font-semibold cursor-pointer"
-              >
-                Mark all as read
-              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setClientNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
+                    if (showToast) showToast('Marked all notifications as read!');
+                  }}
+                  className="px-3 py-1.5 bg-[#171e2e] hover:bg-slate-800 text-blue-300 border border-slate-700/60 rounded-xl text-xs font-semibold transition-all cursor-pointer"
+                >
+                  Mark all as read
+                </button>
+              </div>
             </div>
 
-            <div className="space-y-3">
-              {clientNotifications.map((n) => (
-                <div
-                  key={n.id}
-                  className={`p-4 rounded-xl border transition-all flex items-start justify-between gap-3 ${
-                    n.unread
-                      ? 'bg-blue-950/20 border-blue-500/40 text-slate-100'
-                      : 'bg-[#171e2e] border-slate-800/80 text-slate-300'
-                  }`}
-                >
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-xs font-bold text-slate-100">{n.title}</h4>
-                      {n.unread && (
-                        <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                      )}
-                    </div>
-                    <p className="text-xs text-slate-300">{n.message}</p>
-                    <span className="text-[10px] text-slate-500 font-mono block">{n.time}</span>
-                  </div>
-                </div>
-              ))}
+            {/* Filter Pills Bar */}
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1">
+              {['ALL', 'UNREAD', 'WORKOUT', 'EXERCISE', 'NUTRITION', 'CHECKIN', 'COACH'].map((cat) => {
+                const isActive = clientNotifFilter === cat;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setClientNotifFilter(cat)}
+                    className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
+                      isActive
+                        ? 'bg-blue-600/40 text-blue-200 border border-blue-500/40 shadow-sm'
+                        : 'bg-[#171e2e] text-slate-400 hover:text-slate-200 border border-slate-800'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
             </div>
+
+            {/* Notifications List */}
+            {clientNotifications.length === 0 ? (
+              <div className="text-center py-10 text-slate-500 space-y-2">
+                <Bell className="w-8 h-8 mx-auto text-slate-600" />
+                <p className="text-xs">No notifications in your inbox.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {clientNotifications
+                  .filter((n) => {
+                    if (clientNotifFilter === 'ALL') return true;
+                    if (clientNotifFilter === 'UNREAD') return n.unread;
+                    return n.category === clientNotifFilter;
+                  })
+                  .map((n) => {
+                    const getIcon = () => {
+                      switch (n.category) {
+                        case 'EXERCISE':
+                          return <RefreshCw className="w-4 h-4 text-amber-400" />;
+                        case 'NUTRITION':
+                          return <Apple className="w-4 h-4 text-emerald-400" />;
+                        case 'WORKOUT':
+                          return <Dumbbell className="w-4 h-4 text-blue-400" />;
+                        case 'COACH':
+                          return <MessageSquare className="w-4 h-4 text-sky-400" />;
+                        case 'CHECKIN':
+                          return <Calendar className="w-4 h-4 text-indigo-400" />;
+                        default:
+                          return <Bell className="w-4 h-4 text-blue-400" />;
+                      }
+                    };
+
+                    return (
+                      <div
+                        key={n.id}
+                        className={`p-4 rounded-2xl border transition-all space-y-3 ${
+                          n.unread
+                            ? 'bg-[#162035] border-blue-500/40 shadow-md ring-1 ring-blue-500/20'
+                            : 'bg-[#141b2c] border-slate-800/80 hover:border-slate-700'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-3">
+                            <div className="w-9 h-9 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center shrink-0 mt-0.5">
+                              {getIcon()}
+                            </div>
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <h4 className="text-xs font-bold text-slate-100">{n.title}</h4>
+                                {n.unread && (
+                                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                                )}
+                              </div>
+                              <p className="text-xs text-slate-300 leading-relaxed">{n.message}</p>
+                              <span className="text-[10px] text-slate-500 font-mono block">
+                                {n.time}
+                              </span>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => {
+                              setClientNotifications((prev) => prev.filter((item) => item.id !== n.id));
+                              if (showToast) showToast('Notification removed', 'info');
+                            }}
+                            className="p-1 text-slate-500 hover:text-red-400 rounded-lg transition-colors cursor-pointer shrink-0"
+                            title="Remove Notification"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+
+                        {/* Action Navigation Trigger */}
+                        <div className="flex items-center justify-end pt-2 border-t border-slate-800/60">
+                          <button
+                            onClick={() => {
+                              setClientNotifications((prev) =>
+                                prev.map((item) => (item.id === n.id ? { ...item, unread: false } : item))
+                              );
+                              if (n.targetTab === 'chat') {
+                                setIsChatOpen(true);
+                                if (showToast) showToast('Opening chat with Coach Alex...');
+                              } else {
+                                setActiveTab(n.targetTab);
+                                if (showToast) showToast(`Navigating to ${n.actionLabel}...`);
+                              }
+                            }}
+                            className="px-3 py-1.5 bg-blue-950/70 hover:bg-blue-900/90 text-blue-300 border border-blue-800/60 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+                          >
+                            <span>{n.actionLabel}</span>
+                            <ExternalLink className="w-3.5 h-3.5 text-blue-400" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            )}
           </div>
         )}
       </main>
@@ -784,7 +1038,7 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
 
       {/* Floating Direct Coach Chat Drawer */}
       {isChatOpen && (
-        <div className="fixed bottom-4 right-4 w-96 max-w-[90vw] bg-[#0f1422] border border-slate-800 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in slide-in-from-bottom-5 duration-200">
+        <div className="fixed bottom-3 right-3 left-3 sm:left-auto sm:right-4 sm:w-96 bg-[#0f1422] border border-slate-800 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in slide-in-from-bottom-5 duration-200">
           <div className="flex items-center justify-between p-4 border-b border-slate-800 bg-[#141b2c]">
             <div className="flex items-center gap-2.5">
               <img
@@ -816,15 +1070,41 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
                       : 'bg-[#1b2336] text-slate-200 border border-slate-800 rounded-bl-none'
                   }`}
                 >
-                  <p>{msg.text}</p>
+                  {msg.text && <p>{msg.text}</p>}
+                  {msg.image && (
+                    <div className={`${msg.text ? 'mt-2' : ''} group relative overflow-hidden rounded-lg border border-slate-700/80 cursor-pointer`}>
+                      <img
+                        src={msg.image}
+                        alt="Attachment"
+                        onClick={() => setClientLightboxImage(msg.image)}
+                        className="max-h-48 object-cover rounded-lg"
+                      />
+                    </div>
+                  )}
                 </div>
                 <span className="text-[9px] text-slate-500 mt-1">{msg.time}</span>
               </div>
             ))}
           </div>
 
+          {clientChatImage && (
+            <div className="px-3 py-1.5 bg-[#0c101c] border-t border-slate-800 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <img src={clientChatImage} alt="Attachment" className="w-8 h-8 object-cover rounded border border-blue-500/60" />
+                <span className="text-[10px] text-blue-300">Image attached</span>
+              </div>
+              <button onClick={() => setClientChatImage(null)} className="text-rose-400 text-xs">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
           {/* Input */}
           <div className="p-3 border-t border-slate-800 flex items-center gap-2 bg-[#0c101c]">
+            <label className="p-2 bg-[#171e2e] hover:bg-slate-800 text-slate-300 border border-slate-700/60 rounded-xl cursor-pointer" title="Attach Photo">
+              <ImageIcon className="w-4 h-4 text-amber-400" />
+              <input type="file" accept="image/*" onChange={handleClientImageFileChange} className="hidden" />
+            </label>
             <input
               type="text"
               placeholder="Type message to coach..."
@@ -838,6 +1118,24 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
               className="p-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl cursor-pointer"
             >
               <Send className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Client Lightbox Image Modal */}
+      {clientLightboxImage && (
+        <div
+          onClick={() => setClientLightboxImage(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md animate-in fade-in duration-200"
+        >
+          <div className="relative max-w-3xl max-h-[85vh] overflow-hidden rounded-2xl border border-slate-800 shadow-2xl">
+            <img src={clientLightboxImage} alt="Enlarged preview" className="w-full h-full object-contain" />
+            <button
+              onClick={() => setClientLightboxImage(null)}
+              className="absolute top-4 right-4 p-2 bg-slate-900/80 text-slate-200 hover:text-white rounded-full border border-slate-700"
+            >
+              <X className="w-5 h-5" />
             </button>
           </div>
         </div>

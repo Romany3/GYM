@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Plus, Search } from 'lucide-react';
 
 const PRESET_FOODS = [
@@ -26,8 +26,9 @@ export default function AddMealModal({ isOpen, onClose, onAdd, mealCategory }) {
   );
 
   const handleAddPreset = (preset) => {
+    const mealId = `preset_${preset.name.replace(/\s+/g, '_').toLowerCase()}`;
     onAdd(mealCategory, {
-      id: Date.now().toString(),
+      id: mealId,
       name: preset.name,
       description: preset.serving,
       protein: preset.protein,

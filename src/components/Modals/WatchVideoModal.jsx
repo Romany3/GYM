@@ -1,5 +1,4 @@
-import React from 'react';
-import { X, Play, Dumbbell } from 'lucide-react';
+import { X, Dumbbell } from 'lucide-react';
 
 export default function WatchVideoModal({ isOpen, onClose, exercise }) {
   if (!isOpen || !exercise) return null;

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Settings, Shield, Bell, Moon, Clock, Check } from 'lucide-react';
+import { useState } from 'react';
+import { Settings, Bell, Moon, RefreshCw } from 'lucide-react';
 
-export default function SettingsPage({ showToast }) {
+export default function SettingsPage({ showToast, onResetAppData }) {
   const [quietHoursEnabled, setQuietHoursEnabled] = useState(true);
   const [quietStart, setQuietStart] = useState('22:00');
   const [quietEnd, setQuietEnd] = useState('07:00');
@@ -15,6 +15,13 @@ export default function SettingsPage({ showToast }) {
 
   const toggleNotification = (key) => {
     setNotifications((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleResetData = () => {
+    if (window.confirm('Are you sure you want to reset back to demo defaults?')) {
+      if (onResetAppData) onResetAppData();
+      if (showToast) showToast('Reset all app data to demo defaults!', 'info');
+    }
   };
 
   return (
@@ -140,7 +147,15 @@ export default function SettingsPage({ showToast }) {
         </div>
       </div>
 
-      <div className="flex justify-end pt-2">
+      <div className="flex items-center justify-between pt-2">
+        <button
+          onClick={handleResetData}
+          className="py-3 px-5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 font-bold text-xs rounded-xl flex items-center gap-2 transition-all cursor-pointer"
+        >
+          <RefreshCw className="w-4 h-4" />
+          <span>Reset App Data to Defaults</span>
+        </button>
+
         <button
           onClick={() => showToast && showToast('Saved system & notification settings!')}
           className="py-3 px-8 bg-gradient-to-r from-blue-400 via-sky-300 to-blue-300 hover:from-blue-300 hover:to-sky-200 text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all cursor-pointer"

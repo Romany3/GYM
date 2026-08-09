@@ -1,4 +1,3 @@
-import React from 'react';
 import { SlidersHorizontal, Info, ChevronRight, User, Sparkles } from 'lucide-react';
 
 export default function TargetSetup({ 

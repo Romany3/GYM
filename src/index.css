@@ -55,3 +55,12 @@
   background: rgba(22, 30, 47, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
+
+/* Hide scrollbars utility */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

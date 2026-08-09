@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Megaphone, Send } from 'lucide-react';
 
 export default function AnnouncementModal({ isOpen, onClose, showToast }) {

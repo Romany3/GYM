@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
-import { X, UserPlus, Key, Globe, Phone, Mail, Calendar, User, Activity } from 'lucide-react';
+import { useState } from 'react';
+import { X, UserPlus, Key } from 'lucide-react';
 
-export default function QuickAddClientModal({ isOpen, onClose, onAddClient }) {
+export default function QuickAddClientModal({ 
+  isOpen, 
+  onClose, 
+  onAddClient,
+  currentSubscription,
+  currentClientCount = 18,
+  onNavigateToSubscription
+}) {
   // 10 Comprehensive Fields
   const [name, setName] = useState('');
   const [country, setCountry] = useState('Egypt');
@@ -15,6 +22,9 @@ export default function QuickAddClientModal({ isOpen, onClose, onAddClient }) {
   const [duration, setDuration] = useState('3 Months');
 
   if (!isOpen) return null;
+
+  const maxClients = currentSubscription?.maxClients || 25;
+  const isLimitReached = currentClientCount >= maxClients;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -50,7 +60,28 @@ export default function QuickAddClientModal({ isOpen, onClose, onAddClient }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
       <div className="bg-[#121724] border border-slate-800 rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200 my-8">
-        {/* Header */}
+        {/* Limit Reached Warning Banner */}
+        {isLimitReached && (
+          <div className="p-4 bg-amber-950/40 border-b border-amber-800/60 flex items-center justify-between gap-3 text-xs">
+            <div className="space-y-0.5">
+              <span className="font-bold text-amber-300 block">Trainer Client Capacity Limit Reached</span>
+              <p className="text-slate-300">
+                You have reached your active plan limit ({currentClientCount} / {maxClients} clients). Upgrade plan to register more athletes.
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                onClose();
+                if (onNavigateToSubscription) onNavigateToSubscription();
+              }}
+              className="px-3.5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs whitespace-nowrap cursor-pointer shadow-md"
+            >
+              Upgrade Plan
+            </button>
+          </div>
+        )}
+
+        {/* Form Container */}
         <div className="flex items-center justify-between p-5 border-b border-slate-800 bg-gradient-to-r from-blue-950/40 via-indigo-950/30 to-slate-900">
           <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">

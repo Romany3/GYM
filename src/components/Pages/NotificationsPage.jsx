@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
-  Bell, 
   RefreshCw, 
   Calendar, 
   UserPlus, 
   AlertTriangle, 
-  MessageSquare, 
   CheckCircle2, 
   Clock, 
   Trash2,

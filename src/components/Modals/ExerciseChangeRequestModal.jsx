@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, RefreshCw, CheckCircle, XCircle, Dumbbell, AlertTriangle, ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import { X, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
 
 export default function ExerciseChangeRequestModal({ isOpen, onClose, requests = [], onApprove, onReject }) {
   const [selectedRequestId, setSelectedRequestId] = useState(requests[0]?.id || null);

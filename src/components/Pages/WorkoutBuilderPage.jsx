@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
   Play, 
   GripVertical, 
@@ -6,11 +6,8 @@ import {
   Plus, 
   Save, 
   Trash2, 
-  Check, 
   Pencil,
-  Edit3,
   X,
-  RefreshCw,
   Users
 } from 'lucide-react';
 import WatchVideoModal from '../Modals/WatchVideoModal';
@@ -18,9 +15,7 @@ import AddEditLibraryExerciseModal from '../Modals/AddEditLibraryExerciseModal';
 
 export default function WorkoutBuilderPage({ 
   showToast,
-  onOpenChangeRequestsModal,
-  onOpenBatchAssignModal,
-  changeRequestsCount = 2
+  onOpenBatchAssignModal
 }) {
   // Category Filter State
   const [activeCategory, setActiveCategory] = useState('All');
@@ -262,34 +257,6 @@ export default function WorkoutBuilderPage({
         </div>
       </div>
 
-      {/* Exercise Substitution Request Alert Banner */}
-      {changeRequestsCount > 0 && (
-        <div className="bg-gradient-to-r from-amber-950/40 via-amber-900/20 to-slate-900 border border-amber-500/30 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg animate-in fade-in duration-300">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
-              <RefreshCw className="w-5 h-5 animate-spin-slow" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-950 px-2 py-0.5 rounded border border-amber-800/80">
-                  {changeRequestsCount} Pending Request{changeRequestsCount > 1 ? 's' : ''}
-                </span>
-                <span className="text-xs font-semibold text-slate-200">Client Exercise Substitutions</span>
-              </div>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Clients submitted requests to swap exercises due to missing gym equipment or discomfort.
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={onOpenChangeRequestsModal}
-            className="px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer shrink-0"
-          >
-            Review & Swap ({changeRequestsCount})
-          </button>
-        </div>
-      )}
-
       {/* Main 2-Column Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Library Column (Col 5) */}
@@ -310,7 +277,7 @@ export default function WorkoutBuilderPage({
           </div>
 
           {/* Category Filter Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto bg-[#131926] p-1 rounded-xl border border-slate-800 text-xs font-semibold">
+          <div className="flex items-center gap-1.5 overflow-x-auto bg-[#131926] p-1.5 rounded-xl border border-slate-800 text-xs font-semibold scrollbar-none">
             {['All', 'Chest', 'Back', 'Legs', 'Arms', 'Shoulders', 'Core'].map((cat) => (
               <button
                 key={cat}
@@ -405,7 +372,7 @@ export default function WorkoutBuilderPage({
           {/* Top Bar: Days Tabs & Publish Plan Action */}
           <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
             {/* Days Tabs (Editable Split Names!) */}
-            <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto py-1">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-none w-full sm:w-auto py-1">
               {days.map((d) => {
                 const isActive = activeDayId === d.id;
 
@@ -608,65 +575,6 @@ export default function WorkoutBuilderPage({
               <span className="text-xs font-semibold text-slate-400 group-hover:text-slate-200 transition-colors">
                 Drag exercises from library to add to {days.find(d => d.id === activeDayId)?.label || 'Day'}
               </span>
-            </div>
-          </div>
-
-          {/* Target Muscle Group Distribution Card */}
-          <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 shadow-xl space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
-              <h3 className="font-serif-header text-sm font-semibold text-slate-100">
-                Target Muscle Group Distribution
-              </h3>
-              <div className="flex items-center gap-4 text-[10px] font-bold">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded bg-blue-500" />
-                  <span className="text-slate-400">MAJOR</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded bg-[#a3c2fe]" />
-                  <span className="text-slate-400">SECONDARY</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Muscle Distribution Metrics Grid */}
-            <div className="grid grid-cols-6 gap-2 text-center text-[10px] font-bold tracking-wider text-slate-400 uppercase pt-2">
-              <div>
-                <div className="h-16 bg-[#171e2e] rounded-lg relative overflow-hidden flex items-end justify-center mb-2">
-                  <div className="w-full bg-blue-500 h-[85%] rounded-t-md" />
-                </div>
-                <span>BACK</span>
-              </div>
-              <div>
-                <div className="h-16 bg-[#171e2e] rounded-lg relative overflow-hidden flex items-end justify-center mb-2">
-                  <div className="w-full bg-[#a3c2fe] h-[60%] rounded-t-md" />
-                </div>
-                <span>BICEPS</span>
-              </div>
-              <div>
-                <div className="h-16 bg-[#171e2e] rounded-lg relative overflow-hidden flex items-end justify-center mb-2">
-                  <div className="w-full bg-[#a3c2fe] h-[40%] rounded-t-md" />
-                </div>
-                <span>FOREARMS</span>
-              </div>
-              <div>
-                <div className="h-16 bg-[#171e2e] rounded-lg relative overflow-hidden flex items-end justify-center mb-2">
-                  <div className="w-full bg-[#a3c2fe] h-[30%] rounded-t-md" />
-                </div>
-                <span>CORE</span>
-              </div>
-              <div>
-                <div className="h-16 bg-[#171e2e] rounded-lg relative overflow-hidden flex items-end justify-center mb-2">
-                  <div className="w-full bg-slate-800 h-[0%]" />
-                </div>
-                <span>CHEST</span>
-              </div>
-              <div>
-                <div className="h-16 bg-[#171e2e] rounded-lg relative overflow-hidden flex items-end justify-center mb-2">
-                  <div className="w-full bg-slate-800 h-[0%]" />
-                </div>
-                <span>LEGS</span>
-              </div>
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
   Users, 
   ShieldCheck, 
@@ -7,11 +7,9 @@ import {
   Plus, 
   MessageSquare, 
   User, 
-  Key,
-  X, 
+  Key, 
   TrendingDown, 
   Calendar,
-  Pencil,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
@@ -20,14 +18,16 @@ export default function ClientsPage({
   onQuickAddClient, 
   onOpenClientCredentials,
   showToast,
-  onNavigate 
+  onNavigate,
+  clients: externalClients,
+  onUpdateClients
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [selectedClientIndex, setSelectedClientIndex] = useState(0);
   const [isNoteEditing, setIsNoteEditing] = useState(false);
 
-  const clientData = [
+  const defaultClientData = [
     {
       id: 'c1',
       code: '#MJ-0942',
@@ -120,33 +120,50 @@ export default function ClientsPage({
     },
   ];
 
+  const currentClients = externalClients && externalClients.length > 0 ? externalClients : defaultClientData;
+  const [localClients, setLocalClients] = useState(null);
+  const clientDataList = localClients || currentClients;
+
   // Filtering
-  const filteredClients = clientData.filter((c) => {
-    const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.code.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredClients = clientDataList.filter((c) => {
+    const matchesSearch = (c.name || '').toLowerCase().includes(searchQuery.toLowerCase()) || (c.code || '').toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'ALL' || c.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
-  const selectedClient = clientData[selectedClientIndex] || clientData[0];
-  const [noteText, setNoteText] = useState(selectedClient.note);
+  const selectedClient = clientDataList[selectedClientIndex] || clientDataList[0] || {};
+  const [customNoteText, setCustomNoteText] = useState('');
+  const [activeEditingIndex, setActiveEditingIndex] = useState(null);
+  const noteText = activeEditingIndex === selectedClientIndex ? customNoteText : (selectedClient.note || '');
+
+  const handleStartNoteEditing = () => {
+    setCustomNoteText(selectedClient.note || '');
+    setActiveEditingIndex(selectedClientIndex);
+    setIsNoteEditing(true);
+  };
 
   const handleSaveNote = () => {
-    selectedClient.note = noteText;
+    const updatedList = clientDataList.map((c, i) =>
+      i === selectedClientIndex ? { ...c, note: noteText } : c
+    );
+    setLocalClients(updatedList);
+    if (onUpdateClients) onUpdateClients(updatedList);
     setIsNoteEditing(false);
+    setActiveEditingIndex(null);
     if (showToast) showToast('Updated trainer note');
   };
 
   return (
     <div className="space-y-6">
       {/* Header Controls Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="font-serif-header text-3xl font-bold text-white tracking-tight">
           Clients Directory
         </h1>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           {/* Search Bar */}
-          <div className="relative w-56">
+          <div className="relative w-full sm:w-56">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
             <input
               type="text"
@@ -161,7 +178,7 @@ export default function ClientsPage({
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-[#131926] text-slate-300 text-xs font-semibold rounded-xl px-3 py-2 border border-slate-700/60 focus:outline-none focus:border-blue-500 cursor-pointer"
+            className="w-full sm:w-auto bg-[#131926] text-slate-300 text-xs font-semibold rounded-xl px-3 py-2 border border-slate-700/60 focus:outline-none focus:border-blue-500 cursor-pointer"
           >
             <option value="ALL">Status: All</option>
             <option value="ACTIVE">Active</option>
@@ -173,7 +190,7 @@ export default function ClientsPage({
           {/* Add New Client Button */}
           <button
             onClick={onQuickAddClient}
-            className="flex items-center gap-2 py-2 px-4 bg-gradient-to-r from-blue-300 via-sky-200 to-blue-200 hover:from-blue-200 hover:to-sky-100 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 py-2 px-4 bg-gradient-to-r from-blue-300 via-sky-200 to-blue-200 hover:from-blue-200 hover:to-sky-100 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Add New Client</span>
@@ -227,165 +244,149 @@ export default function ClientsPage({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Table Matrix (Col 8) */}
         <div className="lg:col-span-8 bg-[#121724] border border-slate-800/90 rounded-2xl p-6 shadow-xl space-y-4">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[700px]">
-              <thead>
-                <tr className="border-b border-slate-800 text-[11px] font-semibold text-slate-400 tracking-wider">
-                  <th className="py-3 px-3">CLIENT</th>
-                  <th className="py-3 px-3">GOAL</th>
-                  <th className="py-3 px-3">CURRENT PLAN</th>
-                  <th className="py-3 px-3">LAST ACTIVE</th>
-                  <th className="py-3 px-3">COMPLIANCE</th>
-                  <th className="py-3 px-3 text-center">STATUS</th>
-                  <th className="py-3 px-3 text-right">ACTIONS</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/60 text-xs">
-                {filteredClients.map((client, idx) => {
-                  const isSelected = selectedClient.id === client.id;
+          {/* CLIENT CARDS GRID (Unified Responsive Layout for All Screen Sizes) */}
+          <div className="space-y-3.5">
+            {filteredClients.map((client, idx) => {
+              const isSelected = selectedClient.id === client.id;
+              return (
+                <div
+                  key={client.id}
+                  onClick={() => {
+                    setSelectedClientIndex(idx);
+                    setCustomNoteText(client.note || '');
+                  }}
+                  className={`p-4 sm:p-5 rounded-2xl border transition-all cursor-pointer space-y-3.5 ${
+                    isSelected
+                      ? 'bg-[#182133] border-blue-500/60 shadow-xl shadow-blue-950/25 ring-1 ring-blue-500/30'
+                      : 'bg-[#141b2c] border-slate-800/90 hover:border-slate-700/80 hover:bg-[#161e31]'
+                  }`}
+                >
+                  {/* Top Header: Avatar, Name, Code & Status */}
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      {client.avatar ? (
+                        <img
+                          src={client.avatar}
+                          alt={client.name}
+                          className="w-11 h-11 rounded-full object-cover ring-2 ring-slate-700/80 shrink-0"
+                        />
+                      ) : (
+                        <div className="w-11 h-11 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-slate-300 text-xs shrink-0">
+                          {client.initials}
+                        </div>
+                      )}
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-bold text-sm sm:text-base text-slate-100">{client.name}</h4>
+                          <span className="text-[10px] text-slate-400 font-mono bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700/60">
+                            {client.code}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-400 mt-0.5">{client.email}</p>
+                      </div>
+                    </div>
 
-                  return (
-                    <tr
-                      key={client.id}
-                      onClick={() => {
-                        setSelectedClientIndex(idx);
-                        setNoteText(client.note);
-                      }}
-                      className={`cursor-pointer transition-all ${
-                        isSelected
-                          ? 'bg-[#182133] border-l-4 border-l-blue-400'
-                          : 'hover:bg-slate-800/40'
+                    <span
+                      className={`text-[10px] font-bold tracking-wider uppercase px-3 py-1 rounded-full border shrink-0 ${
+                        client.status === 'ACTIVE'
+                          ? 'bg-blue-950/80 border-blue-800 text-blue-300 shadow-sm'
+                          : client.status === 'AT RISK'
+                          ? 'bg-red-950/80 border-red-900 text-red-300 shadow-sm'
+                          : 'bg-amber-950/80 border-amber-800 text-amber-300 shadow-sm'
                       }`}
                     >
-                      {/* Client info */}
-                      <td className="py-3.5 px-3">
-                        <div className="flex items-center gap-3">
-                          {client.avatar ? (
-                            <img
-                              src={client.avatar}
-                              alt={client.name}
-                              className="w-8 h-8 rounded-full object-cover border border-slate-700"
+                      {client.status}
+                    </span>
+                  </div>
+
+                  {/* Client Details Grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-3 border-t border-slate-800/80">
+                    <div>
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Goal</span>
+                      <span className="font-semibold text-slate-200 truncate block mt-0.5">{client.goal}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Current Plan</span>
+                      <span
+                        className={`font-semibold truncate block mt-0.5 ${
+                          client.planType === 'pro'
+                            ? 'text-blue-300'
+                            : client.planType === 'onboarding'
+                            ? 'text-amber-400'
+                            : 'text-slate-400'
+                        }`}
+                      >
+                        {client.plan}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Compliance</span>
+                      {client.compliance !== null ? (
+                        <div className="flex items-center gap-2 mt-1">
+                          <div className="w-16 bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                            <div
+                              style={{ width: `${client.compliance}%` }}
+                              className={`h-full rounded-full ${
+                                client.compliance < 50 ? 'bg-red-500' : 'bg-blue-400'
+                              }`}
                             />
-                          ) : (
-                            <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-slate-300 text-[11px]">
-                              {client.initials}
-                            </div>
-                          )}
-                          <div>
-                            <h4 className="font-bold text-slate-100">{client.name}</h4>
-                            <span className="text-[10px] text-slate-500 font-mono">
-                              ID: {client.code}
-                            </span>
                           </div>
+                          <span className="text-xs font-bold text-slate-200">{client.compliance}%</span>
                         </div>
-                      </td>
+                      ) : (
+                        <span className="text-slate-500 mt-0.5 block">--</span>
+                      )}
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Last Active</span>
+                      <span className="text-slate-300 font-semibold block mt-0.5">{client.lastActive}</span>
+                    </div>
+                  </div>
 
-                      {/* Goal */}
-                      <td className="py-3.5 px-3 text-slate-300 font-medium">
-                        {client.goal}
-                      </td>
-
-                      {/* Current Plan */}
-                      <td className="py-3.5 px-3">
-                        <span
-                          className={`font-semibold ${
-                            client.planType === 'pro'
-                              ? 'text-blue-300'
-                              : client.planType === 'onboarding'
-                              ? 'text-amber-400'
-                              : 'text-slate-400'
-                          }`}
-                        >
-                          {client.plan}
-                        </span>
-                      </td>
-
-                      {/* Last Active */}
-                      <td className="py-3.5 px-3 text-slate-400">
-                        {client.lastActive}
-                      </td>
-
-                      {/* Compliance Bar */}
-                      <td className="py-3.5 px-3">
-                        {client.compliance !== null ? (
-                          <div className="flex items-center gap-2">
-                            <div className="w-16 bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                              <div
-                                style={{ width: `${client.compliance}%` }}
-                                className={`h-full rounded-full ${
-                                  client.compliance < 50
-                                    ? 'bg-red-500'
-                                    : 'bg-blue-400'
-                                }`}
-                              />
-                            </div>
-                            <span className="text-[11px] font-bold text-slate-300">
-                              {client.compliance}%
-                            </span>
-                          </div>
-                        ) : (
-                          <span className="text-slate-500">--</span>
-                        )}
-                      </td>
-
-                      {/* Status */}
-                      <td className="py-3.5 px-3 text-center">
-                        <span
-                          className={`text-[10px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full border ${
-                            client.status === 'ACTIVE'
-                              ? 'bg-blue-950/70 border-blue-800 text-blue-300'
-                              : client.status === 'AT RISK'
-                              ? 'bg-red-950/70 border-red-900 text-red-300'
-                              : 'bg-amber-950/70 border-amber-800 text-amber-300'
-                          }`}
-                        >
-                          {client.status}
-                        </span>
-                      </td>
-
-                      {/* Actions */}
-                      <td className="py-3.5 px-3 text-right">
-                        <div className="flex items-center justify-end gap-2 text-slate-400">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (onOpenClientCredentials) {
-                                onOpenClientCredentials(client);
-                              } else if (showToast) {
-                                showToast(`Passkey for ${client.name}: ${client.passkey || 'FA-9B2X71'}`);
-                              }
-                            }}
-                            className="px-2.5 py-1 bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 border border-blue-800/60 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all"
-                            title="View Client Passkey & Invite Link"
-                          >
-                            <Key className="w-3.5 h-3.5 text-blue-400" />
-                            <span>Passkey</span>
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (showToast) showToast(`Opening chat with ${client.name}`);
-                            }}
-                            className="p-1.5 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors"
-                          >
-                            <MessageSquare className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onNavigate && onNavigate('nutrition-engine');
-                            }}
-                            className="p-1.5 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors"
-                          >
-                            <User className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                  {/* Actions Row */}
+                  <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800/80">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (onOpenClientCredentials) {
+                          onOpenClientCredentials(client);
+                        } else if (showToast) {
+                          showToast(`Passkey for ${client.name}: ${client.passkey || 'FA-9B2X71'}`);
+                        }
+                      }}
+                      className="px-3 py-1.5 bg-blue-950/70 hover:bg-blue-900/90 text-blue-300 border border-blue-800/60 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+                      title="View Client Passkey & Invite Link"
+                    >
+                      <Key className="w-3.5 h-3.5 text-blue-400" />
+                      <span>Passkey</span>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (onNavigate) onNavigate('coach-chat');
+                        if (showToast) showToast(`Opening chat with ${client.name}`);
+                      }}
+                      className="px-3 py-1.5 bg-[#171e2e] hover:bg-slate-800 text-blue-300 border border-slate-700/60 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+                      title="Chat with Athlete"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5 text-blue-400" />
+                      <span>Message</span>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (onNavigate) onNavigate('nutrition-engine');
+                      }}
+                      className="px-3 py-1.5 bg-[#171e2e] hover:bg-slate-800 text-slate-300 border border-slate-700/60 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+                      title="Adjust Nutrition & Training Plan"
+                    >
+                      <User className="w-3.5 h-3.5" />
+                      <span>Plan</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {/* Table Footer Pagination */}
@@ -483,7 +484,7 @@ export default function ClientsPage({
 
             {/* SVG Weight Line Graph */}
             <div className="pt-3">
-              <svg className="w-full h-24 overflow-visible">
+              <svg className="w-full h-24 overflow-visible" viewBox="0 0 270 90" preserveAspectRatio="none">
                 {/* Grid Lines */}
                 <line x1="0" y1="20" x2="100%" y2="20" stroke="#252e42" strokeDasharray="3 3" />
                 <line x1="0" y1="50" x2="100%" y2="50" stroke="#252e42" strokeDasharray="3 3" />
@@ -528,7 +529,7 @@ export default function ClientsPage({
               {/* Photo 1 */}
               <div className="relative rounded-xl overflow-hidden border border-slate-700/60 aspect-square group">
                 <img
-                  src="/physique_jan.png"
+                  src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=400&q=80"
                   alt="Jan Progress"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
@@ -540,7 +541,7 @@ export default function ClientsPage({
               {/* Photo 2 */}
               <div className="relative rounded-xl overflow-hidden border border-slate-700/60 aspect-square group">
                 <img
-                  src="/physique_may.png"
+                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=400&q=80"
                   alt="May Progress"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
@@ -559,7 +560,14 @@ export default function ClientsPage({
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-bold text-slate-200">Trainer Notes</h4>
               <button
-                onClick={() => setIsNoteEditing(!isNoteEditing)}
+                onClick={() => {
+                  if (isNoteEditing) {
+                    setIsNoteEditing(false);
+                    setActiveEditingIndex(null);
+                  } else {
+                    handleStartNoteEditing();
+                  }
+                }}
                 className="text-[11px] font-semibold text-blue-400 hover:text-blue-300 transition-colors"
               >
                 {isNoteEditing ? 'Cancel' : 'Edit Note'}
@@ -571,7 +579,7 @@ export default function ClientsPage({
                 <textarea
                   rows="4"
                   value={noteText}
-                  onChange={(e) => setNoteText(e.target.value)}
+                  onChange={(e) => setCustomNoteText(e.target.value)}
                   className="w-full bg-[#111622] text-slate-200 text-xs rounded-lg p-2.5 border border-slate-700 focus:outline-none"
                 />
                 <button
@@ -595,7 +603,10 @@ export default function ClientsPage({
           {/* Action Footer Buttons */}
           <div className="grid grid-cols-2 gap-3 pt-2">
             <button
-              onClick={() => showToast && showToast(`Opening messenger with ${selectedClient.name}`)}
+              onClick={() => {
+                if (onNavigate) onNavigate('coach-chat');
+                if (showToast) showToast(`Opening chat with ${selectedClient.name}`);
+              }}
               className="py-2.5 bg-[#171e2e] hover:bg-[#1f293d] border border-slate-700 text-slate-200 font-semibold text-xs rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <MessageSquare className="w-3.5 h-3.5" /> Message

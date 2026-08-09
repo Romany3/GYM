@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { X, Key, Copy, Check, ExternalLink, ShieldCheck } from 'lucide-react';
 
 export default function ClientCredentialsModal({ isOpen, onClose, clientData, showToast }) {
   const [copiedKey, setCopiedKey] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  if (!isOpen || !clientData) return null;
+  const { passkey, username, portalUrl } = useMemo(() => {
+    if (!clientData) return { passkey: '', username: '', portalUrl: '' };
+    const pk = clientData.passkey || 'FA-9B2X71';
+    const un = clientData.email ? clientData.email.split('@')[0] : clientData.name.toLowerCase().replace(/\s+/g, '.');
+    const url = `https://fitarch.app/client?code=${clientData.id || 'c1'}_${pk}`;
+    return { passkey: pk, username: un, portalUrl: url };
+  }, [clientData]);
 
-  const passkey = clientData.passkey || `FA-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-  const username = clientData.email ? clientData.email.split('@')[0] : clientData.name.toLowerCase().replace(/\s+/g, '.');
-  const portalUrl = `https://fitarch.app/client?code=${clientData.id || 'c1'}_${passkey}`;
+  if (!isOpen || !clientData) return null;
 
   const handleCopyPasskey = () => {
     navigator.clipboard?.writeText(passkey);

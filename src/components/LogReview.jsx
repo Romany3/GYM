@@ -1,4 +1,3 @@
-import React from 'react';
 import { Flag, AlertTriangle, CheckCircle, MessageSquare } from 'lucide-react';
 
 export default function LogReview({
@@ -10,7 +9,7 @@ export default function LogReview({
   return (
     <div className="space-y-5">
       {/* Log Review Header Card */}
-      <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 shadow-xl flex flex-col justify-between min-h-[calc(100vh-8rem)]">
+      <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 shadow-xl flex flex-col justify-between lg:min-h-[calc(100vh-8rem)]">
         <div>
           {/* Section Header */}
           <div className="flex items-center justify-between pb-4 border-b border-slate-800/80 mb-5">

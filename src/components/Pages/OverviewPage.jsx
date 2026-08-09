@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
   Users, 
   Calendar, 
@@ -8,13 +8,13 @@ import {
   AlertCircle, 
   CreditCard, 
   Clock, 
-  Dumbbell, 
-  Utensils, 
-  MessageSquare, 
   ChevronRight, 
   MapPin, 
   Video, 
-  UserCheck
+  UserCheck,
+  ArrowUpRight,
+  ArrowDownRight,
+  FileText
 } from 'lucide-react';
 
 export default function OverviewPage({ 
@@ -150,6 +150,139 @@ export default function OverviewPage({
             <span className="text-[10px] font-bold text-amber-400 bg-amber-950/70 px-2 py-0.5 rounded-full border border-amber-800/60">
               -2.1%
             </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Business & Revenue Analytics Section */}
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+          <div>
+            <h2 className="font-serif-header text-2xl font-bold tracking-tight text-white">
+              Business <span className="italic font-normal text-blue-300">&</span> Progress Analytics
+            </h2>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Strategic overview of revenue metrics and client transformation data.
+            </p>
+          </div>
+
+          <button
+            onClick={() => showToast && showToast('Exporting Business & Progress PDF Report...')}
+            className="flex items-center justify-center gap-2 py-2 px-3.5 bg-[#121826] hover:bg-[#182033] text-slate-200 border border-slate-700/80 rounded-xl text-xs font-semibold shadow-md transition-all cursor-pointer shrink-0"
+          >
+            <FileText className="w-4 h-4 text-blue-400" />
+            <span>Export PDF Report</span>
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Left Main MRR Revenue Card (Col 8) */}
+          <div className="lg:col-span-8 bg-[#121724] border border-slate-800/90 rounded-2xl p-6 shadow-xl space-y-6">
+            <div className="flex items-start justify-between">
+              <div>
+                <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                  MONTHLY RECURRING REVENUE (MRR)
+                </span>
+                <div className="font-serif-header text-4xl font-extrabold text-white mt-1">
+                  $42,850.00
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1 text-xs font-bold text-blue-300 bg-blue-950/80 px-3 py-1 rounded-full border border-blue-800/60">
+                <ArrowUpRight className="w-3.5 h-3.5" />
+                <span>+12.4%</span>
+              </div>
+            </div>
+
+            {/* Interactive SVG Area Chart for MRR Growth */}
+            <div className="pt-2 space-y-2">
+              <div className="h-56 w-full relative">
+                <svg className="w-full h-full overflow-visible" viewBox="0 0 420 200" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="overviewMrrGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.35" />
+                      <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.0" />
+                    </linearGradient>
+                  </defs>
+
+                  {/* Grid Lines */}
+                  <line x1="0" y1="35" x2="100%" y2="35" stroke="#1f293d" strokeDasharray="3 3" />
+                  <line x1="0" y1="85" x2="100%" y2="85" stroke="#1f293d" strokeDasharray="3 3" />
+                  <line x1="0" y1="135" x2="100%" y2="135" stroke="#1f293d" strokeDasharray="3 3" />
+                  <line x1="0" y1="185" x2="100%" y2="185" stroke="#1f293d" strokeDasharray="3 3" />
+
+                  {/* Area Fill */}
+                  <polygon
+                    fill="url(#overviewMrrGradient)"
+                    points="0,170 70,150 140,125 210,100 280,75 350,50 420,25 420,200 0,200"
+                  />
+
+                  {/* Trend Line */}
+                  <polyline
+                    fill="none"
+                    stroke="#60a5fa"
+                    strokeWidth="3"
+                    points="0,170 70,150 140,125 210,100 280,75 350,50 420,25"
+                  />
+
+                  {/* Data Points */}
+                  <circle cx="0" cy="170" r="4" fill="#93c5fd" />
+                  <circle cx="70" cy="150" r="4" fill="#93c5fd" />
+                  <circle cx="140" cy="125" r="4" fill="#93c5fd" />
+                  <circle cx="210" cy="100" r="4" fill="#93c5fd" />
+                  <circle cx="280" cy="75" r="4" fill="#93c5fd" />
+                  <circle cx="350" cy="50" r="4" fill="#93c5fd" />
+                  <circle cx="420" cy="25" r="5" fill="#3b82f6" stroke="#ffffff" strokeWidth="2" />
+                </svg>
+              </div>
+
+              {/* Month X-Axis Labels */}
+              <div className="flex justify-between text-xs text-slate-500 font-mono pt-1">
+                <span>Jan</span>
+                <span>Feb</span>
+                <span>Mar</span>
+                <span>Apr</span>
+                <span>May</span>
+                <span>Jun</span>
+                <span>Jul</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Cards Column (Col 4): Churn & ARPU */}
+          <div className="lg:col-span-4 space-y-6">
+            {/* Card 1: Churn Rate */}
+            <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-6 shadow-xl space-y-4">
+              <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                CHURN RATE
+              </span>
+              <div className="text-3xl font-extrabold text-white">
+                2.4%
+              </div>
+
+              <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                <div className="w-[18%] bg-blue-400 h-full rounded-full" />
+              </div>
+
+              <p className="text-xs text-emerald-400 font-semibold flex items-center gap-1 pt-1">
+                <ArrowDownRight className="w-3.5 h-3.5" />
+                <span>-0.8% from last month</span>
+              </p>
+            </div>
+
+            {/* Card 2: ARPU */}
+            <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-6 shadow-xl space-y-4">
+              <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                ARPU (AVG. REVENUE PER USER)
+              </span>
+              <div className="font-serif-header text-3xl font-extrabold text-white">
+                $185.00
+              </div>
+
+              <p className="text-xs text-slate-400 pt-1">
+                Consistent with growth target
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -355,42 +488,6 @@ export default function OverviewPage({
 
         {/* Right Side Column (Col 4): Weekly Adherence & Upcoming Sessions */}
         <div className="lg:col-span-4 space-y-6">
-          {/* Weekly Adherence Card */}
-          <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 shadow-xl space-y-4">
-            <h3 className="font-serif-header text-lg font-semibold text-slate-100">
-              Weekly Adherence
-            </h3>
-
-            {/* Days Bar Chart */}
-            <div className="h-28 flex items-end justify-between px-2 pt-4 border-b border-slate-800 pb-3">
-              {[
-                { day: 'MON', val: 70 },
-                { day: 'TUE', val: 85 },
-                { day: 'WED', val: 95, active: true },
-                { day: 'THU', val: 80 },
-                { day: 'FRI', val: 90 },
-                { day: 'SAT', val: 75 },
-                { day: 'SUN', val: 88 },
-              ].map((item) => (
-                <div key={item.day} className="flex flex-col items-center gap-1.5">
-                  <div
-                    style={{ height: `${item.val * 0.7}px` }}
-                    className={`w-3.5 rounded-t-md transition-all ${
-                      item.active
-                        ? 'bg-blue-400 shadow-md shadow-blue-500/40'
-                        : 'bg-slate-800 hover:bg-slate-700'
-                    }`}
-                  />
-                  <span className="text-[9px] font-mono text-slate-500">{item.day}</span>
-                </div>
-              ))}
-            </div>
-
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Overall adherence is <strong className="text-slate-100">8% higher</strong> than last week. Wednesday dip correlated with system maintenance.
-            </p>
-          </div>
-
           {/* Upcoming Sessions Card */}
           <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 shadow-xl space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Copy, Users, CheckSquare, Square, CheckCircle2 } from 'lucide-react';
+import { useState } from 'react';
+import { X, Copy, CheckSquare, Square, CheckCircle2 } from 'lucide-react';
 
 export default function BatchAssignModal({ isOpen, onClose, clients = [], programTitle = 'Current Routine', onConfirmBatch, showToast }) {
   const [selectedClientIds, setSelectedClientIds] = useState([]);

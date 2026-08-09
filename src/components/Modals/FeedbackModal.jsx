@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, MessageSquare, Send } from 'lucide-react';
 
 export default function FeedbackModal({ isOpen, onClose, onSubmitFeedback, clientName }) {

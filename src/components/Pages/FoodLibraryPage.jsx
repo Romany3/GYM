@@ -1,17 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
   Apple, 
   Search, 
   Plus, 
-  Filter, 
   Flame, 
-  Wheat, 
-  Droplet, 
-  Egg,
-  Utensils,
-  X,
-  CheckCircle2,
-  Tag
+  X
 } from 'lucide-react';
 
 export default function FoodLibraryPage({ showToast }) {

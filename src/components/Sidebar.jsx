@@ -1,12 +1,15 @@
-import React from 'react';
 import { 
   Dumbbell, 
   LayoutGrid, 
   Users, 
   Utensils, 
   Apple,
+  Sparkles,
+  RefreshCw,
   BarChart3, 
-  Calendar, 
+  CreditCard,
+  Bell,
+  MessageSquare,
   Settings, 
   Plus,
   X
@@ -22,11 +25,16 @@ export default function Sidebar({
   const navItems = [
     { id: 'overview', label: 'Overview', icon: LayoutGrid },
     { id: 'clients', label: 'Clients', icon: Users },
+    { id: 'coach-chat', label: 'Coach Chat', icon: MessageSquare },
     { id: 'workout-builder', label: 'Workout Builder', icon: Dumbbell },
+    { id: 'exercise-swaps', label: 'Exercise Change Requests', icon: RefreshCw },
+    { id: 'food-swaps', label: 'Food Swap Requests', icon: Utensils },
     { id: 'nutrition-engine', label: 'Nutrition Engine', icon: Utensils },
     { id: 'food-library', label: 'Food Library', icon: Apple },
+    { id: 'ai-meal-generator', label: 'AI Meal Generator', icon: Sparkles },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'schedule', label: 'My Schedule', icon: Calendar },
+    { id: 'notifications', label: 'Notification Center', icon: Bell },
+    { id: 'subscription-plans', label: 'Subscription Plans', icon: CreditCard },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
@@ -42,7 +50,7 @@ export default function Sidebar({
 
       {/* Main Sidebar (Desktop Sticky Sidebar + Mobile Drawer) */}
       <aside 
-        className={`bg-[#0a0d16] border-r border-slate-800/80 flex flex-col justify-between select-none shrink-0 z-50 w-72 max-w-[85vw] md:w-64 fixed inset-y-0 left-0 h-full md:sticky md:top-0 md:h-screen transition-transform duration-300 ease-in-out ${
+        className={`bg-[#0a0d16] border-r border-slate-800/80 flex flex-col justify-between select-none shrink-0 z-50 w-72 max-w-[85vw] md:w-72 fixed inset-y-0 left-0 h-full md:sticky md:top-0 md:h-screen transition-transform duration-300 ease-in-out ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
@@ -58,16 +66,16 @@ export default function Sidebar({
                   Fit<span className="text-blue-300 font-normal">Arch</span>
                 </span>
               </div>
-              <span className="text-[10px] font-bold tracking-widest text-slate-500 uppercase mt-1 pl-12">
-                Elite Performance
+              <span className="text-[10px] font-bold tracking-widest text-blue-400 uppercase mt-1 pl-12">
+                ELITE PERFORMANCE
               </span>
             </div>
 
-            {/* Mobile Close Button */}
+            {/* Mobile Sidebar Close Button */}
             <button
               onClick={onCloseMobile}
-              className="md:hidden p-2 text-slate-400 hover:text-white rounded-xl bg-[#131926] border border-slate-800 transition-colors"
-              aria-label="Close sidebar menu"
+              className="md:hidden p-1.5 text-slate-400 hover:text-slate-200 rounded-lg hover:bg-slate-800 transition-colors"
+              aria-label="Close menu"
             >
               <X className="w-5 h-5" />
             </button>
@@ -95,8 +103,8 @@ export default function Sidebar({
                   {isActive && (
                     <span className="absolute left-0 top-2 bottom-2 w-1 bg-gradient-to-b from-blue-400 to-indigo-500 rounded-r-full shadow-sm shadow-blue-400/50" />
                   )}
-                  <Icon className={`w-4 h-4 transition-transform group-hover:scale-110 ${isActive ? 'text-blue-400' : 'text-slate-400'}`} />
-                  <span>{item.label}</span>
+                  <Icon className={`w-4 h-4 transition-transform group-hover:scale-110 shrink-0 ${isActive ? 'text-blue-400' : 'text-slate-400'}`} />
+                  <span className="whitespace-nowrap">{item.label}</span>
                 </button>
               );
             })}

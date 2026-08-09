@@ -116,8 +116,8 @@ export default function DailyPlanCreator({
       ) : (
         <>
           {/* Day Selector Bar */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center bg-[#131926] p-1 rounded-xl border border-slate-800">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1 bg-[#131926] p-1 rounded-xl border border-slate-800 overflow-x-auto scrollbar-none max-w-full">
               {days.map((day) => (
                 <button
                   key={day}

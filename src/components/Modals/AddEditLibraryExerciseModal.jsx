@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, Dumbbell, Video, Plus, Check } from 'lucide-react';
+import { useState } from 'react';
+import { X, Dumbbell, Video, Check } from 'lucide-react';
 
 export default function AddEditLibraryExerciseModal({ 
   isOpen, 
@@ -7,48 +7,50 @@ export default function AddEditLibraryExerciseModal({
   onSave, 
   exerciseToEdit 
 }) {
-  const [name, setName] = useState('');
-  const [category, setCategory] = useState('Chest');
-  const [type, setType] = useState('COMPOUND');
-  const [videoUrl, setVideoUrl] = useState('');
-  const [recommendation, setRecommendation] = useState('Recommended: 3x10');
-  const [image, setImage] = useState('/bench_press.png');
-
-  useEffect(() => {
-    if (exerciseToEdit) {
-      setName(exerciseToEdit.name || '');
-      setCategory(exerciseToEdit.category || 'Chest');
-      setType(exerciseToEdit.type || 'COMPOUND');
-      setVideoUrl(exerciseToEdit.videoUrl || '');
-      setRecommendation(exerciseToEdit.recommendation || 'Recommended: 3x10');
-      setImage(exerciseToEdit.image || '/bench_press.png');
-    } else {
-      setName('');
-      setCategory('Chest');
-      setType('COMPOUND');
-      setVideoUrl('https://www.w3schools.com/html/mov_bbb.mp4');
-      setRecommendation('Recommended: 3x10');
-      setImage('/bench_press.png');
-    }
-  }, [exerciseToEdit, isOpen]);
+  const [formState, setFormState] = useState(null);
 
   if (!isOpen) return null;
+
+  const name = formState?.name ?? (exerciseToEdit?.name || '');
+  const category = formState?.category ?? (exerciseToEdit?.category || 'Chest');
+  const type = formState?.type ?? (exerciseToEdit?.type || 'COMPOUND');
+  const videoUrl = formState?.videoUrl ?? (exerciseToEdit?.videoUrl || 'https://www.w3schools.com/html/mov_bbb.mp4');
+  const recommendation = formState?.recommendation ?? (exerciseToEdit?.recommendation || 'Recommended: 3x10');
+  const image = formState?.image ?? (exerciseToEdit?.image || '/bench_press.png');
+
+  const updateField = (field, value) => {
+    setFormState((prev) => ({
+      name,
+      category,
+      type,
+      videoUrl,
+      recommendation,
+      image,
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleClose = () => {
+    setFormState(null);
+    onClose();
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!name.trim()) return;
 
     onSave({
-      id: exerciseToEdit ? exerciseToEdit.id : Date.now().toString(),
+      id: exerciseToEdit ? exerciseToEdit.id : `ex_${Date.now()}`,
       name,
       category,
       type,
-      videoUrl: videoUrl || 'https://www.w3schools.com/html/mov_bbb.mp4',
-      recommendation: recommendation || 'Recommended: 3x10',
-      image: image || '/bench_press.png',
+      videoUrl,
+      recommendation,
+      image,
     });
 
-    onClose();
+    handleClose();
   };
 
   return (
@@ -79,7 +81,7 @@ export default function AddEditLibraryExerciseModal({
               type="text"
               required
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => updateField('name', e.target.value)}
               placeholder="e.g. Incline Dumbbell Press"
               className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl px-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
             />
@@ -90,7 +92,7 @@ export default function AddEditLibraryExerciseModal({
               <label className="block text-xs font-semibold text-slate-300 mb-1">Muscle Category</label>
               <select
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={(e) => updateField('category', e.target.value)}
                 className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl px-3 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500 cursor-pointer"
               >
                 <option value="Chest">Chest</option>
@@ -106,7 +108,7 @@ export default function AddEditLibraryExerciseModal({
               <label className="block text-xs font-semibold text-slate-300 mb-1">Type</label>
               <select
                 value={type}
-                onChange={(e) => setType(e.target.value)}
+                onChange={(e) => updateField('type', e.target.value)}
                 className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl px-3 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500 cursor-pointer"
               >
                 <option value="COMPOUND">COMPOUND</option>
@@ -122,7 +124,7 @@ export default function AddEditLibraryExerciseModal({
               <input
                 type="url"
                 value={videoUrl}
-                onChange={(e) => setVideoUrl(e.target.value)}
+                onChange={(e) => updateField('videoUrl', e.target.value)}
                 placeholder="https://example.com/video.mp4"
                 className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl pl-10 pr-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
               />
@@ -134,7 +136,7 @@ export default function AddEditLibraryExerciseModal({
             <input
               type="text"
               value={recommendation}
-              onChange={(e) => setRecommendation(e.target.value)}
+              onChange={(e) => updateField('recommendation', e.target.value)}
               placeholder="Recommended: 3x8-10"
               className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl px-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
             />

@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
-import { Dumbbell, Mail, Lock, User, Building, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { useState } from 'react';
+import { 
+  Dumbbell, 
+  Lock, 
+  Mail, 
+  ArrowRight, 
+  User, 
+  Building 
+} from 'lucide-react';
 
 export default function CoachAuthPage({ onLoginSuccess, onSwitchToClientAuth }) {
   const [isRegister, setIsRegister] = useState(false);

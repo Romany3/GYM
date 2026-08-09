@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Key, ArrowRight, ShieldCheck, Dumbbell, UserCheck } from 'lucide-react';
+import { useState } from 'react';
+import { Key, ArrowRight, ShieldCheck, UserCheck } from 'lucide-react';
 
 export default function ClientAuthPage({ onClientLoginSuccess, onSwitchToCoachAuth, defaultPasskey = 'FA-9B2X71' }) {
   const [passkey, setPasskey] = useState(defaultPasskey);
