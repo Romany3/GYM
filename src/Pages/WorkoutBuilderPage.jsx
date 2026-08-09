@@ -10,8 +10,8 @@ import {
   X,
   Users
 } from 'lucide-react';
-import WatchVideoModal from '../Modals/WatchVideoModal';
-import AddEditLibraryExerciseModal from '../Modals/AddEditLibraryExerciseModal';
+import WatchVideoModal from '../components/Modals/WatchVideoModal';
+import AddEditLibraryExerciseModal from '../components/Modals/AddEditLibraryExerciseModal';
 
 export default function WorkoutBuilderPage({ 
   showToast,
