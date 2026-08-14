@@ -307,6 +307,21 @@ export default function ClientPortalPage({ clientData, onLogout, showToast, onSu
     }
   };
 
+  const handleScrollToWeeklyForm = (e) => {
+    if (e) e.preventDefault();
+    const elem = document.getElementById('weekly-form-section');
+    if (elem) {
+      const headerOffset = 100;
+      const elementPosition = elem.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   // Handlers
   const handleToggleSet = (exId, setIdx) => {
     setExercises((prev) =>
@@ -653,12 +668,12 @@ export default function ClientPortalPage({ clientData, onLogout, showToast, onSu
                   </div>
                 </div>
 
-                <a
-                  href="#weekly-form-section"
-                  className="px-3 py-1.5 bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-700/60 rounded-xl text-xs font-bold transition-all shrink-0 whitespace-nowrap"
+                <button
+                  onClick={handleScrollToWeeklyForm}
+                  className="px-3.5 py-2 bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-700/60 rounded-xl text-xs font-bold transition-all shrink-0 whitespace-nowrap cursor-pointer flex items-center gap-1 shadow-md hover:shadow-amber-500/20 active:scale-95"
                 >
                   Jump to Weekly Form ↓
-                </a>
+                </button>
               </div>
             </div>
 
@@ -958,7 +973,7 @@ export default function ClientPortalPage({ clientData, onLogout, showToast, onSu
             </div>
 
             {/* Section 3: Weekly Evaluation Form & Progress Photos (Design Matched to User Image) */}
-            <div id="weekly-form-section" className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 md:p-6 shadow-xl space-y-6">
+            <div id="weekly-form-section" className="scroll-mt-28 bg-[#121724] border border-slate-800/90 rounded-2xl p-5 md:p-6 shadow-xl space-y-6">
               <div className="flex items-center justify-between border-b border-slate-800 pb-4">
                 <div>
                   <h3 className="font-serif-header text-xl font-bold text-white tracking-tight">
