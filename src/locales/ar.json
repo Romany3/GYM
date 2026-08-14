@@ -1,0 +1,228 @@
+{
+  "common": {
+    "appName": "أنتيجرافيتي للياقة البدنية",
+    "dashboard": "لوحة التحكم",
+    "active": "نشط",
+    "atRisk": "في خطر",
+    "onboarding": "قيد الانضمام",
+    "frozen": "معلق",
+    "locked": "الأهداف مقفلة",
+    "lockTargets": "قفل الأهداف",
+    "autoBalance": "موازنة الماكروز تلقائياً",
+    "exportPdf": "تصدير PDF",
+    "exportNutriPlan": "تصدير نظام التغذية PDF",
+    "exportWorkoutPdf": "تصدير جدول التمارين PDF",
+    "search": "بحث...",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "close": "إغلاق",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "add": "إضافة",
+    "submit": "إرسال",
+    "approve": "موافقة",
+    "reject": "رفض",
+    "confirm": "تأكيد",
+    "proCoach": "مدرب محترف",
+    "proAthlete": "رياضي محترف",
+    "standard": "أساسي",
+    "vip": "VIP ممتاز",
+    "language": "اللغة",
+    "switchLang": "English",
+    "currentLangName": "العربية",
+    "viewAll": "عرض الكل",
+    "status": "الحالة",
+    "action": "الإجراء",
+    "date": "التاريخ",
+    "notes": "الملاحظات",
+    "logout": "تسجيل الخروج",
+    "allStatus": "جميع الحالات"
+  },
+  "nav": {
+    "overview": "نظرة عامة على الأداء",
+    "clients": "زبائن",
+    "workoutBuilder": "مُنشئ التمارين",
+    "nutritionEngine": "لوحة التغذية",
+    "aiMealGenerator": "مُولد الوجبات بالذكاء الاصطناعي",
+    "foodLibrary": "مكتبة الأطعمة الشاملة",
+    "exerciseSwaps": "طلبات استبدال التمارين",
+    "foodSwaps": "طلبات استبدال الوجبات",
+    "coachChat": "المراسلة المباشرة للأبطال",
+    "analytics": "تحليلات الأداء",
+    "notifications": "مركز الإشعارات",
+    "settings": "إعدادات النظام",
+    "subscriptionPlans": "الاشتراكات والسعة",
+    "clientPortal": "بوابة الزبائن",
+    "coachSignIn": "تسجيل دخول المدرب",
+    "clientLogin": "تسجيل دخول الزبون"
+  },
+  "overview": {
+    "title": "لوحة تحكم المدرب والنظرة العامة",
+    "subtitle": "متابعة أداء الزبائن ونسب الالتزام لحظياً",
+    "actionRequiredTitle": "تنبيهات تتطلب إجراءً",
+    "recentActivityTitle": "النشاط الأخير",
+    "totalActiveClients": "إجمالي الزبائن النشطين",
+    "avgCompliance": "متوسط معدل الالتزام",
+    "pendingSwaps": "طلبات التبديل المعلقة",
+    "unreadMessages": "رسائل غير مقروءة",
+    "viewNotifications": "عرض الإشعارات",
+    "realtimeFeed": "بث مباشر للتمارين والمتابعة",
+    "nudgeClient": "تنبيه الزبون",
+    "viewProfile": "عرض الملف",
+    "all": "الكل",
+    "workouts": "التمارين",
+    "nutrition": "التغذية",
+    "checkins": "المتابعات"
+  },
+  "clients": {
+    "title": "دليل وقائمة الزبائن",
+    "subtitle": "إدارة ملفات الزبائن، رموز الدخول، وجداول التدريب",
+    "addClient": "إضافة زبون جديد",
+    "searchPlaceholder": "البحث بالاسم، البريد الإلكتروني، أو رمز Passkey...",
+    "revokePasskey": "إلغاء رمز Passkey",
+    "restorePasskey": "استعادة رمز Passkey",
+    "revokedBadge": "ملغى",
+    "activeBadge": "نشط",
+    "atRiskBadge": "في خطر",
+    "compliance": "الالتزام",
+    "sessions": "الجلسات المكتملة",
+    "streak": "الأيام المتتالية",
+    "newAthlete": "زبون جديد",
+    "fastOnboarding": "انضمام سريع",
+    "onboardingDesc": "إنشاء رمز دخول وإضافة الزبون إلى القائمة."
+  },
+  "workout": {
+    "title": "محرك تصميم التمارين",
+    "subtitle": "تصميم خطط التدريب للقوة والضخامة العضلية",
+    "routineName": "اسم الجدول التدريبي",
+    "targetMuscle": "المجموعة العضلية المستهدفة",
+    "sets": "الجولات",
+    "reps": "التكرارات",
+    "tempo": "سرعة الأداء (Tempo)",
+    "rpe": "جهد التمرين (RPE)",
+    "rest": "فترة الراحة",
+    "addExercise": "إضافة تمرين للجدول",
+    "saveRoutine": "حفظ الجدول التدريبي",
+    "exportPdf": "تصدير جدول التمارين PDF",
+    "library": "مكتبة التمارين",
+    "batchCopy": "نسخ الجدول لمجموعة زبائن"
+  },
+  "targetSetup": {
+    "title": "إعداد الهدف الغذائي",
+    "targetKcal": "سعرات الهدف",
+    "protein": "البروتين",
+    "carbs": "الكارب",
+    "fats": "الدهون",
+    "allocated": "المحدد",
+    "remaining": "المتبقي",
+    "balanced": "🎯 متوازن (0 سعرة)",
+    "overTarget": "⚠️ متجاوز بـ {{kcal}} سعرة",
+    "underTarget": "متبقي {{kcal}} سعرة",
+    "presets": {
+      "title": "نسب الماكروز السريعة:",
+      "balanced": "متوازن (30/45/25)",
+      "highProtein": "بروتين عالي (40/40/20)",
+      "keto": "قليل الكارب / كيتو (25/15/60)",
+      "bulking": "ضخامة عضلية (25/55/20)"
+    },
+    "clientSelect": {
+      "clickToSelect": "انقر لاختيار الزبون",
+      "searchPlaceholder": "البحث في قائمة الزبائن...",
+      "activeProfile": "ملف الزبون النشط"
+    }
+  },
+  "dailyPlan": {
+    "title": "التمارين والوجبات اليومية",
+    "days": {
+      "Mon": "الإثنين",
+      "Tue": "الثلاثاء",
+      "Wed": "الأربعاء",
+      "Thu": "الخميس",
+      "Fri": "الجمعة",
+      "Sat": "السبت",
+      "Sun": "الأحد"
+    },
+    "duplicate": "نسخ الجدول لكافة الأيام",
+    "addMeal": "إضافة وجبة",
+    "addExercise": "إضافة تمرين",
+    "meals": {
+      "breakfast": "الإفطار",
+      "lunch": "الغداء",
+      "dinner": "العشاء",
+      "snacks": "سناك"
+    }
+  },
+  "aiMeal": {
+    "title": "مُولد الوجبات بالذكاء الاصطناعي",
+    "subtitle": "إنشاء أنظمة غذائية متكاملة لـ 7 أيام تناسب اهداف الزبون",
+    "generateButton": "إنشاء النظام الغذائي لـ 7 أيام",
+    "dietaryPreference": "تفضلات النظام الغذائي",
+    "mealsPerDay": "عدد الوجبات اليومية",
+    "kcalGoal": "مستهدف السعرات",
+    "generating": "جاري تحليل السعرات وإنشاء الوجبات..."
+  },
+  "foodLibrary": {
+    "title": "مكتبة الأطعمة والمكونات الشاملة",
+    "subtitle": "تصفح وتعديل الماكروز للأغذية والوصفات",
+    "addFood": "إضافة طعام مخصص",
+    "searchFood": "البحث في مكتبة الأطعمة..."
+  },
+  "clientPortal": {
+    "title": "بوابة الزبون الرياضي",
+    "dailyCheckin": "المتابعة اليومية وخطط التدريب",
+    "foodSwaps": "بدائل الأغذية والوجبات",
+    "exerciseSubstitutions": "بدائل التمارين الرياضية",
+    "notifications": "مركز إشعارات الزبون",
+    "coachChat": "المحادثة المباشرة مع الكابتن",
+    "logToday": "إرسال تقرير اليوم",
+    "weeklyCheckin": "التحديث الأسبوعي والصور",
+    "workoutSplit": "تمرين اليوم المعتمد",
+    "nutritionSummary": "تقدم مستهدف الماكروز اليومي"
+  },
+  "auth": {
+    "coachSignInTitle": "تسجيل دخول لوحة التحكم للمدرب",
+    "clientPasskeyTitle": "تسجيل دخول الزبون برمز Passkey",
+    "enterPasskey": "أدخل الرمز المكون من 8 خانات",
+    "revokedError": "تم إلغاء هذا الرمز بواسطة كابتن الفريق.",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "signIn": "تسجيل الدخول"
+  },
+  "modals": {
+    "addMeal": {
+      "title": "إضافة مكون وجبة مخصص",
+      "name": "اسم الوجبة",
+      "protein": "البروتين (جرام)",
+      "carbs": "الكربوهيدرات (جرام)",
+      "fats": "الدهون (جرام)",
+      "kcal": "السعرات الحرارية",
+      "add": "إضافة للوجبة"
+    },
+    "addExercise": {
+      "title": "إضافة تمرين للجدول",
+      "name": "اسم التمرين",
+      "category": "الفئة",
+      "sets": "الجولات",
+      "reps": "التكرارات",
+      "burnKcal": "السعرات المستهلكة المتوقعة",
+      "add": "إضافة التمرين"
+    },
+    "quickAddClient": {
+      "title": "إضافة زبون جديد",
+      "name": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "plan": "الخطة المحددة",
+      "create": "إنشاء حساب الزبون ورمز الدخول"
+    },
+    "credentials": {
+      "title": "رمز دخول بوابة الزبون",
+      "copy": "نسخ رمز Passkey",
+      "copied": "تم نسخ الرمز بنجاح!"
+    },
+    "pdf": {
+      "title": "منشئ خطة PDF الشاملة",
+      "download": "تحميل البرنامج بصيغة PDF",
+      "generating": "جاري تجهيز صفحات التقرير..."
+    }
+  }
+}

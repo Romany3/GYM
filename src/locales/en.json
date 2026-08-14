@@ -1,0 +1,228 @@
+{
+  "common": {
+    "appName": "FitArch Performance",
+    "dashboard": "Dashboard",
+    "active": "Active",
+    "atRisk": "At-Risk",
+    "onboarding": "Onboarding",
+    "frozen": "Frozen",
+    "locked": "Targets Locked",
+    "lockTargets": "Lock Targets",
+    "autoBalance": "Auto-Balance Macros",
+    "exportPdf": "Export PDF",
+    "exportNutriPlan": "Export NutriPlan PDF",
+    "exportWorkoutPdf": "Export Workout PDF",
+    "search": "Search...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "submit": "Submit",
+    "approve": "Approve",
+    "reject": "Reject",
+    "confirm": "Confirm",
+    "proCoach": "PRO COACH",
+    "proAthlete": "PRO ATHLETE",
+    "standard": "STANDARD",
+    "vip": "VIP",
+    "language": "Language",
+    "switchLang": "العربية",
+    "currentLangName": "English",
+    "viewAll": "View All",
+    "status": "Status",
+    "action": "Action",
+    "date": "Date",
+    "notes": "Notes",
+    "logout": "Log Out",
+    "allStatus": "All Status"
+  },
+  "nav": {
+    "overview": "Performance Overview",
+    "clients": "Clients",
+    "workoutBuilder": "Workout Builder Engine",
+    "nutritionEngine": "Nutrition Dashboard",
+    "aiMealGenerator": "AI Automated Meal Generator",
+    "foodLibrary": "Master Food Library",
+    "exerciseSwaps": "Exercise Change Requests",
+    "foodSwaps": "Client Food Swap Requests",
+    "coachChat": "Athlete Direct Messaging",
+    "analytics": "Performance Analytics",
+    "notifications": "Notification Center",
+    "settings": "System Settings",
+    "subscriptionPlans": "Subscription & Capacity",
+    "clientPortal": "Client Portal View",
+    "coachSignIn": "Coach Sign In",
+    "clientLogin": "Client Passkey Login"
+  },
+  "overview": {
+    "title": "Coach Dashboard & Overview",
+    "subtitle": "Real-time athlete compliance & workload telemetry",
+    "actionRequiredTitle": "Action Required Alerts",
+    "recentActivityTitle": "Recent Activity",
+    "totalActiveClients": "Total Active Clients",
+    "avgCompliance": "Avg Compliance Rate",
+    "pendingSwaps": "Pending Swap Requests",
+    "unreadMessages": "Unread Athlete Messages",
+    "viewNotifications": "View Notifications",
+    "realtimeFeed": "Real-time workout & check-in feed",
+    "nudgeClient": "Nudge Client",
+    "viewProfile": "View Profile",
+    "all": "All",
+    "workouts": "Workouts",
+    "nutrition": "Nutrition",
+    "checkins": "Check-ins"
+  },
+  "clients": {
+    "title": "Client Directory",
+    "subtitle": "Manage active athlete profiles, passkeys, and workout assignments",
+    "addClient": "Add New Client",
+    "searchPlaceholder": "Search by name, email, or passkey...",
+    "revokePasskey": "Revoke Passkey",
+    "restorePasskey": "Restore Passkey",
+    "revokedBadge": "REVOKED",
+    "activeBadge": "ACTIVE",
+    "atRiskBadge": "AT-RISK",
+    "compliance": "Compliance",
+    "sessions": "Sessions Completed",
+    "streak": "Day Streak",
+    "newAthlete": "New Client",
+    "fastOnboarding": "FAST ONBOARDING",
+    "onboardingDesc": "Generate passkey & add client to your roster."
+  },
+  "workout": {
+    "title": "Workout Builder Engine",
+    "subtitle": "Design custom strength & hypertrophy training protocols",
+    "routineName": "Routine Name",
+    "targetMuscle": "Target Muscle Group",
+    "sets": "Sets",
+    "reps": "Reps",
+    "tempo": "Tempo",
+    "rpe": "Target RPE",
+    "rest": "Rest Period",
+    "addExercise": "Add Exercise to Routine",
+    "saveRoutine": "Save Training Routine",
+    "exportPdf": "Export Workout PDF",
+    "library": "Exercise Library",
+    "batchCopy": "Batch Copy Routine"
+  },
+  "targetSetup": {
+    "title": "Target Setup",
+    "targetKcal": "Target kcal",
+    "protein": "PROTEIN",
+    "carbs": "CARBS",
+    "fats": "FATS",
+    "allocated": "Allocated",
+    "remaining": "Remaining",
+    "balanced": "🎯 Balanced (0 kcal)",
+    "overTarget": "⚠️ Over by {{kcal}} kcal",
+    "underTarget": "{{kcal}} kcal Remaining",
+    "presets": {
+      "title": "Quick Macro Ratio Presets:",
+      "balanced": "Balanced (30/45/25)",
+      "highProtein": "High Protein (40/40/20)",
+      "keto": "Low Carb / Keto (25/15/60)",
+      "bulking": "Bulking Mass (25/55/20)"
+    },
+    "clientSelect": {
+      "clickToSelect": "Click to select client",
+      "searchPlaceholder": "Search client roster...",
+      "activeProfile": "Active Client Profile"
+    }
+  },
+  "dailyPlan": {
+    "title": "Daily Workout & Meal Protocols",
+    "days": {
+      "Mon": "Mon",
+      "Tue": "Tue",
+      "Wed": "Wed",
+      "Thu": "Thu",
+      "Fri": "Fri",
+      "Sat": "Sat",
+      "Sun": "Sun"
+    },
+    "duplicate": "Duplicate Plan to All Days",
+    "addMeal": "Add Meal",
+    "addExercise": "Add Exercise",
+    "meals": {
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "dinner": "Dinner",
+      "snacks": "Snacks"
+    }
+  },
+  "aiMeal": {
+    "title": "AI Automated Meal Generator",
+    "subtitle": "Generate complete 7-day meal protocols tailored to athlete targets",
+    "generateButton": "Generate 7-Day Meal Plan",
+    "dietaryPreference": "Dietary Preference",
+    "mealsPerDay": "Meals Per Day",
+    "kcalGoal": "Calorie Goal",
+    "generating": "AI Analyzing & Crafting Meals..."
+  },
+  "foodLibrary": {
+    "title": "Master Food & Ingredient Library",
+    "subtitle": "Browse and customize macro profiles for foods & recipes",
+    "addFood": "Add Custom Food",
+    "searchFood": "Search food library..."
+  },
+  "clientPortal": {
+    "title": "Client Portal View",
+    "dailyCheckin": "Daily Check-In & Training Protocol",
+    "foodSwaps": "Food & Meal Substitutions",
+    "exerciseSubstitutions": "Exercise Substitutions & Swaps",
+    "notifications": "Client Notification Center",
+    "coachChat": "Direct Coach Messaging",
+    "logToday": "Submit Today's Daily Log",
+    "weeklyCheckin": "Weekly Photo & Progress Check-In",
+    "workoutSplit": "Today's Training Routine",
+    "nutritionSummary": "Daily Macro Target Progress"
+  },
+  "auth": {
+    "coachSignInTitle": "Coach Dashboard Access",
+    "clientPasskeyTitle": "Client Passkey Roster Login",
+    "enterPasskey": "Enter 8-Character Passkey",
+    "revokedError": "Passkey has been revoked by your coach.",
+    "email": "Email Address",
+    "password": "Password",
+    "signIn": "Sign In"
+  },
+  "modals": {
+    "addMeal": {
+      "title": "Add Custom Meal Item",
+      "name": "Meal Name",
+      "protein": "Protein (g)",
+      "carbs": "Carbohydrates (g)",
+      "fats": "Fats (g)",
+      "kcal": "Calories (kcal)",
+      "add": "Add Meal Item"
+    },
+    "addExercise": {
+      "title": "Add Exercise to Routine",
+      "name": "Exercise Name",
+      "category": "Category",
+      "sets": "Sets",
+      "reps": "Reps",
+      "burnKcal": "Estimated Burn (kcal)",
+      "add": "Add Exercise"
+    },
+    "quickAddClient": {
+      "title": "Add New Client",
+      "name": "Full Name",
+      "email": "Email Address",
+      "plan": "Assigned Plan",
+      "create": "Create Client & Passkey"
+    },
+    "credentials": {
+      "title": "Client Portal Access Passkey",
+      "copy": "Copy Passkey",
+      "copied": "Passkey Copied!"
+    },
+    "pdf": {
+      "title": "PDF Program Builder",
+      "download": "Download PDF Program",
+      "generating": "Rendering Canvas Pages..."
+    }
+  }
+}

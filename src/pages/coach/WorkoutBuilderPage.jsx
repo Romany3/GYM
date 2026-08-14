@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Play, 
   GripVertical, 
@@ -19,6 +20,7 @@ export default function WorkoutBuilderPage({
   showToast,
   onOpenBatchAssignModal
 }) {
+  const { t } = useTranslation();
   // Modal State for PDF Export
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   // Category Filter State
@@ -242,10 +244,10 @@ export default function WorkoutBuilderPage({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="font-serif-header text-3xl font-bold text-white tracking-tight">
-            Workout Builder Engine
+            {t('workout.title')}
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Build custom multi-day training splits, set tempos, supersets, and assign technique videos.
+            {t('workout.subtitle')}
           </p>
         </div>
 
@@ -257,7 +259,7 @@ export default function WorkoutBuilderPage({
             title="Export Workout Plan PDF"
           >
             <FileText className="w-4 h-4" />
-            <span>Export PDF</span>
+            <span>{t('common.exportWorkoutPdf')}</span>
           </button>
 
           <button

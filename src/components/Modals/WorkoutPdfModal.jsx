@@ -277,34 +277,17 @@ export default function WorkoutPdfModal({
         {/* HIDDEN PDF RENDER CONTAINER (Cinematic Onyx & Red/Gold Theme) */}
         <div
           ref={pdfContainerRef}
-          style={{
-            position: 'absolute',
-            left: '-9999px',
-            top: 0,
-            width: '794px',
-          }}
+          className="absolute -left-[9999px] top-0 w-[794px]"
         >
           {/* PAGE 0: COVER PAGE */}
           <div
             id="pdf-page-0"
-            style={{
-              width: '794px',
-              height: '1123px',
-              position: 'relative',
-              overflow: 'hidden',
-              fontFamily: 'Cairo, sans-serif',
-              direction: 'rtl',
-              background: '#0d1219',
-              color: '#ffffff',
-              boxSizing: 'border-box',
-            }}
+            className="w-[794px] h-[1123px] relative overflow-hidden font-sans rtl bg-[#0d1219] text-white box-border"
           >
             {/* Background Pattern */}
             <div
+              className="absolute inset-0 opacity-[0.04] pointer-events-none"
               style={{
-                position: 'absolute',
-                inset: 0,
-                opacity: 0.04,
                 backgroundImage:
                   'linear-gradient(#d63031 1px, transparent 1px), linear-gradient(90deg, #d63031 1px, transparent 1px)',
                 backgroundSize: '40px 40px',
@@ -312,101 +295,43 @@ export default function WorkoutPdfModal({
             />
             {/* Red Border Box */}
             <div
-              style={{
-                position: 'absolute',
-                inset: '20px',
-                border: '1px solid rgba(214, 48, 49, 0.35)',
-                borderRadius: '8px',
-                pointerEvents: 'none',
-                zIndex: 2,
-              }}
+              className="absolute inset-[20px] border border-[#d63031]/35 rounded-lg pointer-events-none z-[2]"
             />
 
             <div
-              style={{
-                position: 'relative',
-                zIndex: 3,
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                padding: '40px 50px 60px',
-                boxSizing: 'border-box',
-              }}
+              className="relative z-[3] w-full h-full flex flex-col items-center px-[50px] pt-[40px] pb-[60px] box-border"
             >
-              <div style={{ flexGrow: 1 }} />
+              <div className="grow" />
 
               {/* Coach Name */}
               <div
-                style={{
-                  fontSize: '36px',
-                  fontWeight: 900,
-                  color: '#ffffff',
-                  textAlign: 'center',
-                  textTransform: 'uppercase',
-                  textShadow: '0 4px 20px rgba(0, 0, 0, 0.8)',
-                  lineHeight: 1.2,
-                  flexShrink: 0,
-                }}
+                className="text-[36px] font-black text-white text-center uppercase drop-shadow-lg leading-[1.2] shrink-0"
               >
                 {coachInfo.name}
               </div>
 
               {/* Coach Subtitle / Contact */}
               <div
-                style={{
-                  fontSize: '14px',
-                  color: '#ffffff',
-                  fontWeight: 700,
-                  marginTop: '8px',
-                  direction: 'ltr',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '10px',
-                  flexShrink: 0,
-                }}
+                className="text-[14px] text-white font-bold mt-[8px] ltr flex items-center justify-center gap-[10px] shrink-0"
               >
                 <span>{coachInfo.title}</span>
-                <span style={{ color: '#d63031' }}>|</span>
+                <span className="text-[#d63031]">|</span>
                 <span>📞 {coachInfo.phone}</span>
-                <span style={{ color: '#d63031' }}>|</span>
+                <span className="text-[#d63031]">|</span>
                 <span>💬 {coachInfo.whatsapp}</span>
               </div>
 
               {/* Certifications Card */}
               <div
-                style={{
-                  width: '85%',
-                  marginTop: '20px',
-                  background: 'rgba(13, 18, 25, 0.8)',
-                  border: '1px solid rgba(214, 48, 49, 0.35)',
-                  borderRadius: '6px',
-                  padding: '16px 24px',
-                  flexShrink: 0,
-                  position: 'relative',
-                }}
+                className="w-[85%] mt-[20px] bg-[#0d1219]/80 border border-[#d63031]/35 rounded-md px-[24px] py-[16px] shrink-0 relative"
               >
                 <div
-                  style={{
-                    textAlign: 'center',
-                    color: '#d63031',
-                    fontSize: '15px',
-                    fontWeight: 900,
-                    marginBottom: '8px',
-                  }}
+                  className="text-center text-[#d63031] text-[15px] font-black mb-[8px]"
                 >
                   الشهادات والخبرات | CERTIFICATIONS
                 </div>
                 <div
-                  style={{
-                    color: '#ffffff',
-                    fontSize: '13px',
-                    textAlign: 'center',
-                    fontWeight: 600,
-                    lineHeight: '1.6',
-                  }}
+                  className="text-white text-[13px] text-center font-semibold leading-[1.6]"
                 >
                   • {coachInfo.certifications}
                 </div>
@@ -414,119 +339,61 @@ export default function WorkoutPdfModal({
 
               {/* Client Summary Card */}
               <div
-                style={{
-                  marginTop: '16px',
-                  background: 'rgba(20, 29, 39, 0.6)',
-                  border: '1px solid rgba(214, 48, 49, 0.35)',
-                  borderRadius: '8px',
-                  padding: '16px 30px',
-                  width: '85%',
-                  flexShrink: 0,
-                }}
+                className="mt-[16px] bg-[#141d27]/60 border border-[#d63031]/35 rounded-lg px-[30px] py-[16px] w-[85%] shrink-0"
               >
                 <div
-                  style={{
-                    textAlign: 'center',
-                    color: '#d63031',
-                    fontSize: '16px',
-                    fontWeight: 900,
-                    marginBottom: '12px',
-                    textTransform: 'uppercase',
-                  }}
+                  className="text-center text-[#d63031] text-[16px] font-black mb-[12px] uppercase"
                 >
                   بيانات المشترك | CLIENT PROFILE
                 </div>
                 <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 1fr',
-                    gap: '12px 20px',
-                  }}
+                  className="grid grid-cols-2 gap-x-[20px] gap-y-[12px]"
                 >
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <span style={{ fontSize: '12px', color: '#d63031', fontWeight: 800 }}>اسم المشترك</span>
-                    <span style={{ fontSize: '18px', color: '#ffffff', fontWeight: 800 }}>{clientInfo.name}</span>
+                  <div className="flex flex-col items-center">
+                    <span className="text-[12px] text-[#d63031] font-extrabold">اسم المشترك</span>
+                    <span className="text-[18px] text-white font-extrabold">{clientInfo.name}</span>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <span style={{ fontSize: '12px', color: '#d63031', fontWeight: 800 }}>الهدف</span>
-                    <span style={{ fontSize: '18px', color: '#ffffff', fontWeight: 800 }}>{clientInfo.goal}</span>
+                  <div className="flex flex-col items-center">
+                    <span className="text-[12px] text-[#d63031] font-extrabold">الهدف</span>
+                    <span className="text-[18px] text-white font-extrabold">{clientInfo.goal}</span>
                   </div>
                 </div>
               </div>
 
               {/* Stats Bar */}
               <div
-                style={{
-                  display: 'flex',
-                  gap: '16px',
-                  width: '85%',
-                  marginTop: '16px',
-                  direction: 'ltr',
-                  flexShrink: 0,
-                }}
+                className="flex gap-[16px] w-[85%] mt-[16px] ltr shrink-0"
               >
                 <div
-                  style={{
-                    flex: 1,
-                    padding: '12px 6px',
-                    borderRadius: '4px',
-                    textAlign: 'center',
-                    border: '1px solid #d63031',
-                    background: 'rgba(13, 18, 25, 0.6)',
-                    color: '#d63031',
-                  }}
+                  className="flex-1 px-[6px] py-[12px] rounded text-center border border-[#d63031] bg-[#0d1219]/60 text-[#d63031]"
                 >
-                  <span style={{ fontSize: '22px', fontWeight: 900, display: 'block' }}>{days.length}</span>
-                  <span style={{ fontSize: '11px', fontWeight: 800 }}>أيام التدريب</span>
+                  <span className="text-[22px] font-black block">{days.length}</span>
+                  <span className="text-[11px] font-extrabold">أيام التدريب</span>
                 </div>
 
                 <div
-                  style={{
-                    flex: 1,
-                    padding: '12px 6px',
-                    borderRadius: '4px',
-                    textAlign: 'center',
-                    border: '1px solid #d63031',
-                    background: 'rgba(13, 18, 25, 0.6)',
-                    color: '#d63031',
-                  }}
+                  className="flex-1 px-[6px] py-[12px] rounded text-center border border-[#d63031] bg-[#0d1219]/60 text-[#d63031]"
                 >
-                  <span style={{ fontSize: '22px', fontWeight: 900, display: 'block' }}>{totalExercisesCount}</span>
-                  <span style={{ fontSize: '11px', fontWeight: 800 }}>تمارين مختلفة</span>
+                  <span className="text-[22px] font-black block">{totalExercisesCount}</span>
+                  <span className="text-[11px] font-extrabold">تمارين مختلفة</span>
                 </div>
 
                 <div
-                  style={{
-                    flex: 1,
-                    padding: '12px 6px',
-                    borderRadius: '4px',
-                    textAlign: 'center',
-                    border: '1px solid #2ecc71',
-                    background: 'rgba(13, 18, 25, 0.6)',
-                    color: '#2ecc71',
-                  }}
+                  className="flex-1 px-[6px] py-[12px] rounded text-center border border-[#2ecc71] bg-[#0d1219]/60 text-[#2ecc71]"
                 >
-                  <span style={{ fontSize: '22px', fontWeight: 900, display: 'block' }}>100%</span>
-                  <span style={{ fontSize: '11px', fontWeight: 800 }}>التزام ونتائج</span>
+                  <span className="text-[22px] font-black block">100%</span>
+                  <span className="text-[11px] font-extrabold">التزام ونتائج</span>
                 </div>
               </div>
 
               {/* Footer */}
               <div
-                style={{
-                  marginTop: 'auto',
-                  paddingTop: '16px',
-                  width: '100%',
-                  borderTop: '1px solid rgba(214, 48, 49, 0.25)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
+                className="mt-auto pt-[16px] w-full border-t border-[#d63031]/25 flex items-center justify-between"
               >
-                <span style={{ fontSize: '12px', color: '#ffffff', fontWeight: 700 }}>
+                <span className="text-[12px] text-white font-bold">
                   {coachInfo.name} | {coachInfo.title}
                 </span>
-                <span style={{ fontSize: '11px', color: '#a0a0a0' }}>الصفحة 1 من {totalPages}</span>
+                <span className="text-[11px] text-[#a0a0a0]">الصفحة 1 من {totalPages}</span>
               </div>
             </div>
           </div>
@@ -539,24 +406,12 @@ export default function WorkoutPdfModal({
               <div
                 key={day.id}
                 id={`pdf-page-${dIdx + 1}`}
-                style={{
-                  width: '794px',
-                  height: '1123px',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  fontFamily: 'Cairo, sans-serif',
-                  direction: 'rtl',
-                  background: '#0d1219',
-                  color: '#ffffff',
-                  boxSizing: 'border-box',
-                }}
+                className="w-[794px] h-[1123px] relative overflow-hidden font-sans rtl bg-[#0d1219] text-white box-border"
               >
                 {/* Background Grid Pattern */}
                 <div
+                  className="absolute inset-0 opacity-[0.03] pointer-events-none"
                   style={{
-                    position: 'absolute',
-                    inset: 0,
-                    opacity: 0.03,
                     backgroundImage:
                       'linear-gradient(#d63031 1px, transparent 1px), linear-gradient(90deg, #d63031 1px, transparent 1px)',
                     backgroundSize: '40px 40px',
@@ -564,54 +419,30 @@ export default function WorkoutPdfModal({
                 />
                 {/* Red Border Box */}
                 <div
-                  style={{
-                    position: 'absolute',
-                    inset: '20px',
-                    border: '1px solid rgba(214, 48, 49, 0.35)',
-                    borderRadius: '8px',
-                    pointerEvents: 'none',
-                    zIndex: 2,
-                  }}
+                  className="absolute inset-[20px] border border-[#d63031]/35 rounded-lg pointer-events-none z-[2]"
                 />
 
                 <div
-                  style={{
-                    position: 'relative',
-                    zIndex: 3,
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    padding: '40px 50px 40px',
-                    boxSizing: 'border-box',
-                  }}
+                  className="relative z-[3] w-full h-full flex flex-col px-[50px] pt-[40px] pb-[40px] box-border"
                 >
                   {/* Day Header Bar */}
                   <div
-                    style={{
-                      width: '100%',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: '20px',
-                      paddingBottom: '14px',
-                      borderBottom: '1px solid rgba(214, 48, 49, 0.3)',
-                    }}
+                    className="w-full flex justify-between items-center mb-[20px] pb-[14px] border-b border-[#d63031]/30"
                   >
                     <div>
-                      <h2 style={{ fontSize: '20px', fontWeight: 900, color: '#d63031', margin: 0 }}>
+                      <h2 className="text-[20px] font-black text-[#d63031] m-0">
                         برنامج التدريب الاحترافي
                       </h2>
-                      <div style={{ fontSize: '12px', color: '#ffffff', marginTop: '2px' }}>
+                      <div className="text-[12px] text-white mt-[2px]">
                         الكابتن: {coachInfo.name}
                       </div>
                     </div>
 
-                    <div style={{ textAlign: 'left' }}>
-                      <div style={{ fontSize: '22px', fontWeight: 900, color: '#ffffff' }}>
+                    <div className="text-left">
+                      <div className="text-[22px] font-black text-white">
                         {day.label}
                       </div>
-                      <div style={{ fontSize: '11px', color: '#d63031', fontWeight: 700 }}>
+                      <div className="text-[11px] text-[#d63031] font-bold">
                         {exercises.length} تمارين مخصصة
                       </div>
                     </div>
@@ -619,12 +450,7 @@ export default function WorkoutPdfModal({
 
                   {/* Exercises Stack */}
                   <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '12px',
-                      width: '100%',
-                    }}
+                    className="flex flex-col gap-[12px] w-full"
                   >
                     {exercises.map((ex, eIdx) => {
                       const videoUrl = getExerciseVideoUrl(ex);
@@ -632,126 +458,56 @@ export default function WorkoutPdfModal({
                       return (
                         <div
                           key={ex.id || eIdx}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'stretch',
-                            background: 'rgba(13, 18, 25, 0.65)',
-                            border: '1px solid rgba(214, 48, 49, 0.3)',
-                            borderRight: '4px solid #d63031',
-                            borderRadius: '6px',
-                            overflow: 'hidden',
-                            width: '100%',
-                            direction: 'rtl',
-                          }}
+                          className="flex items-stretch bg-[#0d1219]/65 border border-[#d63031]/30 border-r-4 border-r-[#d63031] rounded-md overflow-hidden w-full rtl"
                         >
                           {/* Number Badge */}
                           <div
-                            style={{
-                              width: '46px',
-                              background: 'rgba(214, 48, 49, 0.12)',
-                              color: '#d63031',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '18px',
-                              fontWeight: 900,
-                              borderLeft: '1px solid rgba(214, 48, 49, 0.25)',
-                              flexShrink: 0,
-                            }}
+                            className="w-[46px] bg-[#d63031]/12 text-[#d63031] flex items-center justify-center text-[18px] font-black border-l border-[#d63031]/25 shrink-0"
                           >
                             {String(eIdx + 1).padStart(2, '0')}
                           </div>
 
                           {/* Exercise Content */}
                           <div
-                            style={{
-                              flex: 1,
-                              padding: '14px 18px',
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                            }}
+                            className="flex-1 px-[18px] py-[14px] flex justify-between items-center"
                           >
-                            <div style={{ flex: 1 }}>
+                            <div className="flex-1">
                               <div
-                                style={{
-                                  fontSize: '18px',
-                                  fontWeight: 800,
-                                  color: '#ffffff',
-                                  lineHeight: 1.2,
-                                  marginBottom: '6px',
-                                }}
+                                className="text-[18px] font-extrabold text-white leading-[1.2] mb-[6px]"
                               >
                                 {ex.name}
                               </div>
 
                               {/* Sets, Reps, Rest, Tempo Tags */}
                               <div
-                                style={{
-                                  display: 'flex',
-                                  gap: '10px',
-                                  alignItems: 'center',
-                                  flexWrap: 'wrap',
-                                }}
+                                className="flex gap-[10px] items-center flex-wrap"
                               >
                                 <div
-                                  style={{
-                                    padding: '4px 10px',
-                                    borderRadius: '6px',
-                                    fontSize: '11px',
-                                    fontWeight: 800,
-                                    background: 'rgba(214, 48, 49, 0.1)',
-                                    color: '#ffffff',
-                                    border: '1px solid rgba(214, 48, 49, 0.4)',
-                                  }}
+                                  className="px-[10px] py-[4px] rounded-md text-[11px] font-extrabold bg-[#d63031]/10 text-white border border-[#d63031]/40"
                                 >
-                                  <span style={{ fontSize: '9px', opacity: 0.7, marginLeft: '4px' }}>المجموعات</span>
+                                  <span className="text-[9px] opacity-70 ml-[4px]">المجموعات</span>
                                   {ex.sets || '3'}
                                 </div>
 
                                 <div
-                                  style={{
-                                    padding: '4px 10px',
-                                    borderRadius: '6px',
-                                    fontSize: '11px',
-                                    fontWeight: 800,
-                                    background: 'rgba(214, 48, 49, 0.1)',
-                                    color: '#ffffff',
-                                    border: '1px solid rgba(214, 48, 49, 0.4)',
-                                  }}
+                                  className="px-[10px] py-[4px] rounded-md text-[11px] font-extrabold bg-[#d63031]/10 text-white border border-[#d63031]/40"
                                 >
-                                  <span style={{ fontSize: '9px', opacity: 0.7, marginLeft: '4px' }}>التكرارات</span>
+                                  <span className="text-[9px] opacity-70 ml-[4px]">التكرارات</span>
                                   {ex.reps || '10'}
                                 </div>
 
                                 <div
-                                  style={{
-                                    padding: '4px 10px',
-                                    borderRadius: '6px',
-                                    fontSize: '11px',
-                                    fontWeight: 800,
-                                    background: 'rgba(214, 48, 49, 0.15)',
-                                    color: '#ff2a3b',
-                                    border: '1px solid #ff2a3b',
-                                  }}
+                                  className="px-[10px] py-[4px] rounded-md text-[11px] font-extrabold bg-[#ff2a3b]/15 text-[#ff2a3b] border border-[#ff2a3b]"
                                 >
-                                  <span style={{ fontSize: '9px', opacity: 0.7, marginLeft: '4px' }}>الراحة</span>
+                                  <span className="text-[9px] opacity-70 ml-[4px]">الراحة</span>
                                   {ex.rest ? `${ex.rest} ثانية` : '60 ثانية'}
                                 </div>
 
                                 {ex.tempo && (
                                   <div
-                                    style={{
-                                      padding: '4px 10px',
-                                      borderRadius: '6px',
-                                      fontSize: '11px',
-                                      fontWeight: 800,
-                                      background: 'rgba(255, 255, 255, 0.05)',
-                                      color: '#94a3b8',
-                                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                                    }}
+                                    className="px-[10px] py-[4px] rounded-md text-[11px] font-extrabold bg-white/5 text-[#94a3b8] border border-white/10"
                                   >
-                                    <span style={{ fontSize: '9px', opacity: 0.7, marginLeft: '4px' }}>التيمبو</span>
+                                    <span className="text-[9px] opacity-70 ml-[4px]">التيمبو</span>
                                     {ex.tempo}
                                   </div>
                                 )}
@@ -759,12 +515,7 @@ export default function WorkoutPdfModal({
 
                               {ex.notes && (
                                 <div
-                                  style={{
-                                    fontSize: '11px',
-                                    color: '#94a3b8',
-                                    marginTop: '8px',
-                                    fontStyle: 'italic',
-                                  }}
+                                  className="text-[11px] text-[#94a3b8] mt-[8px] italic"
                                 >
                                   💡 {ex.notes}
                                 </div>
@@ -773,37 +524,14 @@ export default function WorkoutPdfModal({
 
                             {/* Demo Video Hyperlink Target */}
                             <div
-                              style={{
-                                width: '100px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                borderRight: '1px solid rgba(214, 48, 49, 0.25)',
-                                paddingRight: '12px',
-                                flexShrink: 0,
-                              }}
+                              className="w-[100px] flex items-center justify-center border-r border-[#d63031]/25 pr-[12px] shrink-0"
                             >
                               <div
-                                className="yt-link-target"
+                                className="yt-link-target flex flex-col items-center justify-center gap-[4px] text-[#ff2a3b] no-underline p-[8px] rounded-md bg-[#d63031]/8 w-[84px] h-[70px] cursor-pointer"
                                 data-url={videoUrl}
-                                style={{
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  gap: '4px',
-                                  color: '#ff2a3b',
-                                  textDecoration: 'none',
-                                  padding: '8px',
-                                  borderRadius: '6px',
-                                  background: 'rgba(214, 48, 49, 0.08)',
-                                  width: '84px',
-                                  height: '70px',
-                                  cursor: 'pointer',
-                                }}
                               >
-                                <Video style={{ width: '22px', height: '22px', color: '#ff2a3b' }} />
-                                <span style={{ fontSize: '10px', fontWeight: 800 }}>شاهد الفيديو</span>
+                                <Video className="w-[22px] h-[22px] text-[#ff2a3b]" />
+                                <span className="text-[10px] font-extrabold">شاهد الفيديو</span>
                               </div>
                             </div>
                           </div>
@@ -814,20 +542,12 @@ export default function WorkoutPdfModal({
 
                   {/* Day Footer */}
                   <div
-                    style={{
-                      marginTop: 'auto',
-                      paddingTop: '12px',
-                      width: '100%',
-                      borderTop: '1px solid rgba(214, 48, 49, 0.25)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    }}
+                    className="mt-auto pt-[12px] w-full border-t border-[#d63031]/25 flex items-center justify-between"
                   >
-                    <span style={{ fontSize: '12px', color: '#ffffff', fontWeight: 700 }}>
+                    <span className="text-[12px] text-white font-bold">
                       {coachInfo.name} | مدرب لياقة بدنية
                     </span>
-                    <span style={{ fontSize: '11px', color: '#a0a0a0' }}>
+                    <span className="text-[11px] text-[#a0a0a0]">
                       الصفحة {dIdx + 2} من {totalPages}
                     </span>
                   </div>

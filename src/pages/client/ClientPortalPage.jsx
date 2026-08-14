@@ -23,29 +23,48 @@ import {
   Image as ImageIcon,
   Trash2,
   ExternalLink,
-  ClipboardCheck
+  ClipboardCheck,
+  Globe
 } from 'lucide-react';
 import WatchVideoModal from '@/components/modals/WatchVideoModal';
 import ClientSubstitutionsPage from './ClientSubstitutionsPage';
 import ClientFoodSwapsPage from './ClientFoodSwapsPage';
+import { useTranslation } from 'react-i18next';
 
-export default function ClientPortalPage({ clientData, onLogout, showToast, onSubmitDailyLog, onSubmitWeeklyCheckin }) {
+export default function ClientPortalPage({ 
+  clientData, 
+  onLogout, 
+  showToast, 
+  onSubmitDailyLog, 
+  onSubmitWeeklyCheckin,
+  currentLang,
+  onToggleLanguage
+}) {
+  const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState('daily-checkin'); // 'daily-checkin' | 'food-swaps' | 'substitutions' | 'notifications'
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
 
+  const activeLanguage = currentLang || i18n.language || 'en';
+
+  const handleLangClick = () => {
+    const nextLang = activeLanguage === 'en' ? 'ar' : 'en';
+    i18n.changeLanguage(nextLang);
+    if (onToggleLanguage) onToggleLanguage(nextLang);
+  };
+
   const getClientHeaderTitle = () => {
     switch (activeTab) {
       case 'daily-checkin':
-        return 'Daily Check-In & Training Protocol';
+        return t('clientPortal.dailyCheckin');
       case 'food-swaps':
-        return 'Food & Meal Substitutions';
+        return t('clientPortal.foodSwaps');
       case 'substitutions':
-        return 'Exercise Substitutions & Swaps';
+        return t('clientPortal.exerciseSubstitutions');
       case 'notifications':
-        return 'Client Notification Center';
+        return t('clientPortal.notifications');
       default:
-        return 'Athlete Portal';
+        return t('clientPortal.title');
     }
   };
   const [chatMessages, setChatMessages] = useState([
@@ -419,8 +438,8 @@ export default function ClientPortalPage({ clientData, onLogout, showToast, onSu
 
       {/* Client Master Sidebar (Sticky Desktop + Mobile Drawer) */}
       <aside 
-        className={`bg-[#0a0d16] border-r border-slate-800/80 flex flex-col justify-between select-none shrink-0 z-50 w-72 max-w-[85vw] md:w-72 fixed inset-y-0 left-0 h-full md:sticky md:top-0 md:h-screen transition-transform duration-300 ease-in-out ${
-          isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        className={`bg-[#0a0d16] border-r border-slate-800/80 rtl:border-r-0 rtl:border-l flex flex-col justify-between select-none shrink-0 z-50 w-72 max-w-[85vw] md:w-72 fixed inset-y-0 start-0 h-full md:sticky md:top-0 md:h-screen transition-transform duration-300 ease-in-out ${
+          isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full rtl:translate-x-full md:translate-x-0 rtl:md:translate-x-0'
         }`}
       >
         {/* Top Branding & Athlete Profile Header */}
@@ -561,6 +580,18 @@ export default function ClientPortalPage({ clientData, onLogout, showToast, onSu
 
           {/* Right Controls */}
           <div className="flex items-center gap-2 sm:gap-4 md:gap-6 shrink-0">
+            {/* Language Switcher Button */}
+            <button
+              onClick={handleLangClick}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#131926] hover:bg-slate-800/80 border border-slate-700/60 text-slate-200 hover:text-white font-bold text-xs shadow-sm transition-all cursor-pointer select-none shrink-0"
+              title="Switch Language (English / العربية)"
+            >
+              <Globe className="w-3.5 h-3.5 text-blue-400" />
+              <span className="font-mono text-[11px] tracking-wide">
+                {activeLanguage === 'ar' ? 'English' : 'العربية'}
+              </span>
+            </button>
+
             {/* Action Buttons */}
             <div className="flex items-center gap-1.5 sm:gap-3">
               {/* Notification Bell Button */}

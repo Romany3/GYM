@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Sparkles, 
   RefreshCw, 
@@ -11,6 +12,7 @@ import {
 } from 'lucide-react';
 
 export default function AiMealGeneratorPage({ showToast, onOpenNutritionPdf }) {
+  const { t } = useTranslation();
   // Input Settings
   const [targetKcal, setTargetKcal] = useState(2000);
   const [goalPreset, setGoalPreset] = useState('Balanced'); // 'Balanced' | 'Fat Loss' | 'Hypertrophy' | 'High Protein'
@@ -228,10 +230,10 @@ export default function AiMealGeneratorPage({ showToast, onOpenNutritionPdf }) {
             </span>
           </div>
           <h1 className="font-serif-header text-3xl font-bold text-white tracking-tight mt-1">
-            AI Meal Template Generator
+            {t('aiMeal.title')}
           </h1>
           <p className="text-xs text-slate-400 mt-0.5">
-            Generate full meal templates automatically from your Food Library based on target calories and macro ratios — fully customizable after generation.
+            {t('aiMeal.subtitle')}
           </p>
         </div>
 

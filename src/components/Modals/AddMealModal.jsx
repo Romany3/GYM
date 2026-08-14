@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, Plus, Search } from 'lucide-react';
 
 const PRESET_FOODS = [
@@ -12,6 +13,7 @@ const PRESET_FOODS = [
 ];
 
 export default function AddMealModal({ isOpen, onClose, onAdd, mealCategory }) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [customName, setCustomName] = useState('');
   const [customServing, setCustomServing] = useState('');
@@ -65,13 +67,13 @@ export default function AddMealModal({ isOpen, onClose, onAdd, mealCategory }) {
         <div className="flex items-center justify-between p-5 border-b border-slate-800">
           <div>
             <h3 className="font-serif-header text-lg font-semibold text-slate-100">
-              Add Food Item to <span className="uppercase text-blue-400">{mealCategory}</span>
+              {t('modals.addMeal.title')} (<span className="uppercase text-blue-400">{mealCategory}</span>)
             </h3>
             <p className="text-xs text-slate-400 mt-0.5">Select from library or add custom food macros</p>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-200 rounded-lg hover:bg-slate-800 transition-colors"
+            className="p-1.5 text-slate-400 hover:text-slate-200 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -82,16 +84,16 @@ export default function AddMealModal({ isOpen, onClose, onAdd, mealCategory }) {
           {/* Preset Search */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 mb-2">
-              Food Library Search
+              {t('foodLibrary.searchFood')}
             </label>
             <div className="relative mb-3">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute start-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search food library..."
-                className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl pl-10 pr-4 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
+                placeholder={t('common.search')}
+                className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl ps-10 pe-4 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
               />
             </div>
 

@@ -801,104 +801,88 @@ export default function NutritionPdfModal({
         {/* HIDDEN PDF RENDER CONTAINER MATCHING COACH PHELOPATER TEMPLATE */}
         <div
           ref={pdfContainerRef}
-          style={{
-            position: 'absolute',
-            left: '-9999px',
-            top: 0,
-            width: '794px',
-          }}
+          className="absolute -left-[9999px] top-0 w-[794px]"
         >
           {/* PAGE 0: COVER PAGE (بيانات المشترك والماكروز) */}
           <div
             id="nutr-full-page-0"
-            style={{
-              width: '794px',
-              height: '1123px',
-              position: 'relative',
-              overflow: 'hidden',
-              fontFamily: 'Cairo, sans-serif',
-              direction: 'rtl',
-              background: '#090d14',
-              color: '#ffffff',
-              boxSizing: 'border-box',
-              padding: '40px',
-            }}
+            className="w-[794px] h-[1123px] relative overflow-hidden font-sans rtl bg-[#090d14] text-white box-border p-[40px]"
           >
             {/* Red Border Box */}
-            <div style={{ position: 'absolute', inset: '16px', border: '1px solid rgba(239, 68, 68, 0.25)', pointerEvents: 'none' }} />
+            <div className="absolute inset-[16px] border border-red-500/25 pointer-events-none" />
 
             {/* Coach Header Title */}
-            <div style={{ textAlign: 'center', marginTop: '60px', marginBottom: '30px' }}>
-              <h1 style={{ fontSize: '32px', fontWeight: '900', color: '#ffffff', letterSpacing: '1px', textTransform: 'uppercase', margin: 0 }}>
+            <div className="text-center mt-[60px] mb-[30px]">
+              <h1 className="text-[32px] font-black text-white tracking-widest uppercase m-0">
                 {coachInfo.name}
               </h1>
-              <div style={{ display: 'flex', itemsCenter: 'center', justifyContent: 'center', gap: '10px', fontSize: '13px', color: '#cbd5e1', marginTop: '8px' }}>
+              <div className="flex items-center justify-center gap-[10px] text-[13px] text-slate-300 mt-[8px]">
                 <span>🟢 {coachInfo.whatsapp}</span>
                 <span>|</span>
                 <span>📞 {coachInfo.phone}</span>
                 <span>|</span>
-                <span style={{ fontWeight: 'bold' }}>{coachInfo.title}</span>
+                <span className="font-bold">{coachInfo.title}</span>
               </div>
             </div>
 
             {/* Certifications Box (الشهادات والخبرات) */}
-            <div style={{ background: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '12px', padding: '20px', marginBottom: '24px', position: 'relative' }}>
-              <div style={{ position: 'absolute', top: 0, right: 0, width: '12px', height: '12px', borderRight: '2px solid #ef4444', borderTop: '2px solid #ef4444' }} />
-              <h3 style={{ fontSize: '14px', fontWeight: 'bold', color: '#ffffff', marginBottom: '12px', textAlign: 'right' }}>الشهادات والخبرات</h3>
-              <div style={{ fontSize: '12px', color: '#cbd5e1', lineHeight: '1.8', whiteSpace: 'pre-line' }}>
+            <div className="bg-[#0f172a]/85 border border-red-500/40 rounded-[12px] p-[20px] mb-[24px] relative">
+              <div className="absolute top-0 right-0 w-[12px] h-[12px] border-r-2 border-r-red-500 border-t-2 border-t-red-500" />
+              <h3 className="text-[14px] font-bold text-white mb-[12px] text-right">الشهادات والخبرات</h3>
+              <div className="text-[12px] text-slate-300 leading-[1.8] whitespace-pre-line">
                 {coachInfo.certifications}
               </div>
             </div>
 
             {/* Client Info Box (بيانات المشترك) */}
-            <div style={{ background: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '12px', padding: '24px', marginBottom: '30px', textAlign: 'center' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: '900', color: '#ef4444', marginBottom: '20px' }}>بيانات المشترك</h2>
+            <div className="bg-[#0f172a]/85 border border-red-500/40 rounded-[12px] p-[24px] mb-[30px] text-center">
+              <h2 className="text-[18px] font-black text-red-500 mb-[20px]">بيانات المشترك</h2>
               
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '16px', marginBottom: '16px' }}>
+              <div className="grid grid-cols-2 gap-[20px] border-b border-white/10 pb-[16px] mb-[16px]">
                 <div>
-                  <span style={{ fontSize: '12px', color: '#ef4444', display: 'block', fontWeight: 'bold' }}>الاسم</span>
-                  <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#ffffff' }}>{clientInfo.name}</span>
+                  <span className="text-[12px] text-red-500 block font-bold">الاسم</span>
+                  <span className="text-[16px] font-bold text-white">{clientInfo.name}</span>
                 </div>
                 <div>
-                  <span style={{ fontSize: '12px', color: '#ef4444', display: 'block', fontWeight: 'bold' }}>العمر</span>
-                  <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#ffffff' }}>{clientInfo.age}</span>
+                  <span className="text-[12px] text-red-500 block font-bold">العمر</span>
+                  <span className="text-[16px] font-bold text-white">{clientInfo.age}</span>
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '16px', marginBottom: '16px' }}>
+              <div className="grid grid-cols-2 gap-[20px] border-b border-white/10 pb-[16px] mb-[16px]">
                 <div>
-                  <span style={{ fontSize: '12px', color: '#ef4444', display: 'block', fontWeight: 'bold' }}>الطول</span>
-                  <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#ffffff' }}>{clientInfo.height}</span>
+                  <span className="text-[12px] text-red-500 block font-bold">الطول</span>
+                  <span className="text-[16px] font-bold text-white">{clientInfo.height}</span>
                 </div>
                 <div>
-                  <span style={{ fontSize: '12px', color: '#ef4444', display: 'block', fontWeight: 'bold' }}>الوزن</span>
-                  <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#ffffff' }}>{clientInfo.weight}</span>
+                  <span className="text-[12px] text-red-500 block font-bold">الوزن</span>
+                  <span className="text-[16px] font-bold text-white">{clientInfo.weight}</span>
                 </div>
               </div>
 
               <div>
-                <span style={{ fontSize: '12px', color: '#ef4444', display: 'block', fontWeight: 'bold' }}>الهدف</span>
-                <span style={{ fontSize: '18px', fontWeight: '900', color: '#ffffff' }}>{clientInfo.goal}</span>
+                <span className="text-[12px] text-red-500 block font-bold">الهدف</span>
+                <span className="text-[18px] font-black text-white">{clientInfo.goal}</span>
               </div>
             </div>
 
             {/* Macro Cards 4 Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
-              <div style={{ background: '#0f172a', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '12px', padding: '16px', textAlign: 'center' }}>
-                <span style={{ fontSize: '24px', fontWeight: '900', color: '#ffffff', display: 'block' }}>{macroTargets.kcal}</span>
-                <span style={{ fontSize: '11px', color: '#ef4444', fontWeight: 'bold' }}>سعرات</span>
+            <div className="grid grid-cols-4 gap-[14px]">
+              <div className="bg-[#0f172a] border border-red-500/40 rounded-[12px] p-[16px] text-center">
+                <span className="text-[24px] font-black text-white block">{macroTargets.kcal}</span>
+                <span className="text-[11px] text-red-500 font-bold">سعرات</span>
               </div>
-              <div style={{ background: '#0f172a', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '12px', padding: '16px', textAlign: 'center' }}>
-                <span style={{ fontSize: '24px', fontWeight: '900', color: '#ffffff', display: 'block' }}>{macroTargets.fats}g</span>
-                <span style={{ fontSize: '11px', color: '#ef4444', fontWeight: 'bold' }}>دهون</span>
+              <div className="bg-[#0f172a] border border-red-500/40 rounded-[12px] p-[16px] text-center">
+                <span className="text-[24px] font-black text-white block">{macroTargets.fats}g</span>
+                <span className="text-[11px] text-red-500 font-bold">دهون</span>
               </div>
-              <div style={{ background: '#0f172a', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '12px', padding: '16px', textAlign: 'center' }}>
-                <span style={{ fontSize: '24px', fontWeight: '900', color: '#ffffff', display: 'block' }}>{macroTargets.carbs}g</span>
-                <span style={{ fontSize: '11px', color: '#ef4444', fontWeight: 'bold' }}>كارب</span>
+              <div className="bg-[#0f172a] border border-red-500/40 rounded-[12px] p-[16px] text-center">
+                <span className="text-[24px] font-black text-white block">{macroTargets.carbs}g</span>
+                <span className="text-[11px] text-red-500 font-bold">كارب</span>
               </div>
-              <div style={{ background: '#0f172a', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '12px', padding: '16px', textAlign: 'center' }}>
-                <span style={{ fontSize: '24px', fontWeight: '900', color: '#ffffff', display: 'block' }}>{macroTargets.protein}g</span>
-                <span style={{ fontSize: '11px', color: '#ef4444', fontWeight: 'bold' }}>بروتين</span>
+              <div className="bg-[#0f172a] border border-red-500/40 rounded-[12px] p-[16px] text-center">
+                <span className="text-[24px] font-black text-white block">{macroTargets.protein}g</span>
+                <span className="text-[11px] text-red-500 font-bold">بروتين</span>
               </div>
             </div>
           </div>
@@ -906,41 +890,30 @@ export default function NutritionPdfModal({
           {/* PAGE 1: مقدمة عن النظام (INTRODUCTION) */}
           <div
             id="nutr-full-page-1"
-            style={{
-              width: '794px',
-              height: '1123px',
-              position: 'relative',
-              overflow: 'hidden',
-              fontFamily: 'Cairo, sans-serif',
-              direction: 'rtl',
-              background: '#090d14',
-              color: '#ffffff',
-              boxSizing: 'border-box',
-              padding: '50px 40px',
-            }}
+            className="w-[794px] h-[1123px] relative overflow-hidden font-sans rtl bg-[#090d14] text-white box-border px-[40px] py-[50px]"
           >
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
-              <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#ef4444', letterSpacing: '2px' }}>NUTRIPLAN</span>
-              <div style={{ textAlign: 'center' }}>
-                <h1 style={{ fontSize: '30px', fontWeight: '900', color: '#ffffff', margin: 0 }}>مقدمة عن النظام</h1>
-                <span style={{ fontSize: '10px', color: '#ef4444', letterSpacing: '4px', textTransform: 'uppercase' }}>I N T R O D U C T I O N</span>
+            <div className="flex justify-between items-center mb-[40px]">
+              <span className="text-[12px] font-bold text-red-500 tracking-widest">NUTRIPLAN</span>
+              <div className="text-center">
+                <h1 className="text-[30px] font-black text-white m-0">مقدمة عن النظام</h1>
+                <span className="text-[10px] text-red-500 tracking-widest uppercase">I N T R O D U C T I O N</span>
               </div>
-              <span style={{ width: '40px' }} />
+              <span className="w-[40px]" />
             </div>
 
-            <div style={{ marginTop: '40px', spaceY: '24px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: '#ef4444', marginBottom: '16px' }}>مقدمة عامة</h2>
+            <div className="mt-[40px] space-y-[24px]">
+              <h2 className="text-[20px] font-bold text-red-500 mb-[16px]">مقدمة عامة</h2>
               
-              <p style={{ fontSize: '15px', color: '#e2e8f0', lineHeight: '2.2', marginBottom: '24px' }}>
+              <p className="text-[15px] text-slate-200 leading-[2.2] mb-[24px]">
                 {introText.p1}
               </p>
 
-              <p style={{ fontSize: '15px', color: '#e2e8f0', lineHeight: '2.2', marginBottom: '24px' }}>
+              <p className="text-[15px] text-slate-200 leading-[2.2] mb-[24px]">
                 {introText.p2}
               </p>
 
-              <p style={{ fontSize: '15px', color: '#e2e8f0', lineHeight: '2.2' }}>
+              <p className="text-[15px] text-slate-200 leading-[2.2]">
                 {introText.p3}
               </p>
             </div>
@@ -949,39 +922,28 @@ export default function NutritionPdfModal({
           {/* PAGE 2: معلومات عن التغذية (NUTRITION INFO) */}
           <div
             id="nutr-full-page-2"
-            style={{
-              width: '794px',
-              height: '1123px',
-              position: 'relative',
-              overflow: 'hidden',
-              fontFamily: 'Cairo, sans-serif',
-              direction: 'rtl',
-              background: '#090d14',
-              color: '#ffffff',
-              boxSizing: 'border-box',
-              padding: '50px 40px',
-            }}
+            className="w-[794px] h-[1123px] relative overflow-hidden font-sans rtl bg-[#090d14] text-white box-border px-[40px] py-[50px]"
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-              <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#ef4444', letterSpacing: '2px' }}>NUTRIPLAN</span>
-              <div style={{ textAlign: 'center' }}>
-                <h1 style={{ fontSize: '28px', fontWeight: '900', color: '#ffffff', margin: 0 }}>معلومات عن التغذية</h1>
-                <span style={{ fontSize: '10px', color: '#ef4444', letterSpacing: '4px', textTransform: 'uppercase' }}>N U T R I T I O N   I N F O</span>
+            <div className="flex justify-between items-center mb-[30px]">
+              <span className="text-[12px] font-bold text-red-500 tracking-widest">NUTRIPLAN</span>
+              <div className="text-center">
+                <h1 className="text-[28px] font-black text-white m-0">معلومات عن التغذية</h1>
+                <span className="text-[10px] text-red-500 tracking-widest uppercase">N U T R I T I O N   I N F O</span>
               </div>
-              <span style={{ width: '40px' }} />
+              <span className="w-[40px]" />
             </div>
 
-            <div style={{ marginTop: '20px' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#ef4444', marginBottom: '12px' }}>معلومات عن التغذية</h2>
-              <p style={{ fontSize: '13px', color: '#cbd5e1', lineHeight: '2', marginBottom: '24px' }}>
+            <div className="mt-[20px]">
+              <h2 className="text-[18px] font-bold text-red-500 mb-[12px]">معلومات عن التغذية</h2>
+              <p className="text-[13px] text-slate-300 leading-[2] mb-[24px]">
                 {nutritionInfoText.mainInfo}
               </p>
 
-              <h3 style={{ fontSize: '16px', fontWeight: 'bold', color: '#ef4444', marginBottom: '14px' }}>نصائح ذهبية لخسارة الدهون:</h3>
+              <h3 className="text-[16px] font-bold text-red-500 mb-[14px]">نصائح ذهبية لخسارة الدهون:</h3>
               
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div className="flex flex-col gap-[12px]">
                 {nutritionInfoText.rules.map((rule, idx) => (
-                  <div key={idx} style={{ fontSize: '13px', color: '#e2e8f0', lineHeight: '1.8' }}>
+                  <div key={idx} className="text-[13px] text-slate-200 leading-[1.8]">
                     <strong>{idx + 1}.</strong> {rule}
                   </div>
                 ))}
@@ -994,43 +956,32 @@ export default function NutritionPdfModal({
             <div
               key={meal.id}
               id={`nutr-full-page-${3 + mealIdx}`}
-              style={{
-                width: '794px',
-                height: '1123px',
-                position: 'relative',
-                overflow: 'hidden',
-                fontFamily: 'Cairo, sans-serif',
-                direction: 'rtl',
-                background: '#090d14',
-                color: '#ffffff',
-                boxSizing: 'border-box',
-                padding: '40px',
-              }}
+              className="w-[794px] h-[1123px] relative overflow-hidden font-sans rtl bg-[#090d14] text-white box-border p-[40px]"
             >
               {/* Header */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
-                <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#ef4444', letterSpacing: '2px' }}>NUTRIPLAN</span>
-                <span style={{ width: '40px' }} />
+              <div className="flex justify-between items-center mb-[40px]">
+                <span className="text-[12px] font-bold text-red-500 tracking-widest">NUTRIPLAN</span>
+                <span className="w-[40px]" />
               </div>
 
               {/* Meal Title Box with Red Corners */}
-              <div style={{ border: '1px solid rgba(239, 68, 68, 0.5)', borderRadius: '12px', padding: '16px', textAlign: 'center', marginBottom: '40px', background: 'rgba(15,23,42,0.8)' }}>
-                <h1 style={{ fontSize: '24px', fontWeight: '900', color: '#ef4444', letterSpacing: '3px', margin: 0, textTransform: 'uppercase' }}>
+              <div className="border border-red-500/50 rounded-[12px] p-[16px] text-center mb-[40px] bg-[#0f172a]/80">
+                <h1 className="text-[24px] font-black text-red-500 tracking-widest m-0 uppercase">
                   {meal.titleEn}
                 </h1>
-                <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#ffffff', marginTop: '4px', display: 'block' }}>
+                <span className="text-[16px] font-bold text-white mt-[4px] block">
                   {meal.titleAr}
                 </span>
               </div>
 
               {/* Option 1 Card */}
-              <div style={{ background: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '14px', padding: '24px', marginBottom: '24px', position: 'relative' }}>
-                <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#ffffff', lineHeight: '1.8', textAlign: 'center' }}>
-                  <div style={{ direction: 'ltr', color: '#ffffff', marginBottom: '6px' }}>{meal.option1En}</div>
-                  <div style={{ color: '#cbd5e1' }}>{meal.option1Ar}</div>
+              <div className="bg-[#0f172a]/85 border border-red-500/40 rounded-[14px] p-[24px] mb-[24px] relative">
+                <div className="text-[16px] font-bold text-white leading-[1.8] text-center">
+                  <div className="ltr text-white mb-[6px]">{meal.option1En}</div>
+                  <div className="text-slate-300">{meal.option1Ar}</div>
                 </div>
                 {meal.option1Note && (
-                  <div style={{ textAlign: 'center', color: '#ef4444', fontStyle: 'italic', fontSize: '11px', marginTop: '10px', textTransform: 'uppercase' }}>
+                  <div className="text-center text-red-500 italic text-[11px] mt-[10px] uppercase">
                     {meal.option1Note}
                   </div>
                 )}
@@ -1039,25 +990,25 @@ export default function NutritionPdfModal({
               {/* Option 2 (OR) Card if present */}
               {meal.option2En && (
                 <>
-                  <div style={{ textAlign: 'center', fontSize: '20px', fontWeight: '900', color: '#ffffff', margin: '20px 0' }}>
+                  <div className="text-center text-[20px] font-black text-white my-[20px]">
                     OR
                   </div>
-                  <div style={{ background: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '14px', padding: '24px', position: 'relative' }}>
-                    <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#ffffff', lineHeight: '1.8', textAlign: 'center' }}>
-                      <div style={{ direction: 'ltr', color: '#ffffff', marginBottom: '6px' }}>{meal.option2En}</div>
-                      <div style={{ color: '#cbd5e1' }}>{meal.option2Ar}</div>
+                  <div className="bg-[#0f172a]/85 border border-red-500/40 rounded-[14px] p-[24px] relative">
+                    <div className="text-[16px] font-bold text-white leading-[1.8] text-center">
+                      <div className="ltr text-white mb-[6px]">{meal.option2En}</div>
+                      <div className="text-slate-300">{meal.option2Ar}</div>
                     </div>
                   </div>
                 </>
               )}
 
               {/* Footer Quote */}
-              <div style={{ position: 'absolute', bottom: '40px', left: '40px', right: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '12px', fontWeight: '900', color: '#ffffff', letterSpacing: '2px' }}>".NO GUTS, NO GLORY"</span>
-                <div style={{ display: 'flex', gap: '4px' }}>
-                  <span style={{ width: '20px', height: '4px', background: '#334155' }} />
-                  <span style={{ width: '20px', height: '4px', background: '#334155' }} />
-                  <span style={{ width: '20px', height: '4px', background: '#ef4444' }} />
+              <div className="absolute bottom-[40px] left-[40px] right-[40px] flex justify-between items-center">
+                <span className="text-[12px] font-black text-white tracking-widest">".NO GUTS, NO GLORY"</span>
+                <div className="flex gap-[4px]">
+                  <span className="w-[20px] h-[4px] bg-slate-700" />
+                  <span className="w-[20px] h-[4px] bg-slate-700" />
+                  <span className="w-[20px] h-[4px] bg-red-500" />
                 </div>
               </div>
             </div>
@@ -1066,52 +1017,41 @@ export default function NutritionPdfModal({
           {/* PAGE N+1: التعليمات والمكملات (GUIDELINES & SUPPLEMENTS) */}
           <div
             id={`nutr-full-page-${3 + mealList.length}`}
-            style={{
-              width: '794px',
-              height: '1123px',
-              position: 'relative',
-              overflow: 'hidden',
-              fontFamily: 'Cairo, sans-serif',
-              direction: 'rtl',
-              background: '#090d14',
-              color: '#ffffff',
-              boxSizing: 'border-box',
-              padding: '40px',
-            }}
+            className="w-[794px] h-[1123px] relative overflow-hidden font-sans rtl bg-[#090d14] text-white box-border p-[40px]"
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#ef4444', letterSpacing: '2px' }}>NUTRIPLAN</span>
-              <div style={{ textAlign: 'center' }}>
-                <h1 style={{ fontSize: '26px', fontWeight: '900', color: '#ffffff', margin: 0 }}>التعليمات والمكملات</h1>
-                <span style={{ fontSize: '10px', color: '#ef4444', letterSpacing: '4px', textTransform: 'uppercase' }}>G U I D E L I N E S</span>
+            <div className="flex justify-between items-center mb-[24px]">
+              <span className="text-[12px] font-bold text-red-500 tracking-widest">NUTRIPLAN</span>
+              <div className="text-center">
+                <h1 className="text-[26px] font-black text-white m-0">التعليمات والمكملات</h1>
+                <span className="text-[10px] text-red-500 tracking-widest uppercase">G U I D E L I N E S</span>
               </div>
-              <span style={{ width: '40px' }} />
+              <span className="w-[40px]" />
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div style={{ background: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '10px', padding: '14px' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: 'bold', color: '#ef4444', margin: '0 0 6px 0' }}>اقتراح بالمكملات (( اختياري ))</h3>
-                <div style={{ fontSize: '12px', color: '#cbd5e1', whiteSpace: 'pre-line' }}>{guidelines.supplements}</div>
+            <div className="flex flex-col gap-[14px]">
+              <div className="bg-[#0f172a]/85 border border-red-500/40 rounded-[10px] p-[14px]">
+                <h3 className="text-[14px] font-bold text-red-500 m-0 mb-[6px]">اقتراح بالمكملات (( اختياري ))</h3>
+                <div className="text-[12px] text-slate-300 whitespace-pre-line">{guidelines.supplements}</div>
               </div>
 
-              <div style={{ background: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '10px', padding: '14px' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: 'bold', color: '#ef4444', margin: '0 0 6px 0' }}>اقتراح بالفيتامينات (( اختياري ))</h3>
-                <div style={{ fontSize: '12px', color: '#cbd5e1', lineHeight: '1.8', whiteSpace: 'pre-line' }}>{guidelines.vitamins}</div>
+              <div className="bg-[#0f172a]/85 border border-red-500/40 rounded-[10px] p-[14px]">
+                <h3 className="text-[14px] font-bold text-red-500 m-0 mb-[6px]">اقتراح بالفيتامينات (( اختياري ))</h3>
+                <div className="text-[12px] text-slate-300 leading-[1.8] whitespace-pre-line">{guidelines.vitamins}</div>
               </div>
 
-              <div style={{ background: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '10px', padding: '14px' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: 'bold', color: '#22c55e', margin: '0 0 6px 0' }}>✅ الاهتمام</h3>
-                <div style={{ fontSize: '12px', color: '#cbd5e1', lineHeight: '1.8', whiteSpace: 'pre-line' }}>{guidelines.care}</div>
+              <div className="bg-[#0f172a]/85 border border-red-500/40 rounded-[10px] p-[14px]">
+                <h3 className="text-[14px] font-bold text-emerald-500 m-0 mb-[6px]">✅ الاهتمام</h3>
+                <div className="text-[12px] text-slate-300 leading-[1.8] whitespace-pre-line">{guidelines.care}</div>
               </div>
 
-              <div style={{ background: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '10px', padding: '14px' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: 'bold', color: '#f59e0b', margin: '0 0 6px 0' }}>⚠️ التقليل</h3>
-                <div style={{ fontSize: '12px', color: '#cbd5e1', whiteSpace: 'pre-line' }}>{guidelines.reduction}</div>
+              <div className="bg-[#0f172a]/85 border border-red-500/40 rounded-[10px] p-[14px]">
+                <h3 className="text-[14px] font-bold text-amber-500 m-0 mb-[6px]">⚠️ التقليل</h3>
+                <div className="text-[12px] text-slate-300 whitespace-pre-line">{guidelines.reduction}</div>
               </div>
 
-              <div style={{ background: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '10px', padding: '14px' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: 'bold', color: '#f43f5e', margin: '0 0 6px 0' }}>🚫 الممنوع</h3>
-                <div style={{ fontSize: '12px', color: '#cbd5e1', lineHeight: '1.8', whiteSpace: 'pre-line' }}>{guidelines.forbidden}</div>
+              <div className="bg-[#0f172a]/85 border border-red-500/40 rounded-[10px] p-[14px]">
+                <h3 className="text-[14px] font-bold text-rose-500 m-0 mb-[6px]">🚫 الممنوع</h3>
+                <div className="text-[12px] text-slate-300 leading-[1.8] whitespace-pre-line">{guidelines.forbidden}</div>
               </div>
             </div>
           </div>
@@ -1119,35 +1059,24 @@ export default function NutritionPdfModal({
           {/* PAGE N+2: أسئلة شائعة عن الدايت (F.A.Q) */}
           <div
             id={`nutr-full-page-${4 + mealList.length}`}
-            style={{
-              width: '794px',
-              height: '1123px',
-              position: 'relative',
-              overflow: 'hidden',
-              fontFamily: 'Cairo, sans-serif',
-              direction: 'rtl',
-              background: '#090d14',
-              color: '#ffffff',
-              boxSizing: 'border-box',
-              padding: '40px',
-            }}
+            className="w-[794px] h-[1123px] relative overflow-hidden font-sans rtl bg-[#090d14] text-white box-border p-[40px]"
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#ef4444', letterSpacing: '2px' }}>NUTRIPLAN</span>
-              <div style={{ textAlign: 'center' }}>
-                <h1 style={{ fontSize: '26px', fontWeight: '900', color: '#ffffff', margin: 0 }}>أسئلة شائعة عن الدايت</h1>
-                <span style={{ fontSize: '10px', color: '#ef4444', letterSpacing: '4px', textTransform: 'uppercase' }}>F . A . Q</span>
+            <div className="flex justify-between items-center mb-[24px]">
+              <span className="text-[12px] font-bold text-red-500 tracking-widest">NUTRIPLAN</span>
+              <div className="text-center">
+                <h1 className="text-[26px] font-black text-white m-0">أسئلة شائعة عن الدايت</h1>
+                <span className="text-[10px] text-red-500 tracking-widest uppercase">F . A . Q</span>
               </div>
-              <span style={{ width: '40px' }} />
+              <span className="w-[40px]" />
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div className="flex flex-col gap-[12px]">
               {faqs.map((faq, idx) => (
-                <div key={idx} style={{ background: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '10px', padding: '14px' }}>
-                  <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#ef4444', marginBottom: '4px' }}>
+                <div key={idx} className="bg-[#0f172a]/85 border border-red-500/40 rounded-[10px] p-[14px]">
+                  <div className="text-[14px] font-bold text-red-500 mb-[4px]">
                     ؟ {faq.q}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#cbd5e1', lineHeight: '1.7' }}>
+                  <div className="text-[12px] text-slate-300 leading-[1.7]">
                     {faq.a}
                   </div>
                 </div>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Users, 
   Calendar, 
@@ -22,6 +23,7 @@ export default function OverviewPage({
   onOpenAnnouncement, 
   showToast 
 }) {
+  const { t } = useTranslation();
   const [activityFilter, setActivityFilter] = useState('All');
 
   const activities = [
@@ -300,7 +302,7 @@ export default function OverviewPage({
                 </div>
                 <div>
                   <h2 className="font-serif-header text-lg font-bold text-slate-100">
-                    Action Required Alerts
+                    {t('overview.actionRequiredTitle')}
                   </h2>
                   <p className="text-[11px] text-slate-400">Immediate attention needed for client retention & billing</p>
                 </div>
@@ -324,7 +326,7 @@ export default function OverviewPage({
                     <div>
                       <h4 className="text-xs font-bold text-slate-100 group-hover:text-rose-300 transition-colors">Jason Stark</h4>
                       <span className="text-[9px] font-extrabold text-rose-400 bg-rose-950/80 px-2 py-0.5 rounded border border-rose-800/60 uppercase tracking-widest">
-                        AT RISK • MISSING LOGS
+                        {t('common.atRisk')} • MISSING LOGS
                       </span>
                     </div>
                   </div>
@@ -339,13 +341,13 @@ export default function OverviewPage({
                     onClick={() => showToast && showToast('Nudge notification sent to Jason Stark', 'info')}
                     className="py-2 bg-rose-950/60 hover:bg-rose-900/90 border border-rose-800/80 text-rose-200 font-bold text-[11px] rounded-xl transition-all cursor-pointer shadow-sm text-center"
                   >
-                    Nudge Client
+                    {t('overview.nudgeClient')}
                   </button>
                   <button
                     onClick={() => onNavigate && onNavigate('clients')}
                     className="py-2 bg-[#1c2436] hover:bg-[#242f47] border border-slate-700 text-slate-200 font-semibold text-[11px] rounded-xl transition-all cursor-pointer text-center"
                   >
-                    View Profile
+                    {t('overview.viewProfile')}
                   </button>
                 </div>
               </div>
@@ -391,7 +393,7 @@ export default function OverviewPage({
                 </div>
                 <div>
                   <h2 className="font-serif-header text-lg font-bold text-slate-100">
-                    Recent Activity
+                    {t('overview.recentActivityTitle')}
                   </h2>
                   <p className="text-[11px] text-slate-400">Real-time workout & check-in feed</p>
                 </div>
@@ -420,10 +422,10 @@ export default function OverviewPage({
                     if (onNavigate) onNavigate('notifications');
                     if (showToast) showToast('Opening Notifications & Activity Log', 'info');
                   }}
-                  className="text-[11px] text-slate-300 hover:text-blue-300 font-bold bg-[#171e2e] hover:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700/60 flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ml-1"
+                  className="text-[11px] text-slate-300 hover:text-blue-300 font-bold bg-[#171e2e] hover:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700/60 flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ms-1"
                 >
-                  <span>View All</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-blue-400" />
+                  <span>{t('common.viewAll')}</span>
+                  <ChevronRight className="w-3.5 h-3.5 text-blue-400 rtl:rotate-180" />
                 </button>
               </div>
             </div>

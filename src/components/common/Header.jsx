@@ -1,40 +1,53 @@
-import { Bell, Mail, Menu } from 'lucide-react';
+import { Bell, Mail, Menu, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function Header({ 
   activeTab, 
   onOpenMobileSidebar,
-  onNavigate
+  onNavigate,
+  currentLang,
+  onToggleLanguage
 }) {
+  const { t, i18n } = useTranslation();
+
+  const activeLanguage = currentLang || i18n.language || 'en';
+
+  const handleLangClick = () => {
+    const nextLang = activeLanguage === 'en' ? 'ar' : 'en';
+    i18n.changeLanguage(nextLang);
+    if (onToggleLanguage) onToggleLanguage(nextLang);
+  };
+
   const getHeaderTitle = () => {
     switch (activeTab) {
       case 'overview':
-        return 'Performance Overview';
+        return t('nav.overview');
       case 'clients':
-        return 'Client Directory';
+        return t('nav.clients');
       case 'coach-chat':
-        return 'Athlete Direct Messaging';
+        return t('nav.coachChat');
       case 'workout-builder':
-        return 'Workout Builder Engine';
+        return t('nav.workoutBuilder');
       case 'exercise-swaps':
-        return 'Exercise Change Requests Queue';
+        return t('nav.exerciseSwaps');
       case 'food-swaps':
-        return 'Client Food Swap Requests Queue';
+        return t('nav.foodSwaps');
       case 'subscription-plans':
-        return 'Subscription & Capacity Management';
+        return t('nav.subscriptionPlans');
       case 'nutrition-engine':
-        return 'Nutrition Dashboard';
+        return t('nav.nutritionEngine');
       case 'food-library':
-        return 'Master Food Library';
+        return t('nav.foodLibrary');
       case 'ai-meal-generator':
-        return 'AI Automated Meal Generator';
+        return t('nav.aiMealGenerator');
       case 'analytics':
-        return 'Performance Analytics';
+        return t('nav.analytics');
       case 'notifications':
-        return 'Notification Center';
+        return t('nav.notifications');
       case 'settings':
-        return 'System Settings';
+        return t('nav.settings');
       default:
-        return 'Dashboard';
+        return t('common.dashboard');
     }
   };
 
@@ -58,16 +71,28 @@ export default function Header({
       {/* Right Controls */}
       <div className="flex items-center gap-2 sm:gap-4 md:gap-6 shrink-0">
 
+        {/* Language Switcher Button */}
+        <button
+          onClick={handleLangClick}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#131926] hover:bg-slate-800/80 border border-slate-700/60 text-slate-200 hover:text-white font-bold text-xs shadow-sm transition-all cursor-pointer select-none shrink-0"
+          title="Switch Language (English / العربية)"
+        >
+          <Globe className="w-3.5 h-3.5 text-blue-400" />
+          <span className="font-mono text-[11px] tracking-wide">
+            {activeLanguage === 'ar' ? 'English' : 'العربية'}
+          </span>
+        </button>
+
         {/* Coach Subscription & Capacity Badge */}
         <button
           onClick={() => onNavigate && onNavigate('subscription-plans')}
-          className="hidden xl:flex items-center gap-3 px-3 py-1.5 rounded-xl bg-[#131926] hover:bg-slate-800/80 border border-blue-500/20 shadow-sm cursor-pointer transition-all text-left"
+          className="hidden xl:flex items-center gap-3 px-3 py-1.5 rounded-xl bg-[#131926] hover:bg-slate-800/80 border border-blue-500/20 shadow-sm cursor-pointer transition-all text-left rtl:text-right"
           title="Manage Subscription & Client Capacity"
         >
-          <div className="flex flex-col text-right">
+          <div className="flex flex-col text-right rtl:text-left">
             <div className="flex items-center gap-1.5">
               <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 px-1.5 py-0.2 rounded border border-emerald-800/60 uppercase">
-                PRO COACH
+                {t('common.proCoach')}
               </span>
               <span className="text-xs font-semibold text-slate-200">18 / 25 Clients</span>
             </div>

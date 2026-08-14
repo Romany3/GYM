@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Apple, 
   Search, 
@@ -8,6 +9,7 @@ import {
 } from 'lucide-react';
 
 export default function FoodLibraryPage({ showToast }) {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [isAddFoodOpen, setIsAddFoodOpen] = useState(false);
@@ -77,20 +79,14 @@ export default function FoodLibraryPage({ showToast }) {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Header Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950 px-2.5 py-0.5 rounded border border-emerald-800/60 uppercase tracking-widest">
-              NUTRITION ENGINE DATABASE
-            </span>
-            <span className="text-xs text-slate-400 font-mono">{foodItems.length} Verified Items</span>
-          </div>
-          <h1 className="font-serif-header text-3xl font-bold text-white tracking-tight mt-1">
-            Master Food Library
+          <h1 className="font-serif-header text-3xl font-bold text-white tracking-tight">
+            {t('foodLibrary.title')}
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Calibrated macronutrient database per 100g for building custom meal plans.
+          <p className="text-xs text-slate-400 mt-1">
+            {t('foodLibrary.subtitle')}
           </p>
         </div>
 
@@ -101,7 +97,7 @@ export default function FoodLibraryPage({ showToast }) {
             className="w-full sm:w-auto flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            <span>Add Custom Food Item</span>
+            <span>{t('foodLibrary.addFood')}</span>
           </button>
         </div>
       </div>

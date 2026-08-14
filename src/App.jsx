@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import Header from '@/components/common/Header';
 import Sidebar from '@/components/common/Sidebar';
 import TargetSetup from '@/components/common/TargetSetup';
 import DailyPlanCreator from '@/components/common/DailyPlanCreator';
-import LogReview from '@/components/common/LogReview';
 import AddMealModal from '@/components/modals/AddMealModal';
 import AddExerciseModal from '@/components/modals/AddExerciseModal';
 import QuickAddClientModal from '@/components/modals/QuickAddClientModal';
@@ -32,6 +32,8 @@ import ClientPortalPage from '@/pages/client/ClientPortalPage';
 import { CheckCircle2, Monitor } from 'lucide-react';
 
 export default function App() {
+  const { i18n } = useTranslation();
+
   // Master Application Mode State ('coach_panel' | 'coach_auth' | 'client_auth' | 'client_portal')
   const [appMode, setAppMode] = useState('coach_panel');
   const [selectedClientForDetails, setSelectedClientForDetails] = useState(null);
@@ -190,6 +192,25 @@ export default function App() {
       targetKcal: 2900
     }
   ]);
+  // Global Language & RTL/LTR Direction State
+  const [language, setLanguage] = useState(() => {
+    return localStorage.getItem('app_lang') || 'en';
+  });
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+    i18n.changeLanguage(language);
+    localStorage.setItem('app_lang', language);
+  }, [language, i18n]);
+
+  const handleToggleLanguage = (targetLang) => {
+    const nextLang = typeof targetLang === 'string' ? targetLang : (language === 'en' ? 'ar' : 'en');
+    setLanguage(nextLang);
+    i18n.changeLanguage(nextLang);
+    if (showToast) showToast(nextLang === 'ar' ? 'تم تغيير لغة النظام إلى العربية 🇸🇦' : 'Switched app language to English 🇺🇸');
+  };
+
   const [selectedClientIndex, setSelectedClientIndex] = useState(0);
   const selectedClient = clients[selectedClientIndex] || clients[0];
 
@@ -238,31 +259,6 @@ export default function App() {
   const [exercises, setExercises] = useState([
     { id: 'e1', category: 'STRENGTH', name: 'Leg Day - Hypertrophy', detail: 'Estimated Burn: 350 kcal', burnKcal: 350 },
     { id: 'e2', category: 'CARDIO', name: 'LISS: Fasted Walk', detail: '30 Mins @ 4.5km/h', burnKcal: 100 },
-  ]);
-
-  // Log Review Timeline Items (Nutrition)
-  const [logItems] = useState([
-    {
-      id: 'log1',
-      time: '08:30 AM',
-      status: 'planned',
-      title: 'Classic Scrambled Eggs',
-      note: 'Added a bit of extra spinach today. Felt great.',
-    },
-    {
-      id: 'log2',
-      time: '11:15 AM',
-      status: 'off-plan',
-      title: 'Starbucks Latte + Muffin',
-      details: 'Sugar: 45g | Kcal: 520',
-    },
-    {
-      id: 'log3',
-      time: '01:45 PM',
-      status: 'planned',
-      title: 'Grilled Salmon & Quinoa',
-      image: '/salmon_quinoa.png',
-    },
   ]);
 
   // Modals Visibility
@@ -403,12 +399,6 @@ export default function App() {
     setIsBatchAssignOpen(true);
   };
 
-  const handleCycleClient = () => {
-    const nextIdx = (selectedClientIndex + 1) % clients.length;
-    setSelectedClientIndex(nextIdx);
-    showToast(`Switched client to ${clients[nextIdx].name}`, 'info');
-  };
-
   // Render Coach Login / Register Screen
   if (appMode === 'coach_auth') {
     return (
@@ -483,6 +473,8 @@ export default function App() {
           showToast={showToast}
           onSubmitDailyLog={handleClientSubmitDailyLog}
           onSubmitWeeklyCheckin={handleClientSubmitWeeklyCheckin}
+          currentLang={language}
+          onToggleLanguage={handleToggleLanguage}
         />
       </div>
     );
@@ -506,7 +498,7 @@ export default function App() {
       <div className="flex flex-col md:flex-row flex-1">
         {/* Toast Notification Banner */}
         {toast && (
-          <div className="fixed top-12 right-5 z-50 animate-in fade-in slide-in-from-top-3 duration-300">
+          <div className="fixed top-12 ltr:right-5 ltr:left-auto rtl:left-5 rtl:right-auto z-50 animate-in fade-in slide-in-from-top-3 duration-300">
             <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border shadow-xl text-xs font-semibold ${
               toast.type === 'warning'
                 ? 'bg-amber-950/90 border-amber-800 text-amber-200'
@@ -537,6 +529,8 @@ export default function App() {
           selectedClient={selectedClient}
           onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
           onNavigate={setActiveTab}
+          currentLang={language}
+          onToggleLanguage={handleToggleLanguage}
         />
 
         {/* Dynamic Page Router Content */}
@@ -544,7 +538,7 @@ export default function App() {
           {/* 1. NUTRITION ENGINE PAGE */}
           {activeTab === 'nutrition-engine' && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              <section className="lg:col-span-3">
+              <section className="lg:col-span-4">
                 <TargetSetup
                   targetKcal={selectedClient.targetKcal}
                   proteinGrams={proteinGrams}
@@ -556,11 +550,15 @@ export default function App() {
                   isLocked={isLocked}
                   setIsLocked={setIsLocked}
                   selectedClient={selectedClient}
-                  onOpenClientSelector={handleCycleClient}
+                  clients={clients}
+                  onSelectClient={(idx) => {
+                    setSelectedClientIndex(idx);
+                    if (showToast) showToast(`Switched active profile to ${clients[idx].name}!`);
+                  }}
                 />
               </section>
 
-              <section className="lg:col-span-6">
+              <section className="lg:col-span-8">
                 <DailyPlanCreator
                   selectedDay={selectedDay}
                   setSelectedDay={setSelectedDay}
@@ -574,15 +572,6 @@ export default function App() {
                   onDeleteExercise={handleDeleteExercise}
                   onDuplicateDays={() => showToast('Plan duplicated across Mon - Sun!')}
                   onOpenNutritionPdf={() => setIsNutritionPdfOpen(true)}
-                />
-              </section>
-
-              <section className="lg:col-span-3">
-                <LogReview
-                  logItems={logItems}
-                  onApproveLog={() => showToast(`Approved today's log for ${selectedClient.name}!`)}
-                  onOpenFeedback={() => setIsFeedbackOpen(true)}
-                  onFlagDay={() => showToast('Flagged Oct 24th for review', 'warning')}
                 />
               </section>
             </div>

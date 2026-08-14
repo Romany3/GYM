@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Users, 
   ShieldCheck, 
@@ -25,6 +26,7 @@ export default function ClientsPage({
   revokedPasskeys = {},
   onToggleRevokePasskey
 }) {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [selectedClientIndex, setSelectedClientIndex] = useState(0);
@@ -161,19 +163,19 @@ export default function ClientsPage({
       {/* Header Controls Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="font-serif-header text-3xl font-bold text-white tracking-tight">
-          Clients Directory
+          {t('clients.title')}
         </h1>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           {/* Search Bar */}
           <div className="relative w-full sm:w-56">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+            <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search clients..."
-              className="w-full bg-[#131926] text-slate-200 text-xs rounded-xl pl-9 pr-3 py-2 border border-slate-700/60 focus:outline-none focus:border-blue-500"
+              placeholder={t('clients.searchPlaceholder')}
+              className="w-full bg-[#131926] text-slate-200 text-xs rounded-xl ps-9 pe-3 py-2 border border-slate-700/60 focus:outline-none focus:border-blue-500"
             />
           </div>
 
@@ -181,22 +183,20 @@ export default function ClientsPage({
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full sm:w-auto bg-[#131926] text-slate-300 text-xs font-semibold rounded-xl px-3 py-2 border border-slate-700/60 focus:outline-none focus:border-blue-500 cursor-pointer"
+            className="bg-[#131926] text-slate-200 text-xs rounded-xl px-3 py-2 border border-slate-700/60 focus:outline-none focus:border-blue-500 cursor-pointer"
           >
-            <option value="ALL">Status: All</option>
-            <option value="ACTIVE">Active</option>
-            <option value="AT RISK">At Risk</option>
-            <option value="ONBOARDING">Onboarding</option>
-            <option value="FROZEN">Frozen / Suspended</option>
+            <option value="ALL">{t('common.allStatus')}</option>
+            <option value="ACTIVE">{t('common.active')}</option>
+            <option value="AT_RISK">{t('common.atRisk')}</option>
           </select>
 
-          {/* Add New Client Button */}
+          {/* Add Client Button */}
           <button
             onClick={onQuickAddClient}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 py-2 px-4 bg-gradient-to-r from-blue-300 via-sky-200 to-blue-200 hover:from-blue-200 hover:to-sky-100 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-blue-900/40 transition-all cursor-pointer shrink-0"
           >
             <Plus className="w-4 h-4" />
-            <span>Add New Client</span>
+            <span>{t('clients.addClient')}</span>
           </button>
         </div>
       </div>
@@ -292,19 +292,23 @@ export default function ClientsPage({
                     <div className="flex items-center gap-2 flex-wrap shrink-0">
                       {revokedPasskeys[client.passkey || 'FA-9B2X71'] && (
                         <span className="text-[10px] font-extrabold tracking-wider uppercase px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800">
-                          🚫 REVOKED
+                          🚫 {t('clients.revokedBadge')}
                         </span>
                       )}
                       <span
                         className={`text-[10px] font-bold tracking-wider uppercase px-3 py-1 rounded-full border ${
                           client.status === 'ACTIVE'
                             ? 'bg-blue-950/80 border-blue-800 text-blue-300 shadow-sm'
-                            : client.status === 'AT RISK'
+                            : client.status === 'AT RISK' || client.status === 'AT_RISK'
                             ? 'bg-red-950/80 border-red-900 text-red-300 shadow-sm'
                             : 'bg-amber-950/80 border-amber-800 text-amber-300 shadow-sm'
                         }`}
                       >
-                        {client.status}
+                        {client.status === 'AT RISK' || client.status === 'AT_RISK' 
+                          ? t('common.atRisk') 
+                          : client.status === 'ACTIVE' 
+                          ? t('common.active') 
+                          : client.status}
                       </span>
                     </div>
                   </div>

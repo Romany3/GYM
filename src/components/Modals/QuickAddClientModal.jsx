@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, UserPlus, Key } from 'lucide-react';
 
 export default function QuickAddClientModal({ 
@@ -9,6 +10,7 @@ export default function QuickAddClientModal({
   currentClientCount = 18,
   onNavigateToSubscription
 }) {
+  const { t } = useTranslation();
   // 10 Comprehensive Fields
   const [name, setName] = useState('');
   const [country, setCountry] = useState('Egypt');
@@ -252,7 +254,7 @@ export default function QuickAddClientModal({
             type="submit"
             className="w-full py-3.5 bg-gradient-to-r from-blue-300 via-sky-200 to-blue-200 hover:from-blue-200 hover:to-sky-100 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all mt-2 cursor-pointer"
           >
-            Register Client & Generate Credentials Passkey
+            {t('modals.quickAddClient.create')}
           </button>
         </form>
       </div>
