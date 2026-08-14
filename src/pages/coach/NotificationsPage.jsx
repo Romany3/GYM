@@ -15,6 +15,17 @@ export default function NotificationsPage({ onNavigate, onOpenChangeRequests, sh
 
   const [notifications, setNotifications] = useState([
     {
+      id: 'n0',
+      type: 'daily_log',
+      title: 'Daily Log & Meal Report Submitted',
+      message: 'Marcus Jensen submitted today\'s Daily Log (4 prescribed meals eaten, 3 workouts completed, Note: "Felt strong on bench press").',
+      time: 'Just now',
+      unread: true,
+      category: 'LOG',
+      actionLabel: 'Review Daily Log',
+      actionType: 'client-details',
+    },
+    {
       id: 'n1',
       type: 'exercise_swap',
       title: 'Exercise Substitution Request',
@@ -34,7 +45,7 @@ export default function NotificationsPage({ onNavigate, onOpenChangeRequests, sh
       unread: true,
       category: 'CHECKIN',
       actionLabel: 'View Progress Photos',
-      actionType: 'analytics',
+      actionType: 'client-details',
     },
     {
       id: 'n3',
@@ -91,6 +102,8 @@ export default function NotificationsPage({ onNavigate, onOpenChangeRequests, sh
 
   const getNotificationIcon = (type) => {
     switch (type) {
+      case 'daily_log':
+        return <CheckCircle2 className="w-4 h-4 text-emerald-400" />;
       case 'exercise_swap':
         return <RefreshCw className="w-4 h-4 text-amber-400" />;
       case 'checkin':
@@ -140,7 +153,7 @@ export default function NotificationsPage({ onNavigate, onOpenChangeRequests, sh
 
       {/* Filter Tabs Bar */}
       <div className="flex items-center gap-1.5 overflow-x-auto bg-[#121724] p-1.5 rounded-2xl border border-slate-800 text-xs font-semibold scrollbar-none">
-        {['ALL', 'UNREAD', 'SWAP', 'CHECKIN', 'CLIENT', 'SYSTEM'].map((tab) => (
+        {['ALL', 'UNREAD', 'LOG', 'SWAP', 'CHECKIN', 'CLIENT', 'SYSTEM'].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveFilter(tab)}

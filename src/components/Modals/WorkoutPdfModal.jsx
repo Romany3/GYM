@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { X, FileText, Download, Loader2, User, Phone, Award, Target, Video } from 'lucide-react';
+import { X, FileText, Download, Loader2, User, Target, Video } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 

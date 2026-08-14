@@ -10,7 +10,6 @@ import {
   Upload, 
   Send, 
   X, 
-  Flame, 
   Sun,
   Moon,
   Cookie,
@@ -24,30 +23,27 @@ import {
   Apple,
   Image as ImageIcon,
   Trash2,
-  ExternalLink
+  ExternalLink,
+  ClipboardCheck
 } from 'lucide-react';
 import WatchVideoModal from '@/components/modals/WatchVideoModal';
 import ClientSubstitutionsPage from './ClientSubstitutionsPage';
 import ClientFoodSwapsPage from './ClientFoodSwapsPage';
 
-export default function ClientPortalPage({ clientData, onLogout, showToast }) {
-  const [activeTab, setActiveTab] = useState('workout'); // 'workout' | 'nutrition' | 'checkin' | 'notifications'
+export default function ClientPortalPage({ clientData, onLogout, showToast, onSubmitDailyLog, onSubmitWeeklyCheckin }) {
+  const [activeTab, setActiveTab] = useState('daily-checkin'); // 'daily-checkin' | 'food-swaps' | 'substitutions' | 'notifications'
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   const getClientHeaderTitle = () => {
     switch (activeTab) {
-      case 'workout':
-        return "Today's Workout Protocol";
-      case 'nutrition':
-        return 'Nutrition & Meals Plan';
+      case 'daily-checkin':
+        return 'Daily Check-In & Training Protocol';
       case 'food-swaps':
         return 'Food & Meal Substitutions';
       case 'substitutions':
         return 'Exercise Substitutions & Swaps';
-      case 'checkin':
-        return 'Weekly Progress Check-In';
       case 'notifications':
         return 'Client Notification Center';
       default:
@@ -176,17 +172,140 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
     },
   ]);
 
-  // Meals Checklist State
+  // Meals Checklist State (with full macro tracking: Protein, Carbs, Fats)
   const [meals, setMeals] = useState({
-    breakfast: { title: 'Breakfast', icon: Sun, items: [{ name: 'Scrambled Eggs (3 eggs) & Toast', kcal: 420, eaten: true }] },
-    lunch: { title: 'Lunch', icon: Utensils, items: [{ name: 'Grilled Chicken (200g) & Rice', kcal: 650, eaten: true }] },
-    dinner: { title: 'Dinner', icon: Moon, items: [{ name: 'Salmon Filet & Sweet Potato', kcal: 580, eaten: false }] },
-    snacks: { title: 'Snacks', icon: Cookie, items: [{ name: 'Whey Protein Scoop & Almonds', kcal: 280, eaten: false }] },
+    breakfast: { title: 'Breakfast', icon: Sun, items: [{ name: 'Scrambled Eggs (3 eggs) & Toast', kcal: 520, protein: 38, carbs: 54, fats: 18, eaten: true }] },
+    lunch: { title: 'Lunch', icon: Utensils, items: [{ name: 'Grilled Chicken (200g) & Rice', kcal: 750, protein: 58, carbs: 78, fats: 24, eaten: true }] },
+    dinner: { title: 'Dinner', icon: Moon, items: [{ name: 'Salmon Filet & Sweet Potato', kcal: 720, protein: 54, carbs: 76, fats: 22, eaten: false }] },
+    snacks: { title: 'Snacks', icon: Cookie, items: [{ name: 'Whey Protein Scoop & Almonds', kcal: 460, protein: 30, carbs: 32, fats: 16, eaten: false }] },
   });
 
   // Weekly Checkin State
   const [energyScore, setEnergyScore] = useState(8);
   const [sleepScore, setSleepScore] = useState(7);
+
+  // Daily Log Submission State
+  const [extraActivitiesNotes, setExtraActivitiesNotes] = useState('');
+  const [isDailyLogSubmittedToday, setIsDailyLogSubmittedToday] = useState(false);
+  const [submittedTimestamp, setSubmittedTimestamp] = useState(null);
+
+  // Weekly Progress Evaluation State & Photos
+  const [isWeeklyEvaluationSubmitted, setIsWeeklyEvaluationSubmitted] = useState(false);
+  const [weeklySubmittedTimestamp, setWeeklySubmittedTimestamp] = useState(null);
+  const [progressPhotos, setProgressPhotos] = useState({
+    front: null,
+    side: null,
+    back: null,
+  });
+
+  const handlePhotoUpload = (pose, event) => {
+    const file = event.target.files && event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProgressPhotos((prev) => ({ ...prev, [pose]: e.target.result }));
+        if (showToast) showToast(`Uploaded ${pose.toUpperCase()} view photo!`);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // 1. Submit Daily Log (Meals, Workouts, Extra Notes)
+  const handleDailyLogSubmit = () => {
+    const eatenMealsList = [];
+    let totalKcalLogged = 0;
+    let totalProteinLogged = 0;
+    let totalCarbsLogged = 0;
+    let totalFatsLogged = 0;
+
+    Object.keys(meals).forEach((catKey) => {
+      const cat = meals[catKey];
+      cat.items.forEach((item) => {
+        if (item.eaten) {
+          eatenMealsList.push({
+            name: item.name,
+            kcal: item.kcal,
+            protein: item.protein || 0,
+            carbs: item.carbs || 0,
+            fats: item.fats || 0,
+            category: cat.title,
+          });
+          totalKcalLogged += item.kcal || 0;
+          totalProteinLogged += item.protein || 0;
+          totalCarbsLogged += item.carbs || 0;
+          totalFatsLogged += item.fats || 0;
+        }
+      });
+    });
+
+    const completedExercisesList = exercises.map((ex) => {
+      const completedSetsCount = ex.loggedSets.filter((s) => s.completed).length;
+      const setsSummary = ex.loggedSets.map((s) => `${s.weight || 0}kg x ${s.reps || 0} (${s.completed ? '✓' : 'x'})`).join(', ');
+      return {
+        name: ex.name,
+        target: ex.target,
+        completedSets: completedSetsCount,
+        totalSets: ex.loggedSets.length,
+        loggedSets: setsSummary,
+        isFullyCompleted: completedSetsCount === ex.loggedSets.length && ex.loggedSets.length > 0,
+      };
+    });
+
+    const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const payload = {
+      type: 'daily_log',
+      clientId: clientData?.id || 'c1',
+      clientName: clientData?.name || 'Marcus Jensen',
+      date: new Date().toISOString().split('T')[0],
+      submittedAt: nowStr,
+      eatenMealsCount: eatenMealsList.length,
+      eatenMeals: eatenMealsList,
+      totalKcalLogged,
+      totalProteinLogged,
+      totalCarbsLogged,
+      totalFatsLogged,
+      completedExercisesCount: completedExercisesList.filter((e) => e.completedSets > 0).length,
+      completedExercises: completedExercisesList,
+      extraNotes: extraActivitiesNotes,
+    };
+
+    setIsDailyLogSubmittedToday(true);
+    setSubmittedTimestamp(nowStr);
+
+    if (onSubmitDailyLog) {
+      onSubmitDailyLog(payload);
+    } else if (showToast) {
+      showToast('Daily details & workout log submitted to Coach Alex Thorne!');
+    }
+  };
+
+  // 2. Submit Weekly Evaluation Form & Photos
+  const handleWeeklyEvaluationSubmit = () => {
+    const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const payload = {
+      type: 'weekly_evaluation',
+      clientId: clientData?.id || 'c1',
+      clientName: clientData?.name || 'Marcus Jensen',
+      date: new Date().toISOString().split('T')[0],
+      submittedAt: nowStr,
+      checkin: {
+        sleepHours: `${sleepScore} hrs`,
+        energyLevel: `${energyScore} / 10`,
+      },
+      progressPhotos,
+    };
+
+    setIsWeeklyEvaluationSubmitted(true);
+    setWeeklySubmittedTimestamp(nowStr);
+
+    if (onSubmitWeeklyCheckin) {
+      onSubmitWeeklyCheckin(payload);
+    } else if (showToast) {
+      showToast('Weekly progress evaluation & photos submitted to Coach Alex Thorne!');
+    }
+  };
 
   // Handlers
   const handleToggleSet = (exId, setIdx) => {
@@ -234,10 +353,6 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
     setIsSwapModalOpen(false);
     setSelectedExerciseToSwap(null);
     setSwapReasonNote('');
-  };
-
-  const handleSubmitWorkoutReport = () => {
-    if (showToast) showToast('Submitted workout report to Coach Alex Thorne!');
   };
 
   const handleToggleMeal = (catKey, itemIdx) => {
@@ -325,11 +440,9 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
           {/* Navigation Items */}
           <nav className="space-y-1.5">
             {[
-              { id: 'workout', label: "Today's Workout", icon: Dumbbell },
-              { id: 'nutrition', label: 'Nutrition & Meals', icon: Utensils },
+              { id: 'daily-checkin', label: 'Daily Check-In & Protocol', icon: ClipboardCheck },
               { id: 'food-swaps', label: 'Food Swaps', icon: Apple },
               { id: 'substitutions', label: 'Exercise Swaps', icon: ArrowLeftRight },
-              { id: 'checkin', label: 'Weekly Check-In', icon: Calendar },
               { id: 'notifications', label: 'Notifications', icon: Bell },
             ].map((item) => {
               const Icon = item.icon;
@@ -480,346 +593,393 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
 
         {/* Main Client Content Area */}
         <main className="p-4 sm:p-6 md:p-8 flex-1 space-y-6 w-full">
-
-        {/* TAB 1: WORKOUT EXECUTION VIEW */}
-        {activeTab === 'workout' && (
-          <div className="space-y-6">
-            {/* Workout Banner Card */}
-            <div className="bg-gradient-to-r from-blue-950/60 via-indigo-950/40 to-slate-900 border border-blue-500/30 rounded-2xl p-5 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400 bg-blue-900/60 px-2 py-0.5 rounded border border-blue-700/60">
-                  DAY 02 PROTOCOL
-                </span>
-                <h2 className="font-serif-header text-2xl font-bold text-white mt-1">
-                  Push Hypertrophy Split
-                </h2>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Target: Chest, Shoulders & Triceps • Est. Duration: 45 Mins
-                </p>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800 text-xs font-semibold text-amber-400">
-                  <Flame className="w-4 h-4" />
-                  <span>Streak: 14 Days</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Exercise List */}
-            <div className="space-y-5">
-              {exercises.map((ex) => {
-                const isAllSetsComplete = ex.loggedSets.length > 0 && ex.loggedSets.every((s) => s.completed);
-                return (
-                  <div
-                    key={ex.id}
-                    className={`border rounded-2xl p-5 shadow-lg space-y-4 transition-all ${
-                      isAllSetsComplete
-                        ? 'bg-[#101c18] border-emerald-500/60 shadow-emerald-950/20'
-                        : 'bg-[#121724] border-slate-800/90'
-                    }`}
-                  >
-                    {/* Exercise Header */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
-                      <div>
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="text-base font-bold text-slate-100">{ex.name}</h3>
-                          <span className="text-[10px] font-semibold text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
-                            {ex.target}
-                          </span>
-                          {isAllSetsComplete && (
-                            <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/90 px-2 py-0.5 rounded border border-emerald-800/60 flex items-center gap-1">
-                              <CheckCircle2 className="w-3 h-3" /> Completed
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs text-slate-400 mt-1">
-                          Prescribed: <strong className="text-slate-200">{ex.sets} Sets x {ex.reps} Reps</strong> • Tempo: <span className="font-mono text-blue-300 font-bold">{ex.tempo}</span>
-                        </p>
-                      </div>
-
-                      {/* Action Buttons Row - Equal 3 Columns on Mobile, Flex on Desktop */}
-                      <div className="grid grid-cols-3 sm:flex sm:items-center sm:w-auto gap-2 w-full">
-                        {/* Whole Exercise Complete Check Button */}
-                        <button
-                          onClick={() => handleToggleWholeExercise(ex.id)}
-                          className={`flex items-center justify-center gap-1 px-2.5 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
-                            isAllSetsComplete
-                              ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
-                              : 'bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700'
-                          }`}
-                          title="Mark all sets in this exercise completed"
-                        >
-                          <Check className="w-3.5 h-3.5 shrink-0" />
-                          <span className="truncate">{isAllSetsComplete ? 'Done ✅' : 'Check All'}</span>
-                        </button>
-
-                        {/* Video Tutorial Trigger */}
-                        <button
-                          onClick={() => {
-                            setSelectedVideoExercise(ex);
-                            setIsVideoOpen(true);
-                          }}
-                          className="flex items-center justify-center gap-1 px-2.5 py-2 bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 border border-blue-800/60 text-xs font-semibold rounded-xl transition-all cursor-pointer"
-                        >
-                          <Play className="w-3.5 h-3.5 shrink-0" />
-                          <span className="truncate">Demo</span>
-                        </button>
-
-                        {/* Request Substitution Trigger */}
-                        <button
-                          onClick={() => handleOpenSwapModal(ex)}
-                          className="flex items-center justify-center gap-1 px-2.5 py-2 bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-800/60 text-xs font-semibold rounded-xl transition-all cursor-pointer"
-                          title="Request machine swap or alternative"
-                        >
-                          <RefreshCw className="w-3.5 h-3.5 shrink-0" />
-                          <span className="truncate">Swap</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* 1. MOBILE NATIVE SET LOGGING CARDS (Visible on < md) */}
-                    <div className="space-y-2.5 md:hidden">
-                      {ex.loggedSets.map((set, idx) => (
-                        <div
-                          key={idx}
-                          className={`p-3 rounded-xl border space-y-2.5 transition-all ${
-                            set.completed
-                              ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-100 font-semibold'
-                              : 'bg-[#171e2e] border-slate-800 text-slate-300'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="font-bold text-xs text-blue-300">Set {set.setNum}</span>
-                            <button
-                              onClick={() => handleToggleSet(ex.id, idx)}
-                              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
-                                set.completed
-                                  ? 'bg-emerald-500 text-slate-950 shadow-sm'
-                                  : 'bg-[#121724] hover:bg-slate-800 text-slate-300 border border-slate-700/60'
-                              }`}
-                            >
-                              <Check className="w-3.5 h-3.5" />
-                              <span>{set.completed ? 'Done ✅' : 'Check Set'}</span>
-                            </button>
-                          </div>
-
-                          <div className="grid grid-cols-3 gap-2 text-xs">
-                            <div>
-                              <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">Reps</label>
-                              <input
-                                type="number"
-                                value={set.reps}
-                                onChange={(e) => handleUpdateSetField(ex.id, idx, 'reps', e.target.value)}
-                                className="w-full bg-[#111622] text-slate-100 text-xs p-2 rounded-lg border border-slate-700/60 text-center font-mono font-bold"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">Weight (kg)</label>
-                              <input
-                                type="number"
-                                value={set.weight}
-                                onChange={(e) => handleUpdateSetField(ex.id, idx, 'weight', e.target.value)}
-                                className="w-full bg-[#111622] text-slate-100 text-xs p-2 rounded-lg border border-slate-700/60 text-center font-mono font-bold"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">RPE (1-10)</label>
-                              <input
-                                type="number"
-                                step="0.5"
-                                value={set.rpe}
-                                onChange={(e) => handleUpdateSetField(ex.id, idx, 'rpe', e.target.value)}
-                                className="w-full bg-[#111622] text-slate-100 text-xs p-2 rounded-lg border border-slate-700/60 text-center font-mono font-bold"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* 2. DESKTOP INTERACTIVE SETS TABLE (Visible on >= md) */}
-                    <div className="hidden md:block space-y-2 text-xs">
-                      <div className="grid grid-cols-5 text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3">
-                        <span>Set</span>
-                        <span>Reps</span>
-                        <span>Weight (kg)</span>
-                        <span>RPE (1-10)</span>
-                        <span className="text-right">Log Set</span>
-                      </div>
-
-                      {ex.loggedSets.map((set, idx) => (
-                        <div
-                          key={idx}
-                          className={`grid grid-cols-5 items-center p-2.5 rounded-xl border transition-all ${
-                            set.completed
-                              ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-100 font-semibold'
-                              : 'bg-[#171e2e] border-slate-800 text-slate-300'
-                          }`}
-                        >
-                          <span className="font-bold text-slate-400">Set {set.setNum}</span>
-
-                          <input
-                            type="number"
-                            value={set.reps}
-                            onChange={(e) => handleUpdateSetField(ex.id, idx, 'reps', e.target.value)}
-                            className="w-16 bg-[#111622] text-slate-100 text-xs p-1.5 rounded-lg border border-slate-700/60 text-center font-semibold"
-                          />
-
-                          <input
-                            type="number"
-                            value={set.weight}
-                            onChange={(e) => handleUpdateSetField(ex.id, idx, 'weight', e.target.value)}
-                            className="w-16 bg-[#111622] text-slate-100 text-xs p-1.5 rounded-lg border border-slate-700/60 text-center font-semibold"
-                          />
-
-                          <input
-                            type="number"
-                            step="0.5"
-                            value={set.rpe}
-                            onChange={(e) => handleUpdateSetField(ex.id, idx, 'rpe', e.target.value)}
-                            className="w-16 bg-[#111622] text-slate-100 text-xs p-1.5 rounded-lg border border-slate-700/60 text-center font-semibold"
-                          />
-
-                          <div className="text-right">
-                            <button
-                              onClick={() => handleToggleSet(ex.id, idx)}
-                              className={`px-3 py-1.5 rounded-lg font-bold text-xs transition-all cursor-pointer inline-flex items-center gap-1 ${
-                                set.completed
-                                  ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-sm'
-                                  : 'bg-[#121724] hover:bg-slate-800 text-slate-300 border border-slate-700/60'
-                              }`}
-                            >
-                              {set.completed ? (
-                                <>
-                                  <Check className="w-3.5 h-3.5" />
-                                  <span>Done</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Check className="w-3.5 h-3.5 text-slate-400" />
-                                  <span>Check</span>
-                                </>
-                              )}
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Complete Workout Button */}
-            <div className="pt-2">
-              <button
-                onClick={handleSubmitWorkoutReport}
-                className="w-full py-4 bg-gradient-to-r from-blue-400 via-sky-300 to-blue-300 hover:from-blue-300 hover:to-sky-200 text-slate-950 font-bold text-sm rounded-2xl shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <CheckCircle2 className="w-5 h-5" />
-                <span>Finish & Submit Workout Report to Coach</span>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 2: NUTRITION & MEALS VIEW */}
-        {activeTab === 'nutrition' && (
-          <div className="space-y-6">
-            {/* Daily Macro Targets Card */}
-            <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-              <div className="flex items-center justify-between">
+        {/* TAB 0: MASTER UNIFIED DAILY CHECK-IN & PROTOCOL VIEW */}
+        {activeTab === 'daily-checkin' && (
+          <div className="space-y-8">
+            {/* Top Header & Weekly Reminder Banner */}
+            <div className="space-y-4">
+              <div className="bg-gradient-to-r from-blue-950/80 via-indigo-950/60 to-slate-900 border border-blue-500/40 rounded-2xl p-5 md:p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <h3 className="font-serif-header text-lg font-bold text-white">Daily Macro Goal</h3>
-                  <p className="text-xs text-slate-400">Target Calories: <strong className="text-blue-300">2,450 kcal</strong></p>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-blue-300 bg-blue-900/60 px-2.5 py-0.5 rounded border border-blue-700/60">
+                      DAILY ATHLETE PROTOCOL & CHECK-IN
+                    </span>
+                    {isDailyLogSubmittedToday ? (
+                      <span className="text-[10px] font-extrabold text-emerald-400 bg-emerald-950/90 px-2.5 py-0.5 rounded-full border border-emerald-800/80 flex items-center gap-1">
+                        ✓ SUBMITTED TODAY ({submittedTimestamp})
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-extrabold text-amber-400 bg-amber-950/90 px-2.5 py-0.5 rounded-full border border-amber-800/80 flex items-center gap-1 animate-pulse">
+                        • PENDING TODAY'S SUBMISSION
+                      </span>
+                    )}
+                    {(progressPhotos.front || progressPhotos.side || progressPhotos.back) && (
+                      <span className="text-[10px] font-extrabold text-sky-400 bg-sky-950/90 px-2.5 py-0.5 rounded-full border border-sky-800/80 flex items-center gap-1">
+                        📷 PHOTOS ATTACHED
+                      </span>
+                    )}
+                  </div>
+                  <h2 className="font-serif-header text-xl sm:text-2xl font-bold text-white mt-1.5">
+                    Daily Check-In & Training Protocol
+                  </h2>
+                  <p className="text-xs text-slate-300 mt-0.5">
+                    Execute your daily workout protocol, check off prescribed meals, and submit your daily log to Coach Alex Thorne.
+                  </p>
                 </div>
+
                 <button
-                  onClick={() => showToast && showToast('Opening official Coach PDF meal plan...')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 border border-blue-800/60 rounded-xl text-xs font-semibold transition-all"
+                  onClick={handleDailyLogSubmit}
+                  className="px-5 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
                 >
-                  <FileText className="w-4 h-4" />
-                  <span>View Coach PDF Plan</span>
+                  <Send className="w-4 h-4" />
+                  <span>{isDailyLogSubmittedToday ? 'Resubmit Daily Log Only' : 'Submit Daily Log Only'}</span>
                 </button>
               </div>
 
-              {/* Macro Bars */}
-              <div className="grid grid-cols-3 gap-3 text-xs">
-                <div className="bg-[#171e2e] p-3 rounded-xl border border-slate-800">
-                  <span className="text-slate-400 font-semibold block">Protein Target</span>
-                  <span className="text-sm font-bold text-slate-100">185g</span>
+              {/* Weekly Evaluation Reminder Alert Box */}
+              <div className="bg-gradient-to-r from-amber-950/80 via-slate-900 to-slate-900 border border-amber-500/40 rounded-2xl p-4 shadow-lg flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                    <Bell className="w-5 h-5 animate-bounce" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-amber-200 flex items-center gap-2">
+                      <span>Weekly Evaluation & Progress Photos Reminder</span>
+                      <span className="px-2 py-0.5 bg-amber-900/80 text-amber-300 rounded text-[9px] uppercase font-mono">Due Every Sunday</span>
+                    </h4>
+                    <p className="text-[11px] text-slate-300 mt-0.5">
+                      Don't forget to submit your weekly progress photos (Front, Side, Back) and rate your weekly energy & sleep quality below.
+                    </p>
+                  </div>
                 </div>
-                <div className="bg-[#171e2e] p-3 rounded-xl border border-slate-800">
-                  <span className="text-slate-400 font-semibold block">Carbs Target</span>
-                  <span className="text-sm font-bold text-slate-100">240g</span>
-                </div>
-                <div className="bg-[#171e2e] p-3 rounded-xl border border-slate-800">
-                  <span className="text-slate-400 font-semibold block">Fats Target</span>
-                  <span className="text-sm font-bold text-slate-100">70g</span>
-                </div>
+
+                <a
+                  href="#weekly-form-section"
+                  className="px-3 py-1.5 bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-700/60 rounded-xl text-xs font-bold transition-all shrink-0 whitespace-nowrap"
+                >
+                  Jump to Weekly Form ↓
+                </a>
               </div>
             </div>
 
-            {/* Meals List Checklist */}
-            <div className="space-y-4">
-              {Object.entries(meals).map(([key, cat]) => {
-                const Icon = cat.icon;
+            {/* Section 1: Prescribed Workout Protocol (Full Details) */}
+            <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 md:p-6 shadow-xl space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-red-950/80 border border-red-800/60 flex items-center justify-center text-red-400">
+                    <Dumbbell className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-red-400 bg-red-950/90 px-2 py-0.5 rounded border border-red-800/60">
+                        DAY 02 PROTOCOL
+                      </span>
+                      <h3 className="font-serif-header text-lg font-bold text-white">Push Hypertrophy Split</h3>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Target: Chest, Upper Chest, Shoulders & Triceps • Est. Duration: 45 Mins
+                    </p>
+                  </div>
+                </div>
+
+                <span className="text-xs font-mono font-semibold text-slate-300 bg-[#171e2e] px-3 py-1.5 rounded-xl border border-slate-700/60">
+                  {exercises.filter(ex => ex.loggedSets.some(s => s.completed)).length} / {exercises.length} Exercises Completed
+                </span>
+              </div>
+
+              <div className="space-y-4">
+                {exercises.map((ex) => {
+                  const isAllSetsComplete = ex.loggedSets.length > 0 && ex.loggedSets.every((s) => s.completed);
+                  return (
+                    <div
+                      key={ex.id}
+                      className={`border rounded-2xl p-4 sm:p-5 shadow-lg space-y-4 transition-all ${
+                        isAllSetsComplete
+                          ? 'bg-[#101c18] border-emerald-500/60 shadow-emerald-950/20'
+                          : 'bg-[#171e2e] border-slate-700/60'
+                      }`}
+                    >
+                      {/* Exercise Header */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+                        <div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="text-sm font-bold text-slate-100">{ex.name}</h4>
+                            <span className="text-[10px] font-semibold text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
+                              {ex.target}
+                            </span>
+                            {isAllSetsComplete && (
+                              <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/90 px-2 py-0.5 rounded border border-emerald-800/60 flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3" /> Completed
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-slate-400 mt-1">
+                            Prescribed: <strong className="text-slate-200">{ex.sets} Sets x {ex.reps} Reps</strong> • Tempo: <span className="font-mono text-blue-300 font-bold">{ex.tempo}</span>
+                          </p>
+                        </div>
+
+                        {/* Quick Action Controls */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            onClick={() => handleToggleWholeExercise(ex.id)}
+                            className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                              isAllSetsComplete
+                                ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                                : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
+                            }`}
+                          >
+                            <Check className="w-3.5 h-3.5" />
+                            <span>{isAllSetsComplete ? 'Done ✅' : 'Check All'}</span>
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              setSelectedVideoExercise(ex);
+                              setIsVideoOpen(true);
+                            }}
+                            className="flex items-center gap-1 px-2.5 py-1.5 bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 border border-blue-800/60 text-xs font-semibold rounded-xl transition-all cursor-pointer"
+                          >
+                            <Play className="w-3.5 h-3.5" />
+                            <span>Demo</span>
+                          </button>
+
+                          <button
+                            onClick={() => handleOpenSwapModal(ex)}
+                            className="flex items-center gap-1 px-2.5 py-1.5 bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-800/60 text-xs font-semibold rounded-xl transition-all cursor-pointer"
+                          >
+                            <RefreshCw className="w-3.5 h-3.5" />
+                            <span>Swap</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Set Logger Inputs */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                        {ex.loggedSets.map((set, setIdx) => (
+                          <div
+                            key={setIdx}
+                            className={`p-3 rounded-xl border space-y-2 transition-all ${
+                              set.completed
+                                ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-100'
+                                : 'bg-[#121724] border-slate-800 text-slate-300'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-xs text-blue-300">Set {set.setNum}</span>
+                              <button
+                                onClick={() => handleToggleSet(ex.id, setIdx)}
+                                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                                  set.completed
+                                    ? 'bg-emerald-500 text-slate-950 shadow-sm'
+                                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
+                                }`}
+                              >
+                                <Check className="w-3 h-3" />
+                                <span>{set.completed ? 'Done' : 'Mark'}</span>
+                              </button>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              <div>
+                                <span className="text-[10px] text-slate-400 block font-semibold">Weight (kg)</span>
+                                <input
+                                  type="number"
+                                  disabled={set.completed}
+                                  value={set.weight}
+                                  onChange={(e) => handleUpdateSetField(ex.id, setIdx, 'weight', e.target.value)}
+                                  className={`w-full font-bold rounded-lg px-2 py-1 border text-center transition-all ${
+                                    set.completed
+                                      ? 'bg-emerald-950/60 text-emerald-300 border-emerald-700/60 cursor-not-allowed opacity-80'
+                                      : 'bg-[#1b2336] text-slate-100 border-slate-700/60 focus:outline-none focus:border-blue-500'
+                                  }`}
+                                />
+                              </div>
+                              <div>
+                                <span className="text-[10px] text-slate-400 block font-semibold">Reps</span>
+                                <input
+                                  type="number"
+                                  disabled={set.completed}
+                                  value={set.reps}
+                                  onChange={(e) => handleUpdateSetField(ex.id, setIdx, 'reps', e.target.value)}
+                                  className={`w-full font-bold rounded-lg px-2 py-1 border text-center transition-all ${
+                                    set.completed
+                                      ? 'bg-emerald-950/60 text-emerald-300 border-emerald-700/60 cursor-not-allowed opacity-80'
+                                      : 'bg-[#1b2336] text-slate-100 border-slate-700/60 focus:outline-none focus:border-blue-500'
+                                  }`}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Section 2: Nutrition & Prescribed Meals Plan (Full Details) */}
+            <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 md:p-6 shadow-xl space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-950/80 border border-amber-800/60 flex items-center justify-center text-amber-400">
+                    <Utensils className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-serif-header text-lg font-bold text-white">Nutrition & Prescribed Meal Plan</h3>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Daily Target: {clientData?.targetKcal || 2450} kcal • Protein: 180g • Carbs: 240g • Fats: 80g
+                    </p>
+                  </div>
+                </div>
+
+                <span className="text-xs font-mono font-semibold text-amber-300 bg-amber-950/80 px-3 py-1.5 rounded-xl border border-amber-800/60">
+                  {Object.values(meals).flatMap(c => c.items).filter(i => i.eaten).length} / {Object.values(meals).flatMap(c => c.items).length} Meals Eaten
+                </span>
+              </div>
+
+              {/* Daily Macro Progress Summary Bars (Fully Dynamic Tracking) */}
+              {(() => {
+                const eatenItems = Object.values(meals).flatMap(c => c.items).filter(i => i.eaten);
+                const loggedKcal = eatenItems.reduce((acc, curr) => acc + (curr.kcal || 0), 0);
+                const loggedProtein = eatenItems.reduce((acc, curr) => acc + (curr.protein || 0), 0);
+                const loggedCarbs = eatenItems.reduce((acc, curr) => acc + (curr.carbs || 0), 0);
+                const loggedFats = eatenItems.reduce((acc, curr) => acc + (curr.fats || 0), 0);
+
+                const targetKcal = clientData?.targetKcal || 2450;
+                const targetProtein = clientData?.targetProtein || 180;
+                const targetCarbs = clientData?.targetCarbs || 240;
+                const targetFats = clientData?.targetFats || 80;
+
                 return (
-                  <div key={key} className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-lg space-y-3">
-                    <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
-                      <Icon className="w-4 h-4 text-blue-400" />
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200">{cat.title}</h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#171e2e] border border-slate-700/60 rounded-xl p-4">
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">CALORIES</span>
+                      <span className="text-sm font-black text-slate-100">
+                        {loggedKcal} / {targetKcal} kcal
+                      </span>
+                      <div className="w-full h-1.5 bg-slate-800 rounded-full mt-1.5 overflow-hidden">
+                        <div
+                          className="h-full bg-blue-500 rounded-full transition-all duration-300"
+                          style={{ width: `${Math.min(100, Math.round((loggedKcal / targetKcal) * 100))}%` }}
+                        />
+                      </div>
                     </div>
 
-                    <div className="space-y-2">
-                      {cat.items.map((item, idx) => (
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">PROTEIN</span>
+                      <span className="text-sm font-black text-rose-400">{loggedProtein}g / {targetProtein}g</span>
+                      <div className="w-full h-1.5 bg-slate-800 rounded-full mt-1.5 overflow-hidden">
                         <div
-                          key={idx}
-                          onClick={() => handleToggleMeal(key, idx)}
-                          className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all ${
-                            item.eaten
-                              ? 'bg-emerald-950/30 border-emerald-800/50 text-emerald-200'
-                              : 'bg-[#171e2e] border-slate-800 text-slate-300'
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <CheckCircle2 className={`w-4 h-4 ${item.eaten ? 'text-emerald-400' : 'text-slate-600'}`} />
-                            <span className={`text-xs font-semibold ${item.eaten ? 'line-through opacity-70' : ''}`}>
-                              {item.name}
-                            </span>
-                          </div>
-                          <span className="text-xs font-mono text-slate-400">{item.kcal} kcal</span>
-                        </div>
-                      ))}
+                          className="h-full bg-rose-500 rounded-full transition-all duration-300"
+                          style={{ width: `${Math.min(100, Math.round((loggedProtein / targetProtein) * 100))}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">CARBS</span>
+                      <span className="text-sm font-black text-amber-400">{loggedCarbs}g / {targetCarbs}g</span>
+                      <div className="w-full h-1.5 bg-slate-800 rounded-full mt-1.5 overflow-hidden">
+                        <div
+                          className="h-full bg-amber-500 rounded-full transition-all duration-300"
+                          style={{ width: `${Math.min(100, Math.round((loggedCarbs / targetCarbs) * 100))}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">FATS</span>
+                      <span className="text-sm font-black text-emerald-400">{loggedFats}g / {targetFats}g</span>
+                      <div className="w-full h-1.5 bg-slate-800 rounded-full mt-1.5 overflow-hidden">
+                        <div
+                          className="h-full bg-emerald-500 rounded-full transition-all duration-300"
+                          style={{ width: `${Math.min(100, Math.round((loggedFats / targetFats) * 100))}%` }}
+                        />
+                      </div>
                     </div>
                   </div>
                 );
-              })}
+              })()}
+
+              {/* Meal Checklist Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {Object.keys(meals).map((catKey) => {
+                  const cat = meals[catKey];
+                  const IconComp = cat.icon;
+                  return (
+                    <div key={catKey} className="bg-[#171e2e] border border-slate-700/60 rounded-xl p-4 space-y-3">
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <span className="font-bold text-xs text-blue-300 flex items-center gap-2">
+                          {IconComp && <IconComp className="w-4 h-4 text-amber-400" />}
+                          {cat.title}
+                        </span>
+                        <span className="text-[10px] font-mono text-slate-400 font-semibold">
+                          {cat.items.reduce((a, b) => a + (b.kcal || 0), 0)} kcal
+                        </span>
+                      </div>
+
+                      {cat.items.map((item, iIdx) => (
+                        <div
+                          key={iIdx}
+                          onClick={() => handleToggleMeal(catKey, iIdx)}
+                          className={`flex items-center justify-between p-3 rounded-lg border text-xs cursor-pointer transition-all ${
+                            item.eaten
+                              ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-100 shadow-sm'
+                              : 'bg-[#121724] border-slate-800 text-slate-300 hover:border-slate-700'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`w-5 h-5 rounded-md flex items-center justify-center border transition-all ${
+                              item.eaten ? 'bg-emerald-500 border-emerald-400 text-slate-950' : 'border-slate-600 bg-slate-900'
+                            }`}>
+                              {item.eaten && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                            </div>
+                            <div>
+                              <span className={item.eaten ? 'line-through text-slate-300 font-medium' : 'font-semibold'}>
+                                {item.name}
+                              </span>
+                              <div className="text-[10px] font-mono flex items-center gap-1.5 mt-0.5">
+                                <span className="text-rose-400 font-semibold">P: {item.protein || 0}g</span>
+                                <span className="text-slate-600">•</span>
+                                <span className="text-amber-400 font-semibold">C: {item.carbs || 0}g</span>
+                                <span className="text-slate-600">•</span>
+                                <span className="text-emerald-400 font-semibold">F: {item.fats || 0}g</span>
+                              </div>
+                            </div>
+                          </div>
+                          <span className="font-mono text-xs text-slate-300 font-bold shrink-0">{item.kcal} kcal</span>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        )}
 
-        {/* TAB 2.5: FOOD SUBSTITUTIONS VIEW */}
-        {activeTab === 'food-swaps' && (
-          <ClientFoodSwapsPage showToast={showToast} />
-        )}
-
-        {/* TAB 3: EXERCISE SUBSTITUTIONS VIEW */}
-        {activeTab === 'substitutions' && (
-          <ClientSubstitutionsPage showToast={showToast} activeExercises={exercises} />
-        )}
-
-        {/* TAB 4: WEEKLY CHECK-IN VIEW */}
-        {activeTab === 'checkin' && (
-          <div className="space-y-6">
-            <div className="bg-[#121724] border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
-              <h3 className="font-serif-header text-lg font-bold text-white">Weekly Evaluation Form</h3>
-
-              <div className="space-y-4 text-xs">
+            {/* Section 3: Weekly Evaluation Form & Progress Photos (Design Matched to User Image) */}
+            <div id="weekly-form-section" className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 md:p-6 shadow-xl space-y-6">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
                 <div>
-                  <div className="flex justify-between font-semibold mb-1">
-                    <span className="text-slate-400">Energy & Vitality (1-10)</span>
-                    <span className="text-blue-300 font-bold">{energyScore} / 10</span>
+                  <h3 className="font-serif-header text-xl font-bold text-white tracking-tight">
+                    Weekly Evaluation Form
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Rate your weekly energy and sleep quality, and upload your 3 weekly progress photos.
+                  </p>
+                </div>
+                <span className="text-[10px] font-extrabold text-amber-300 bg-amber-950 px-2.5 py-1 rounded-full border border-amber-800/60">
+                  REQUIRED EVERY SUNDAY
+                </span>
+              </div>
+
+              {/* Sliders Area (Styled like reference image) */}
+              <div className="space-y-6 pt-1">
+                {/* Energy & Vitality */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs font-semibold">
+                    <span className="text-slate-300">Energy & Vitality (1–10)</span>
+                    <span className="text-blue-400 font-extrabold font-mono text-sm">{energyScore} / 10</span>
                   </div>
                   <input
                     type="range"
@@ -827,14 +987,15 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
                     max="10"
                     value={energyScore}
                     onChange={(e) => setEnergyScore(e.target.value)}
-                    className="w-full h-1.5 bg-slate-800 rounded-lg accent-blue-400 cursor-pointer"
+                    className="w-full h-2 bg-slate-800 rounded-lg accent-blue-400 cursor-pointer"
                   />
                 </div>
 
-                <div>
-                  <div className="flex justify-between font-semibold mb-1">
-                    <span className="text-slate-400">Sleep Quality (1-10)</span>
-                    <span className="text-sky-300 font-bold">{sleepScore} / 10</span>
+                {/* Sleep Quality */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs font-semibold">
+                    <span className="text-slate-300">Sleep Quality (1–10)</span>
+                    <span className="text-sky-400 font-extrabold font-mono text-sm">{sleepScore} / 10</span>
                   </div>
                   <input
                     type="range"
@@ -842,39 +1003,130 @@ export default function ClientPortalPage({ clientData, onLogout, showToast }) {
                     max="10"
                     value={sleepScore}
                     onChange={(e) => setSleepScore(e.target.value)}
-                    className="w-full h-1.5 bg-slate-800 rounded-lg accent-sky-400 cursor-pointer"
+                    className="w-full h-2 bg-slate-800 rounded-lg accent-sky-400 cursor-pointer"
                   />
                 </div>
               </div>
 
-              {/* Progress Photos Upload Zone */}
-              <div className="pt-2 border-t border-slate-800 space-y-3">
-                <h4 className="text-xs font-bold text-slate-300">Upload Weekly Progress Photos</h4>
+              {/* Upload Weekly Progress Photos Section (Matching 3-Card Layout in reference image) */}
+              <div className="space-y-3 pt-4 border-t border-slate-800">
+                <h4 className="text-xs font-bold text-slate-200">Upload Weekly Progress Photos</h4>
 
-                <div className="grid grid-cols-3 gap-3">
-                  {['front', 'side', 'back'].map((pose) => (
-                    <div
-                      key={pose}
-                      className="border-2 border-dashed border-slate-800 hover:border-blue-500/50 rounded-xl p-4 text-center cursor-pointer bg-[#171e2e] transition-all"
-                    >
-                      <Upload className="w-6 h-6 text-slate-400 mx-auto mb-1" />
-                      <span className="text-[10px] font-bold uppercase text-slate-300 block">{pose} view</span>
-                    </div>
-                  ))}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {[
+                    { pose: 'front', title: 'FRONT VIEW' },
+                    { pose: 'side', title: 'SIDE VIEW' },
+                    { pose: 'back', title: 'BACK VIEW' },
+                  ].map(({ pose, title }) => {
+                    const hasPhoto = Boolean(progressPhotos[pose]);
+                    return (
+                      <label
+                        key={pose}
+                        className={`relative border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center min-h-[120px] ${
+                          hasPhoto
+                            ? 'border-emerald-500/80 bg-emerald-950/20'
+                            : 'border-slate-800 hover:border-blue-500/60 bg-[#171e2e]'
+                        }`}
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handlePhotoUpload(pose, e)}
+                          className="hidden"
+                        />
+
+                        {hasPhoto ? (
+                          <div className="relative w-full h-24 rounded-lg overflow-hidden border border-emerald-500/60">
+                            <img src={progressPhotos[pose]} alt={title} className="w-full h-full object-cover" />
+                            <span className="absolute bottom-1 right-1 bg-slate-950/90 text-emerald-400 px-2 py-0.5 rounded text-[9px] font-bold">
+                              ✓ Uploaded
+                            </span>
+                          </div>
+                        ) : (
+                          <>
+                            <Upload className="w-6 h-6 text-slate-400 mb-2 group-hover:scale-110 transition-transform" />
+                            <span className="text-xs font-bold tracking-wider text-slate-300 uppercase">
+                              {title}
+                            </span>
+                          </>
+                        )}
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
 
+              {/* Dedicated Submit Button for Weekly Evaluation & Photos */}
+              <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#171e2e] p-4 rounded-xl border border-slate-700/60">
+                <div>
+                  <h5 className="text-xs font-bold text-slate-100 flex items-center gap-2 flex-wrap">
+                    <span>Weekly Evaluation Submission</span>
+                    {isWeeklyEvaluationSubmitted ? (
+                      <span className="text-[10px] text-emerald-400 font-extrabold bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-800">
+                        ✓ SUBMITTED THIS WEEK ({weeklySubmittedTimestamp})
+                      </span>
+                    ) : (
+                      <span className="text-[10px] text-amber-400 font-bold bg-amber-950/80 px-2 py-0.5 rounded-full border border-amber-800">
+                        PENDING SUNDAY SUBMISSION
+                      </span>
+                    )}
+                  </h5>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    Submits your weekly Energy score, Sleep score, and 3 progress photos to Coach Alex.
+                  </p>
+                </div>
+
+                <button
+                  onClick={handleWeeklyEvaluationSubmit}
+                  className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs rounded-xl shadow-lg shadow-amber-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
+                >
+                  <Calendar className="w-4 h-4" />
+                  <span>{isWeeklyEvaluationSubmitted ? 'Resubmit Weekly Evaluation' : 'Submit Weekly Evaluation & Photos'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Section 4: Extra Activities & Daily Notes for Coach */}
+            <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 md:p-6 shadow-xl space-y-3">
+              <h3 className="font-serif-header text-sm font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-2.5">
+                <FileText className="w-4 h-4 text-blue-400" />
+                <span>Extra Activities & Daily Notes for Coach</span>
+              </h3>
+              <p className="text-xs text-slate-400">
+                Log any extra cardio, steps, off-plan foods, or physical comments for Coach Alex:
+              </p>
+              <textarea
+                value={extraActivitiesNotes}
+                onChange={(e) => setExtraActivitiesNotes(e.target.value)}
+                rows={4}
+                className="w-full bg-[#171e2e] border border-slate-700/70 rounded-xl p-3.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500 resize-none placeholder:text-slate-500"
+                placeholder="e.g. Completed 30 min fasted walk (8,500 steps). Shoulder felt great during bench press. Drank extra water today..."
+              />
+            </div>
+
+            {/* Section 5: Master Daily Check-In Submit Card */}
+            <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 md:p-6 shadow-xl text-center space-y-3">
+              <p className="text-xs text-slate-300 font-medium">
+                Today's eaten meals checklist, completed workout sets, and extra notes will be sent directly to Coach Alex. <span className="text-slate-400 font-normal">(Weekly Evaluation Form is submitted separately above).</span>
+              </p>
               <button
-                onClick={() => showToast && showToast('Submitted weekly check-in form & photos to Coach Alex!')}
-                className="w-full py-3 bg-gradient-to-r from-blue-400 to-indigo-400 text-slate-950 font-bold text-xs rounded-xl shadow-md cursor-pointer"
+                onClick={handleDailyLogSubmit}
+                className="w-full py-3.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-600 hover:from-blue-400 hover:to-indigo-400 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-500/25 active:scale-[0.99] transition-all cursor-pointer flex items-center justify-center gap-2"
               >
-                Submit Weekly Check-In
+                <Send className="w-4 h-4" />
+                <span>{isDailyLogSubmittedToday ? 'Resubmit Daily Check-In Only' : 'Submit Daily Check-In Only'}</span>
               </button>
             </div>
           </div>
         )}
 
-        {/* TAB 4: CLIENT NOTIFICATIONS VIEW */}
+        {/* TAB 1: FOOD SWAPS VIEW */}
+        {activeTab === 'food-swaps' && <ClientFoodSwapsPage showToast={showToast} />}
+
+        {/* TAB 2: EXERCISE SUBSTITUTIONS VIEW */}
+        {activeTab === 'substitutions' && <ClientSubstitutionsPage showToast={showToast} />}
+
+        {/* TAB 3: CLIENT NOTIFICATIONS VIEW */}
         {activeTab === 'notifications' && (
           <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 md:p-6 shadow-xl space-y-5">
             {/* Header & Quick Action Buttons */}

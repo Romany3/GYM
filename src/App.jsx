@@ -283,6 +283,49 @@ export default function App() {
   const [isBatchAssignOpen, setIsBatchAssignOpen] = useState(false);
   const [batchAssignProgramTitle, setBatchAssignProgramTitle] = useState('Hypertrophy Split 4-Day Protocol');
 
+  // Client Daily Logs Submissions Master State
+  const [clientSubmittedLogs, setClientSubmittedLogs] = useState({});
+
+  const handleClientSubmitDailyLog = (logPayload) => {
+    const clientId = logPayload.clientId || currentClientData.id || 'c1';
+    const dateKey = logPayload.date || new Date().toISOString().split('T')[0];
+
+    // Store in master clientSubmittedLogs
+    setClientSubmittedLogs((prev) => ({
+      ...prev,
+      [clientId]: {
+        ...(prev[clientId] || {}),
+        [dateKey]: logPayload,
+      },
+    }));
+
+    showToast(`Daily Log & Workout Details submitted to Coach Alex!`);
+  };
+
+  const handleClientSubmitWeeklyCheckin = (weeklyPayload) => {
+    const clientId = weeklyPayload.clientId || currentClientData.id || 'c1';
+    const dateKey = weeklyPayload.date || new Date().toISOString().split('T')[0];
+
+    setClientSubmittedLogs((prev) => {
+      const clientLogs = prev[clientId] || {};
+      const existingDateLog = clientLogs[dateKey] || {};
+      return {
+        ...prev,
+        [clientId]: {
+          ...clientLogs,
+          [dateKey]: {
+            ...existingDateLog,
+            checkin: weeklyPayload.checkin || existingDateLog.checkin,
+            progressPhotos: weeklyPayload.progressPhotos || existingDateLog.progressPhotos,
+            weeklySubmittedAt: weeklyPayload.submittedAt,
+          },
+        },
+      };
+    });
+
+    showToast(`Weekly evaluation & photos submitted to Coach Alex!`);
+  };
+
   // Handlers
   const handleOpenAddMeal = (mealCategory) => {
     setActiveMealCategory(mealCategory);
@@ -419,6 +462,8 @@ export default function App() {
           clientData={currentClientData}
           onLogout={() => setAppMode('client_auth')}
           showToast={showToast}
+          onSubmitDailyLog={handleClientSubmitDailyLog}
+          onSubmitWeeklyCheckin={handleClientSubmitWeeklyCheckin}
         />
       </div>
     );
@@ -562,6 +607,7 @@ export default function App() {
               client={selectedClientForDetails}
               onBack={() => setActiveTab('clients')}
               showToast={showToast}
+              submittedLogs={clientSubmittedLogs}
               onNavigate={(tab, payload) => {
                 if (tab === 'client-details') {
                   if (payload) setSelectedClientForDetails(payload);

@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NutriPlan">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>NutriPlan | Gold Cinematic Edition</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@400;500;700;800;900&family=Orbitron:wght@600;800;900&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: radial-gradient(circle at center, #150a0a 0%, #060606 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #d63031;
+      border-radius: 4px
+    }
+
+    .hdr {
+      padding: 18px 18px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+
+    .hdr-l {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .hdr-l .ic {
+      width: 40px;
+      height: 40px;
+      background: #141414;
+      color: #d63031;
+      border: 1px solid #d63031;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px rgba(214, 48, 49, 0.3);
+    }
+
+    .hdr-l h1 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 1px
+    }
+
+    .hdr-l h1 b {
+      color: #d63031
+    }
+
+    .hdr-l .sub {
+      font-size: 11px;
+      color: #8f9ca5;
+      letter-spacing: 2px;
+      text-transform: uppercase
+    }
+
+    .hdr-a {
+      display: flex;
+      gap: 6px
+    }
+
+    .bt {
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      font-family: 'Cairo';
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s
+    }
+
+    .bt-r {
+      background: #141414;
+      color: #ffffff;
+      border: 1px solid #2f2f2f;
+    }
+
+    .bt-r:hover {
+      box-shadow: 0 0 12px rgba(214, 48, 49, 0.25);
+      border-color: #d63031;
+      background: rgba(214, 48, 49, 0.1);
+    }
+
+    .bt-g {
+      background: linear-gradient(135deg, #ff4747 0%, #b21f1f 100%);
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(214, 48, 49, 0.4)
+    }
+
+    .bt-g:hover {
+      box-shadow: 0 0 18px rgba(214, 48, 49, 0.6);
+      filter: brightness(1.05);
+    }
+
+    .bt-g:active {
+      transform: scale(0.96)
+    }
+
+    .bt-g.ld {
+      opacity: 0.6;
+      pointer-events: none
+    }
+
+    .tbar {
+      padding: 0 14px;
+      margin-bottom: 14px
+    }
+
+    .tbar-in {
+      display: flex;
+      gap: 3px;
+      padding: 3px;
+      border-radius: 12px;
+      background: #111111;
+      border: 1px solid rgba(214, 48, 49, 0.2)
+    }
+
+    .tb {
+      flex: 1;
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      color: #a5b1c2;
+      padding: 8px 2px 6px;
+      border-radius: 8px;
+      font-family: 'Cairo';
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s
+    }
+
+    .tb .ti {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #d63031;
+    }
+
+    .tb.a {
+      background: #1c1111;
+      color: #ffffff;
+      border-top: 3px solid #d63031;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 4px 12px rgba(214, 48, 49, 0.25);
+    }
+
+    .tb.a .ti {
+      color: #ffffff
+    }
+
+    .ca {
+      padding: 0 14px 80px
+    }
+
+    .cc {
+      background: #111111;
+      border: 1px solid #1c1c1c;
+      border-top: 4px solid #d63031;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      border-radius: 12px;
+      padding: 20px 16px;
+      min-height: 50vh
+    }
+
+    .st {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #1c1c1c
+    }
+
+    .st h2 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #ffffff
+    }
+
+    .st .si {
+      color: #d63031;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fd {
+      margin-top: 12px;
+      margin-bottom: 12px
+    }
+
+    .fd label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 6px
+    }
+
+    .fd input,
+    .fd select,
+    .fd textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #2b2b2b;
+      border-radius: 6px;
+      background: #161616;
+      font-family: 'Cairo';
+      font-size: 15px;
+      color: #ffffff;
+      outline: none;
+      direction: rtl;
+      transition: all 0.3s
+    }
+
+    .fd input::placeholder {
+      color: #666666;
+    }
+
+    .fd input[type="date"],
+    .fd input[type="number"] {
+      direction: ltr;
+      text-align: right
+    }
+
+    .fd input:focus,
+    .fd textarea:focus,
+    .fd select:focus {
+      border-color: #d63031;
+      box-shadow: 0 0 10px rgba(214, 48, 49, 0.25)
+    }
+
+    .fd textarea {
+      resize: none;
+      line-height: 1.8
+    }
+
+    .fd select option {
+      background: #111111
+    }
+
+    .g2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px
+    }
+
+    .g4 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 8px
+    }
+
+    .cs2 {
+      grid-column: span 2
+    }
+
+    .macro-row {
+      display: flex;
+      gap: 5px;
+      margin-top: 8px;
+      direction: ltr
+    }
+
+    .mp {
+      flex: 1;
+      padding: 8px 4px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 800;
+      border: 1px solid;
+      text-transform: none
+    }
+
+    .mp .mv {
+      font-size: 16px;
+      font-weight: 800;
+      display: block;
+      margin-bottom: 2px
+    }
+
+    .mp-c {
+      background: rgba(214, 48, 49, 0.08);
+      border-color: #d63031;
+      color: #d63031
+    }
+
+    .mp-p {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #ffffff;
+      color: #ffffff
+    }
+
+    .mp-k {
+      background: rgba(180, 180, 180, 0.08);
+      border-color: #b4b4b4;
+      color: #ffffff
+    }
+
+    .mp-f {
+      background: rgba(214, 48, 49, 0.08);
+      border-color: #d63031;
+      color: #ffffff
+    }
+
+    .dt {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #151515;
+      border: 1px solid #222222;
+      display: flex;
+      justify-content: space-around;
+      text-align: center;
+      direction: ltr
+    }
+
+    .dt .di {
+      font-size: 13px;
+      font-weight: 800;
+      color: #a5b1c2;
+      text-transform: none
+    }
+
+    .di .dv {
+      font-size: 18px;
+      font-weight: 800;
+      display: block;
+      margin-bottom: 2px
+    }
+
+    .di-c .dv {
+      color: #d63031
+    }
+
+    .di-p .dv {
+      color: #ffffff
+    }
+
+    .di-k .dv {
+      color: #a5b1c2
+    }
+
+    .di-f .dv {
+      color: #ffffff
+    }
+
+    .mc {
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #151515;
+      border: 1px solid #222222;
+      border-radius: 8px;
+      position: relative
+    }
+
+    .mc-rm {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      border: 1px solid #ff4d4d;
+      cursor: pointer;
+      background: transparent;
+      color: #ff4d4d;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .mc-n {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 24px;
+      height: 24px;
+      background: #d63031;
+      color: #ffffff;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800
+    }
+
+    .ba {
+      width: 100%;
+      padding: 14px;
+      border: 1px dashed rgba(214, 48, 49, 0.4);
+      border-radius: 8px;
+      background: transparent;
+      color: #d63031;
+      font-family: 'Cairo';
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s
+    }
+
+    .ba:hover {
+      border-color: #d63031;
+      background: rgba(214, 48, 49, 0.05);
+      box-shadow: 0 0 12px rgba(214, 48, 49, 0.15)
+    }
+
+    .rs {
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      background: #151515;
+      border: 1px solid #222222
+    }
+
+    .phu {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px
+    }
+
+    .phc {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 2px solid #d63031;
+      overflow: hidden;
+      background: #151515;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      box-shadow: 0 0 15px rgba(214, 48, 49, 0.3)
+    }
+
+    .phc img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover
+    }
+
+    .phc .php {
+      font-size: 28px
+    }
+
+    .phc input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer
+    }
+
+    .phl {
+      font-size: 13px;
+      color: #d63031;
+      font-weight: 600
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #111111;
+      color: #ffffff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      border: 1px solid #d63031;
+      box-shadow: 0 0 15px rgba(214, 48, 49, 0.4);
+      z-index: 1000;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0)
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .sp {
+      width: 12px;
+      height: 12px;
+      border: 2px solid #0c1015;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: inline-block
+    }
+
+    .tc {
+      animation: fu 0.25s ease
+    }
+
+    @keyframes fu {
+      from {
+        opacity: 0;
+        transform: translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @media(min-width:768px) {
+      .cc {
+        padding: 28px
+      }
+
+      .g2 {
+        gap: 16px
+      }
+
+      .hdr {
+        padding: 22px 24px 14px
+      }
+
+      .tbar {
+        padding: 0 22px
+      }
+
+      .ca {
+        padding: 0 22px 80px
+      }
+    }
+
+    /* PDF Rendering Styles with Red/White Theme */
+    #pdf-render {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      width: 794px
+    }
+
+    .pp {
+      width: 794px;
+      height: 1123px;
+      position: relative;
+      overflow: hidden;
+      font-family: 'Cairo', sans-serif;
+      direction: rtl;
+      background: #0d1219;
+      color: #ffffff
+    }
+
+    .pp-bg {
+      position: absolute;
+      inset: 0;
+      background: #0d1219
+    }
+
+    .pp-pat {
+      position: absolute;
+      inset: 0;
+      opacity: 0.03;
+      background-image: linear-gradient(#d63031 1px, transparent 1px), linear-gradient(90deg, #d63031 1px, transparent 1px);
+      background-size: 40px 40px
+    }
+
+    .pp-bdr {
+      position: absolute;
+      inset: 20px;
+      border: 1px solid rgba(214, 48, 49, 0.2);
+      border-radius: 4px;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .pp-ct {
+      position: relative;
+      z-index: 3;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 50px 60px;
+      box-sizing: border-box
+    }
+
+    .pp-ft {
+      margin-top: auto;
+      padding: 12px 0;
+      text-align: center;
+      font-size: 12px;
+      color: #8fa0b5;
+      width: 100%;
+      border-top: 1px solid rgba(214, 48, 49, 0.2)
+    }
+
+    /* Premium Fitness PDF Styles */
+    .pp-bg-steak {
+      position: absolute;
+      inset: 0;
+      background: url('images/meals_bg.jpg') center center/cover no-repeat;
+      opacity: 0.22;
+      filter: grayscale(10%) contrast(110%);
+    }
+
+    .pp-gradient-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(13, 18, 25, 0.4) 0%, rgba(13, 18, 25, 0.8) 75%, #0d1219 100%);
+      z-index: 1;
+    }
+
+    /* Red/White Theme adjustments for cover and other pages */
+    .pp-red-badge {
+      background: #d63031;
+      color: #ffffff;
+      padding: 8px 24px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      margin-bottom: 12px;
+      z-index: 2;
+      position: relative;
+      box-shadow: 0 0 15px rgba(214, 48, 49, 0.4);
+      border: 1px solid #d63031;
+    }
+
+    .pp-cname-red {
+      font-size: 36px;
+      font-weight: 900;
+      color: #ffffff;
+      text-align: center;
+      text-transform: uppercase;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+      line-height: 1.2;
+    }
+
+    .pp-ccard {
+      background: rgba(20, 29, 39, 0.5);
+      border: 1px solid rgba(214, 48, 49, 0.3);
+      border-radius: 8px;
+      padding: 24px 30px;
+      width: 85%;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+      position: relative;
+      z-index: 3;
+    }
+
+    .pp-ctitle {
+      text-align: center;
+      color: #d63031;
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+
+    .pp-cgrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 30px;
+    }
+
+    .pp-citem {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .pp-cil {
+      font-size: 13px;
+      color: #d63031;
+      font-weight: 800;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .pp-civ {
+      font-size: 20px;
+      color: #ffffff;
+      font-weight: 800;
+      font-family: 'Cairo';
+    }
+
+    .pp-mbar-red {
+      display: flex;
+      gap: 16px;
+      width: 85%;
+      direction: ltr;
+      z-index: 3;
+    }
+
+    .pp-mb-red {
+      flex: 1;
+      padding: 14px 6px;
+      border-radius: 4px;
+      text-align: center;
+      border: 1px solid rgba(214, 48, 49, 0.35);
+      background: rgba(13, 18, 25, 0.5);
+      box-shadow: 0 0 15px rgba(214, 48, 49, 0.1);
+    }
+
+    .pp-mb-red .pv2 {
+      font-size: 24px;
+      font-weight: 900;
+      display: block;
+      margin-bottom: 4px;
+      font-family: 'Montserrat', sans-serif;
+      color: #ffffff;
+    }
+
+    .pp-mb-red .pl2 {
+      font-size: 11px;
+      font-weight: 800;
+      color: #d63031;
+      text-transform: uppercase;
+    }
+
+    /* Inner page headers in Red/White theme */
+    .pp-ph-red h2 {
+      font-size: 30px;
+      font-weight: 900;
+      color: #ffffff;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .pp-ph-red .phs {
+      font-size: 12px;
+      color: #d63031;
+      letter-spacing: 6px;
+      margin-top: 6px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .pp-ph-red .phl2 {
+      width: 60px;
+      height: 3px;
+      background: #d63031;
+      margin: 12px auto 0;
+      border-radius: 2px;
+      box-shadow: 0 0 8px rgba(214, 48, 49, 0.6);
+    }
+
+    /* Meal page specific layouts */
+    .pp-ct-meal {
+      position: relative;
+      z-index: 3;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 40px 45px 40px;
+      box-sizing: border-box;
+    }
+
+    .meal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 25px;
+    }
+
+    .meal-header-left {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 20px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 2px;
+    }
+
+    .meal-header-center {
+      display: flex;
+      align-items: center;
+    }
+
+    .meal-header-right {
+      display: flex;
+      align-items: center;
+      color: #ffffff;
+    }
+
+    .meal-title-box {
+      width: 100%;
+      border: 1px solid rgba(214, 48, 49, 0.35);
+      background: rgba(13, 18, 25, 0.5);
+      padding: 12px 20px;
+      margin-bottom: 30px;
+      position: relative;
+      text-align: center;
+    }
+
+    .meal-title-box::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      width: 12px;
+      height: 12px;
+      border-top: 2.5px solid #d63031;
+      border-left: 2.5px solid #d63031;
+    }
+
+    .meal-title-box::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      right: -4px;
+      width: 12px;
+      height: 12px;
+      border-bottom: 2.5px solid #d63031;
+      border-right: 2.5px solid #d63031;
+    }
+
+    .meal-title-en {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: #d63031;
+      letter-spacing: 3px;
+      margin-bottom: 4px;
+    }
+
+    .meal-title-ar {
+      font-family: 'Cairo', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .meal-options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      flex-grow: 1;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .meal-option-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      position: relative;
+    }
+
+    .meal-option-box {
+      width: 70%;
+      border: 1px solid rgba(214, 48, 49, 0.35);
+      background: rgba(13, 18, 25, 0.5);
+      padding: 16px 20px;
+      position: relative;
+      min-height: 130px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    .meal-option-box::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      width: 12px;
+      height: 12px;
+      border-top: 2.5px solid #d63031;
+      border-left: 2.5px solid #d63031;
+    }
+
+    .meal-option-box::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      right: -4px;
+      width: 12px;
+      height: 12px;
+      border-bottom: 2.5px solid #d63031;
+      border-right: 2.5px solid #d63031;
+    }
+
+    .meal-line-en {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+      text-align: center;
+      margin-bottom: 6px;
+      line-height: 1.4;
+      direction: ltr;
+    }
+
+    .meal-line-ar {
+      font-family: 'Cairo', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: #ffffff;
+      text-align: center;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .meal-line-note {
+      font-family: 'Montserrat', 'Cairo', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      font-style: italic;
+      color: #d63031;
+      text-align: center;
+      margin-top: 8px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .meal-or-separator {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 24px;
+      font-weight: 900;
+      color: #ffffff;
+      text-align: right;
+      padding-right: 32%;
+      letter-spacing: 2px;
+      margin: 5px 0;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    .meal-image-container {
+      width: 25%;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .dot-pattern {
+      position: absolute;
+      width: 80px;
+      height: 120px;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.25) 1.5px, transparent 1.5px);
+      background-size: 8px 8px;
+      z-index: 1;
+      right: -10px;
+      bottom: -20px;
+    }
+
+    .meal-circle-frame {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+      z-index: 2;
+      background: #0d1219;
+    }
+
+    .meal-circle-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .meal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      width: 100%;
+      margin-top: 30px;
+    }
+
+    .meal-footer-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .decor-stripes {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .decor-stripes span {
+      width: 35px;
+      height: 8px;
+      border: 1.5px solid #ffffff;
+      transform: skewX(-25deg);
+      display: inline-block;
+    }
+
+    .decor-stripes span:nth-child(1) {
+      border-color: #d63031;
+      background: #d63031;
+    }
+
+    .meal-footer-right {
+      text-align: right;
+    }
+
+    .meal-quote {
+      font-family: 'Orbitron', 'Cairo', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      max-width: 300px;
+    }
+
+    /* Red theme section borders for guidelines */
+    .pp-sec-red {
+      background: rgba(13, 18, 25, 0.5);
+      border: 1px solid rgba(214, 48, 49, 0.3);
+      border-right: 4px solid #d63031;
+      border-radius: 4px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      width: 100%;
+      position: relative;
+    }
+
+    .pp-sec-red::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      width: 10px;
+      height: 10px;
+      border-top: 2.5px solid #d63031;
+      border-left: 2.5px solid #d63031;
+    }
+
+    .pp-sec-red .stt {
+      font-size: 18px;
+      font-weight: 800;
+      color: #d63031;
+      margin-bottom: 6px;
+    }
+
+    /* Text pages red styles */
+    .pp-text-red {
+      width: 100%;
+      text-align: right;
+      padding: 0 14px
+    }
+
+    .pp-text-red h3 {
+      color: #d63031;
+      font-size: 22px;
+      font-weight: 800;
+      margin: 20px 0 12px;
+      display: inline-block
+    }
+
+    .pp-text-red p {
+      color: #ffffff;
+      font-size: 17px;
+      line-height: 1.8;
+      margin-bottom: 12px;
+      text-align: justify
+    }
+
+    .pp-text-red .qa-red {
+      margin-bottom: 16px;
+      background: rgba(13, 18, 25, 0.5);
+      padding: 16px;
+      border-radius: 4px;
+      border: 1px solid rgba(214, 48, 49, 0.3);
+      border-right: 4px solid #d63031;
+      position: relative;
+    }
+
+    .pp-text-red .qa-red::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      width: 10px;
+      height: 10px;
+      border-top: 2.5px solid #d63031;
+      border-left: 2.5px solid #d63031;
+    }
+
+    .pp-text-red .qq {
+      color: #d63031;
+      font-size: 19px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .pp-text-red .qa-a {
+      color: #ffffff;
+      font-size: 17px;
+      line-height: 1.9
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+  <div id="pdf-render"></div>
+
+  <script>
+    let coachPhoto = "images/coach.png";
+    let logoPhoto = "images/logo.png";
+    const S = {
+      tab: 'client', gen: false,
+      co: {
+        name: 'Coach. Phelopater Afraem', phone: '201221599689', wa: '201221599689', cert: 'مدرب شخصي · أخصائي تغذية · حجامة ومساج',
+        certs: 'خبرة سنوات في مجال كمال الأجسام\nمدرب شخصي وأخصائي تغذية معتمد\nأخصائي حجامة ومساج علاجي ورياضي',
+        intro: 'هنا هتلاقي كل اللي انت محتاجه بالتفصيل من أول خطة الدايت والمكملات. هنا هتلاقي كل الاسئلة والإجابات اللي ممكن تخطر على بالك عشان توصل لأحسن نتيجة.\n\nكل شخص ليه الحق انه يغير من شكل جسمه ويبقى أحسن نسخة من نفسه. شكلك في المرايا وثقتك في هيئتك هيغير من معظم جوانب حياتك.\n\nاعتبر النظام ده الخريطة بتاعتك للوصول لهدفك. هشرحلك كل اللي محتاج تعرفه بشكل يديك المختصر المفيد علمياً.',
+        nutritionInfo: 'هدفك هنا أنك تكمل تمرينك بالتغذية أو الدايت الصح اللي هيوصلك لهدفك. الدايت هو اللي بيوجه التغيير، ومن أهم عناصر التغذية تغيير شكل جسمك هو الـ ENERGY BALANCE أو توازن الطاقة.\n\nالسعرات الحرارية أو الكالوري هي وحدة قياس الطاقة والدايت بتاعك هيكون سعراته محسوبة على حسب هدفك.\n\nنصائح ذهبية لخسارة الدهون:\n1. خلال الأسبوع، كل الاكل للأداء، مش للمتعة. وسيب وجبة واحدة بس في الأسبوع تاكل فيها براحتك.\n2. لو قللت أكلك زيادة عن اللزوم، مش هتخس أكتر، بالعكس جسمك هيبطأ الحرق وهتحس بتعب أسرع.\n3. لو بوظت أكلك في يوم أو اتنين مش هيحصل حاجة لو زوّدت سعراتك النهارده عادي تعوّض بكرة أو بعده، المهم توازن أسبوعك كله.\n4. لو هدفكم خسارة دهون، بلاش بعد التمرين تعمل Shake سعراته كتير.\n5. لو عايز تخسر دهون، امشي بعد كل تمرينة لمدة من ٢٠ ل ٣٠ دقيقة (كارديو).\n6. النوم مش رفاهية ده أساس خسارة الدهون، قلة النوم بتبوظ الحرق وتزود الجوع، نام كويس.\n7. اتحرك كل يوم مش بس وقت التمرين، امشي أكتر، اتحرك أكتر، أي حركة صغيرة بتفرق في النتيجة.',
+        faq: 'هل لازم أوزن أكلي؟\nأيوة من أهم أدوات الدايت هي ميزان الأكل لدقة الكميات المستخدمة.\n---\nأوزن أكلي قبل ولا بعد الطبخ؟\nالنشويات قبل الطبخ، البروتين بعد الطبخ.\n---\nميعاد الأكل بيفرق؟\nمش فارقه براحتك، المهم متزودش أو تقلل حاجه بمزاجك.\n---\nهل ترتيب الوجبات بيفرق؟\nلا مش بيفرق، العامل الاساسي هو نوع الاكل وعدد السعرات.\n---\nهل ينفع ابني عضلات واخسر دهون في نفس الوقت؟\nاه ينفع ودي حاجه اسمها Body Recomposition بس مش لأي حد.\n---\nلماذا أشعر بالجوع دائما؟\nقد تكون قلقاً أو لا تحصل على قسط كاف من النوم أو نظامك يفتقر للألياف والبروتين.',
+        quote: 'NO GUTS, NO GLORY.'
+      },
+      cl: { name: '', age: '', height: '', weight: '', goal: 'تخسيس', sd: '', ed: '' },
+      np: {
+        meals: [
+          {
+            name: 'الوجبة الأولى',
+            items: '3 eggs + 1 high protein tortilla+200 gm tomato\nبيضات 3+تورتيلا عالية البروتين+طماطم 200 جم\n*YOU CAN REPLACE TORTILLA WITH 2 BROWN TOAST*',
+            alt: '3 eggs + 100 gm boiled potato + 200 gm tomato\nبيضات 3+بطاطس مسلوقة 100جم+جم طماطم 200',
+            cal: '450', pro: '35', carb: '45', fat: '12',
+            img1: '', img2: ''
+          },
+          {
+            name: 'الوجبة الثانية',
+            items: '150 gm chicken breast + 150 gm cooked rice + green salad\n150 جرام صدر دجاج + 150 جرام رز مطبوخ + سلطة خضراء',
+            alt: '150 gm beef steak or grilled fish\n150 جرام ستيك لحم أو سمك مشوي',
+            cal: '550', pro: '45', carb: '50', fat: '10',
+            img1: '', img2: ''
+          },
+          {
+            name: 'سناك قبل التمرين',
+            items: '1 banana + 3 dates\n1 موزه + 3 تمرات',
+            alt: '',
+            cal: '180', pro: '2', carb: '42', fat: '0',
+            img1: '', img2: ''
+          },
+          {
+            name: 'الوجبة الرابعة',
+            items: '150 gm chicken breast + 100 gm cooked rice + green salad\n150 جرام صدر دجاج + 100 جرام رز مطبوخ + سلطة خضراء',
+            alt: '',
+            cal: '480', pro: '42', carb: '35', fat: '8',
+            img1: '', img2: ''
+          }
+        ],
+        forbidden: 'بيبسي\nالمأكولات السريعة\nالحلويات بانواعه\nالشوكولاته\nالزيوت المصنعة\nالسكريات المضافة\nالمشروبات الغازية\nالأطعمة المقلية بالزيوت',
+        reduce: 'الحد من تناول الاملاح',
+        focus: 'شرب 4 لتر من الماء يومياً\nجميع الوجبات يكون بها طبق سلطة خضار\n3 كوب مغلي البقدونس قبل كل وجبه بنصف ساعه',
+        vitamins: 'فيتامين سي قرص واحد بعد الفطار\nاوميجا 3 قرص واحد بعد الغدا\nمغنسيوم قرص واحد قبل النوم\nزنك قرص واحد قبل النوم\nكروميوم 200 ميكروجرام قبل الفطار بنص ساعه',
+        supps: 'ال كارنتين'
+      }
+    };
+
+    const ICONS = {
+      coach: `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18 2H6a2 2 0 0 0-2 2v3c0 2.25 1.5 4.14 3.5 4.75A6 6 0 0 0 11 17.93V20H9a1 1 0 0 0 0 2h6a1 1 0 0 0 0-2h-2v-2.07a6 6 0 0 0 3.5-6.18A4.75 4.75 0 0 0 20 7V4a2 2 0 0 0-2-2zM6 9V4h2v5a2 2 0 0 1-4 0zm12 0a2 2 0 0 1-4 0V4h2v5z"/></svg>`,
+      client: `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`,
+      intro: `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18 2H6a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3zm-1 16H7a1 1 0 0 1 0-2h10a1 1 0 0 1 0 2zm0-4H7a1 1 0 0 1 0-2h10a1 1 0 0 1 0 2zm0-4H7a1 1 0 0 1 0-2h10a1 1 0 0 1 0 2z"/></svg>`,
+      meals: `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8h2V2c-2.5 0-4.5 2-4.5 4z"/></svg>`,
+      vitamins: `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="transform: rotate(45deg); display: inline-block;"><path d="M6 3h12a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zm0 2a1 1 0 0 0-1 1v6h14V6a1 1 0 0 0-1-1H6zm14 9H4v4a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-4z"/></svg>`,
+      rules: `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>`,
+      faq: `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.25z"/></svg>`
+    };
+
+    const e = s => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const L = s => (s || '').split('\n').filter(Boolean);
+    const n = v => parseFloat(v) || 0;
+    function tot() { let c = 0, p = 0, k = 0, f = 0; S.np.meals.forEach(m => { c += n(m.cal); p += n(m.pro); k += n(m.carb); f += n(m.fat) }); return { cal: c, pro: p, carb: k, fat: f } }
+    function handlePhoto(inp) { const f = inp.files[0]; if (!f) return; const r = new FileReader(); r.onload = ev => { coachPhoto = ev.target.result; R() }; r.readAsDataURL(f); }
+    function handleLogo(inp) { const f = inp.files[0]; if (!f) return; const r = new FileReader(); r.onload = ev => { logoPhoto = ev.target.result; R() }; r.readAsDataURL(f); }
+    function handleMealPhoto(inp, idx, opt) {
+      const f = inp.files[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = ev => {
+        if (opt === 1) {
+          S.np.meals[idx].img1 = ev.target.result;
+        } else {
+          S.np.meals[idx].img2 = ev.target.result;
+        }
+        R();
+      };
+      r.readAsDataURL(f);
+    }
+    function numberToWords(num) {
+      const words = ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN'];
+      return words[num - 1] || num;
+    }
+    function renderMealLines(text) {
+      if (!text) return '';
+      return L(text).map(line => {
+        const trimmed = line.trim();
+        if (/^\*.*\*$/.test(trimmed)) {
+          const content = trimmed.replace(/\*/g, '');
+          const isAr = /[\u0600-\u06FF]/.test(content);
+          return `<div class="meal-line-note" ${isAr ? 'style="letter-spacing:normal;"' : ''}>${e(content)}</div>`;
+        } else if (/[\u0600-\u06FF]/.test(trimmed)) {
+          return `<div class="meal-line-ar">${e(trimmed)}</div>`;
+        } else {
+          return `<div class="meal-line-en">${e(trimmed)}</div>`;
+        }
+      }).join('');
+    }
+    function TT(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+
+    function R() {
+      document.getElementById('app').innerHTML = `
+  <div class="hdr"><div class="hdr-l"><img src="${logoPhoto}" style="height: 42px; width: auto; filter: drop-shadow(0 0 6px rgba(214,48,49,0.35)); margin-left: 12px; border-radius: 4px;"><div><h1>Nutri<b>Plan</b></h1><div class="sub">Dashboard</div></div></div>
+  <div class="hdr-a"><button class="bt bt-r" onclick="if(confirm('مسح البيانات؟')){S.cl={name:'',age:'',height:'',weight:'',goal:'تخسيس',sd:'',ed:''};R()}"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>
+  <button class="bt bt-g ${S.gen ? 'ld' : ''}" onclick="GEN()">${S.gen ? '<span class="sp"></span> جاري...' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align:middle;margin-left:4px;"><path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V10H19v3h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zm5.5 2h1v-3h-1v3zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6z"/></svg> PDF'}</button></div></div>
+  <div class="tbar"><div class="tbar-in">
+  ${[['coach', 'الكابتن'], ['client', 'العميل'], ['intro', 'المقدمة'], ['meals', 'الوجبات'], ['vitamins', 'المكملات'], ['rules', 'التعليمات'], ['faq', 'أسئلة']].map(([id, lb]) => `<button class="tb ${S.tab === id ? 'a' : ''}" onclick="S.tab='${id}';R()"><span class="ti">${ICONS[id]}</span>${lb}</button>`).join('')}
+  </div></div>
+  <div class="ca"><div class="cc"><div class="tc">${TAB()}</div></div></div>
+  <div class="toast" id="toast"></div>`;
+    }
+
+    function TAB() {
+      const c = S.cl, np = S.np, o = S.co;
+      if (S.tab === 'client') return `<div class="st"><span class="si">${ICONS.client}</span><h2>بيانات العميل</h2></div>
+    <div class="g2"><div class="cs2 fd"><label>الاسم</label><input value="${e(c.name)}" oninput="S.cl.name=this.value" placeholder="اسم العميل"></div>
+    <div class="fd"><label>العمر</label><input type="number" value="${e(c.age)}" oninput="S.cl.age=this.value"></div>
+    <div class="fd"><label>الطول (سم)</label><input type="number" value="${e(c.height)}" oninput="S.cl.height=this.value"></div>
+    <div class="fd"><label>الوزن (كجم)</label><input type="number" value="${e(c.weight)}" oninput="S.cl.weight=this.value"></div>
+    <div class="fd"><label>الهدف</label><select onchange="S.cl.goal=this.value">${['تخسيس', 'تضخيم', 'تنشيف', 'ثبات', 'Body Recomposition'].map(g => `<option ${c.goal === g ? 'selected' : ''}>${g}</option>`).join('')}</select></div>
+    <div class="fd"><label>تاريخ البداية</label><input type="date" value="${e(c.sd)}" oninput="S.cl.sd=this.value"></div>
+    <div class="fd"><label>تاريخ الانتهاء</label><input type="date" value="${e(c.ed)}" oninput="S.cl.ed=this.value"></div></div>`;
+
+      if (S.tab === 'meals') {
+        const t = tot(); return `<div class="st"><span class="si">${ICONS.meals}</span><h2>الوجبات</h2></div>
+    ${np.meals.map((m, i) => `<div class="mc"><span class="mc-n">${i + 1}</span><button class="mc-rm" onclick="S.np.meals.splice(${i},1);R()">✕</button>
+    <div style="padding-top:6px"><div class="fd"><label>اسم الوجبة</label><input value="${e(m.name)}" oninput="S.np.meals[${i}].name=this.value"></div>
+    <div class="fd"><label>المحتوى</label><textarea rows="3" oninput="S.np.meals[${i}].items=this.value">${e(m.items)}</textarea></div>
+    <div class="fd"><label>البديل</label><textarea rows="2" oninput="S.np.meals[${i}].alt=this.value">${e(m.alt)}</textarea></div>
+    <div class="g4">
+    <div class="fd"><label>🥩بروتين</label><input type="number" value="${e(m.pro)}" oninput="S.np.meals[${i}].pro=this.value"></div>
+    <div class="fd"><label>🍞كارب</label><input type="number" value="${e(m.carb)}" oninput="S.np.meals[${i}].carb=this.value"></div>
+    <div class="fd"><label>🫒دهون</label><input type="number" value="${e(m.fat)}" oninput="S.np.meals[${i}].fat=this.value"></div>
+    <div class="fd"><label>🔥سعرات</label><input type="number" value="${e(m.cal)}" oninput="S.np.meals[${i}].cal=this.value"></div></div>
+    ${(n(m.cal) || n(m.pro)) ? `<div class="macro-row"><div class="mp mp-p"><span class="mv">${n(m.pro)}g</span>بروتين</div><div class="mp mp-k"><span class="mv">${n(m.carb)}g</span>كارب</div><div class="mp mp-f"><span class="mv">${n(m.fat) || 0}g</span>دهون</div><div class="mp mp-c"><span class="mv">${n(m.cal) || 0}</span>سعرات</div></div>` : ''}
+    <div class="g2" style="margin-top: 10px;">
+      <div class="fd">
+        <label>📷 صورة الوجبة الأساسية</label>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <input type="file" accept="image/*" onchange="handleMealPhoto(this, ${i}, 1)" style="flex:1;">
+          ${m.img1 ? `<button class="bt bt-r" style="padding:6px 10px;" onclick="S.np.meals[${i}].img1='';R()">✕</button>` : ''}
+        </div>
+        ${m.img1 ? `<img src="${m.img1}" style="width:50px;height:50px;object-fit:cover;border-radius:4px;margin-top:5px;border:1px solid #d63031;">` : '<span style="font-size:11px;color:#8fa0b5;">(سلطة افتراضي)</span>'}
+      </div>
+      <div class="fd">
+        <label>📷 صورة الوجبة البديلة</label>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <input type="file" accept="image/*" onchange="handleMealPhoto(this, ${i}, 2)" style="flex:1;">
+          ${m.img2 ? `<button class="bt bt-r" style="padding:6px 10px;" onclick="S.np.meals[${i}].img2='';R()">✕</button>` : ''}
+        </div>
+        ${m.img2 ? `<img src="${m.img2}" style="width:50px;height:50px;object-fit:cover;border-radius:4px;margin-top:5px;border:1px solid #d63031;">` : '<span style="font-size:11px;color:#8fa0b5;">(شوفان افتراضي)</span>'}
+      </div>
+    </div>
+    </div></div>`).join('')}
+    <button class="ba" onclick="S.np.meals.push({name:'',items:'',alt:'',cal:'',pro:'',carb:'',fat:'',img1:'',img2:''});R()">+ إضافة وجبة</button>
+    ${(t.cal) ? `<div class="dt"><div class="di di-p"><span class="dv">${t.pro}g</span>بروتين</div><div class="di di-k"><span class="dv">${t.carb}g</span>كارب</div><div class="di di-f"><span class="dv">${t.fat}g</span>دهون</div><div class="di di-c"><span class="dv">${t.cal}</span>سعرات</div></div>` : ''}`;
+      }
+
+      if (S.tab === 'rules') return `<div class="st"><span class="si">${ICONS.rules}</span><h2>التعليمات</h2></div>
+    <div class="rs rs-f"><div class="fd"><label>🚫 الممنوع</label><textarea rows="5" oninput="S.np.forbidden=this.value">${e(np.forbidden)}</textarea></div></div>
+    <div class="rs rs-d"><div class="fd"><label>⚠️ التقليل</label><textarea rows="2" oninput="S.np.reduce=this.value">${e(np.reduce)}</textarea></div></div>
+    <div class="rs rs-o"><div class="fd"><label>✅ الاهتمام</label><textarea rows="3" oninput="S.np.focus=this.value">${e(np.focus)}</textarea></div></div>`;
+
+      if (S.tab === 'vitamins') return `<div class="st"><span class="si">${ICONS.vitamins}</span><h2>الفيتامينات والمكملات</h2></div>
+    <div class="fd"><label>الفيتامينات</label><textarea rows="6" oninput="S.np.vitamins=this.value">${e(np.vitamins)}</textarea></div>
+    <div class="fd"><label>المكملات</label><textarea rows="3" oninput="S.np.supps=this.value">${e(np.supps)}</textarea></div>`;
+
+      if (S.tab === 'coach') return `<div class="st"><span class="si">${ICONS.coach}</span><h2>بيانات الكابتن</h2></div>
+    <div class="fd"><label>الاسم</label><input value="${e(o.name)}" oninput="S.co.name=this.value"></div>
+    <div class="fd"><label>الهاتف</label><input value="${e(o.phone)}" oninput="S.co.phone=this.value" dir="ltr" style="text-align:left"></div>
+    <div class="fd"><label>واتساب</label><input value="${e(o.wa)}" oninput="S.co.wa=this.value" dir="ltr" style="text-align:left"></div>
+    <div class="fd"><label>الوصف</label><input value="${e(o.cert)}" oninput="S.co.cert=this.value"></div>
+    <div class="fd"><label>الشهادات والخبرات</label><textarea rows="5" oninput="S.co.certs=this.value">${e(o.certs)}</textarea></div>
+    <div class="fd"><label>الشعار / الحكمة التحفيزية (أسفل صفحة الوجبة)</label><input value="${e(o.quote)}" oninput="S.co.quote=this.value"></div>
+    <div class="g2" style="margin-top: 15px;">
+      <div class="fd">
+        <label>📷 صورة الكابتن (خلفية الصفحات)</label>
+        <input type="file" accept="image/*" onchange="handlePhoto(this)">
+        ${coachPhoto && !coachPhoto.startsWith('images/coach.png') ? `<button class="bt bt-r" style="padding:6px 10px;margin-top:5px;font-size:11px;" onclick="coachPhoto='images/coach.png';R()">إعادة الافتراضي ✕</button>` : ''}
+      </div>
+      <div class="fd">
+        <label>📷 شعار الكابتن / اللوجو</label>
+        <input type="file" accept="image/*" onchange="handleLogo(this)">
+        ${logoPhoto && !logoPhoto.startsWith('images/logo.png') ? `<button class="bt bt-r" style="padding:6px 10px;margin-top:5px;font-size:11px;" onclick="logoPhoto='images/logo.png';R()">إعادة الافتراضي ✕</button>` : ''}
+      </div>
+    </div>`;
+
+      if (S.tab === 'intro') return `<div class="st"><span class="si">${ICONS.intro}</span><h2>المقدمة ومعلومات التغذية</h2></div>
+    <div class="fd"><label>مقدمة عامة عن النظام</label><textarea rows="6" oninput="S.co.intro=this.value">${e(o.intro)}</textarea></div>
+    <div class="fd"><label>معلومات عن التغذية</label><textarea rows="8" oninput="S.co.nutritionInfo=this.value">${e(o.nutritionInfo)}</textarea></div>`;
+
+      if (S.tab === 'faq') return `<div class="st"><span class="si">${ICONS.faq}</span><h2>أسئلة شائعة عن الدايت</h2></div>
+    <div class="fd"><label>الأسئلة والإجابات (افصل كل سؤال+إجابة بسطر ---)</label><textarea rows="14" oninput="S.co.faq=this.value">${e(o.faq)}</textarea></div>`;
+    }
+
+    function bg(op = 0.48, isMeal = false) {
+      const bgImg = (isMeal || !coachPhoto) ? 'images/meals_bg.jpg' : coachPhoto;
+      const opacity = op;
+      return `<div class="pp-bg"></div>
+              <div style="position:absolute;inset:0;background:url('${bgImg}') center center/cover no-repeat;opacity:${opacity};${!isMeal && coachPhoto ? 'filter:grayscale(100%);' : ''}"></div>
+              <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(13,18,25,0.15) 0%, rgba(13,18,25,0.4) 60%, rgba(13,18,25,0.75) 100%);z-index:1;"></div>
+              <div class="pp-bdr" style="border-color: rgba(214, 48, 49, 0.2);"></div>`;
+    }
+    function mealBg() {
+      return bg(0.60, true);
+    }
+    function ft(o) {
+      const phIc = `<svg style="vertical-align:middle;margin-left:4px" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.82 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>`;
+      const waIc = `<svg style="vertical-align:middle;margin-left:4px" width="14" height="14" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
+      const cPic = coachPhoto ? `<img src="${coachPhoto}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-left:10px;border:1px solid #d63031;box-shadow:0 0 5px rgba(214,48,49,0.35)">` : '';
+      return `<div class="pp-ft" style="display:flex;align-items:center;justify-content:center;gap:5px;border-top:1px solid rgba(214, 48, 49, 0.25);">${cPic} <span>${e(o.name)} | ${phIc} ${e(o.phone)} | ${waIc} ${e(o.wa)}</span></div>`;
+    }
+
+    async function GEN() {
+      S.gen = true; R();
+      try {
+        const c = S.cl, np = S.np, o = S.co, box = document.getElementById('pdf-render');
+        const t = tot(), hm = t.cal > 0;
+
+        // Parse FAQ
+        const faqItems = (o.faq || '').split('---').map(block => {
+          const lines = block.trim().split('\n').filter(Boolean);
+          if (lines.length < 2) return null;
+          return { q: lines[0], a: lines.slice(1).join(' ') };
+        }).filter(Boolean);
+
+        const mealHtml = np.meals.map((m, actualIndex) => {
+          const mainImg = m.img1 || 'images/salad.png';
+          const altImg = m.img2 || 'images/oats.png';
+          const enName = 'MEAL ' + numberToWords(actualIndex + 1);
+
+          return `
+    <!-- MEALS PAGE ${actualIndex + 1} -->
+    <div class="pp" id="p3_${actualIndex}">
+      ${bg(0.22, true)}
+      <div class="pp-ct-meal">
+        <!-- Header -->
+        <div class="meal-header">
+          <div class="meal-header-center">
+            <span style="font-family:'Orbitron'; font-size:12px; letter-spacing:2px; color:#d63031; font-weight:800;">NUTRIPLAN</span>
+          </div>
+          <div class="meal-header-right">
+            <img src="${logoPhoto}" style="height: 48px; width: auto; filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));">
+          </div>
+        </div>
+
+        <!-- Meal Title Box -->
+        <div class="meal-title-box">
+          <div class="meal-title-en">${enName}</div>
+          <div class="meal-title-ar">${e(m.name)}</div>
+        </div>
+
+        <!-- Meal Options Container -->
+        <div class="meal-options-container">
+          <!-- Option 1 (Main Meal) -->
+          <div class="meal-option-row">
+            <div class="meal-option-box">
+              ${renderMealLines(m.items)}
+            </div>
+            <div class="meal-image-container">
+              <div class="dot-pattern"></div>
+              <div class="meal-circle-frame">
+                <img src="${mainImg}" class="meal-circle-img">
+              </div>
+            </div>
+          </div>
+
+          <!-- OR Separator (if alternative exists) -->
+          ${L(m.alt).length ? `
+          <div class="meal-or-separator">OR</div>
+
+          <!-- Option 2 (Alternative Meal) -->
+          <div class="meal-option-row">
+            <div class="meal-option-box">
+              ${renderMealLines(m.alt)}
+            </div>
+            <div class="meal-image-container">
+              <div class="dot-pattern"></div>
+              <div class="meal-circle-frame">
+                <img src="${altImg}" class="meal-circle-img">
+              </div>
+            </div>
+          </div>
+          ` : ''}
+        </div>
+
+        <!-- Footer Decorators -->
+        <div class="meal-footer">
+          <div class="meal-footer-left">
+            <div class="decor-stripes">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <div class="meal-footer-right">
+            <div class="meal-quote" style="${/[\u0600-\u06FF]/.test(o.quote) ? 'letter-spacing: normal;' : ''}">“${e(o.quote || 'NO GUTS, NO GLORY.')}”</div>
+          </div>
+        </div>
+
+      </div>
+    </div>`;
+        }).join('');
+
+        let pagesIds = ['p1', 'p2_intro', 'p2_nutrition'];
+        for (let i = 0; i < np.meals.length; i++) pagesIds.push('p3_' + i);
+        pagesIds.push('p4', 'p6');
+
+        box.innerHTML = `
+    <!-- P1: COVER -->
+    <div class="pp" id="p1">
+      ${bg(0.55, false)}
+      <div class="pp-ct" style="padding-top: 35px; padding-bottom: 50px;">
+        
+       
+        <div style="flex-grow: 1;"></div>
+        <div class="pp-cname-red" style="flex-shrink:0;">${e(o.name)}</div>
+        <div class="pp-csub" style="direction:ltr; display:flex; align-items:center; justify-content:center;flex-shrink:0;margin-top:10px;margin-bottom:15px;">
+          ${e(o.cert)} <span style="margin:0 12px;color:#d63031">|</span>
+          <svg style="margin-right:4px; vertical-align:middle;" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.82 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg> ${e(o.phone)}
+          <span style="margin:0 12px;color:#d63031">|</span>
+          <svg style="margin-right:4px; vertical-align:middle;" width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> ${e(o.wa)}
+        </div>
+        <!-- Certificates on Cover -->
+        <div style="width:85%;margin-top:15px;background:rgba(13,18,25,0.7);border:1px solid rgba(214,48,49,0.3);border-radius:4px;padding:12px 20px;flex-shrink:0;position:relative;">
+          <div style="position:absolute;top:-4px;left:-4px;width:10px;height:10px;border-top:2px solid #d63031;border-left:2px solid #d63031;"></div>
+          <div class="pp-ctitle-red" style="margin-bottom:8px;font-size:14px;text-shadow:none">الشهادات والخبرات</div>
+          ${L(o.certs).map(c => `<div class="cert-d" style="color:#ffffff;font-size:12px;line-height:1.6;margin-bottom:4px;font-weight:600">• ${e(c)}</div>`).join('')}
+        </div>
+
+        <div class="pp-ccard" style="margin-top:12px;padding:12px 30px;flex-shrink:0;">
+          <div class="pp-ctitle">بيانات المشترك</div>
+          <div class="pp-cgrid" style="gap:10px 20px;">
+            <div class="pp-citem" style="padding:4px 0"><span class="pp-cil">الاسم</span><span class="pp-civ">${e(c.name) || '—'}</span></div>
+            <div class="pp-citem" style="padding:4px 0"><span class="pp-cil">العمر</span><span class="pp-civ">${c.age ? c.age + ' سنة' : '—'}</span></div>
+            <div class="pp-citem" style="padding:4px 0"><span class="pp-cil">الطول</span><span class="pp-civ">${c.height ? c.height + ' سم' : '—'}</span></div>
+            <div class="pp-citem" style="padding:4px 0"><span class="pp-cil">الوزن</span><span class="pp-civ">${c.weight || '—'} كجم</span></div>
+            <div class="pp-citem" style="grid-column: span 2; padding:4px 0; border-top:1px solid rgba(214,48,49,0.15); margin-top:4px;"><span class="pp-cil">الهدف</span><span class="pp-civ">${e(c.goal)}</span></div>
+          </div>
+        </div>
+        ${hm ? `<div class="pp-mbar-red" style="margin-top:12px;flex-shrink:0;">
+          <div class="pp-mb-red"><span class="pv2" style="font-size:22px;">${t.cal}</span><span class="pl2">سعرات</span></div>
+          <div class="pp-mb-red"><span class="pv2" style="font-size:22px;">${t.fat}g</span><span class="pl2">دهون</span></div>
+          <div class="pp-mb-red"><span class="pv2" style="font-size:22px;">${t.carb}g</span><span class="pl2">كارب</span></div>
+          <div class="pp-mb-red"><span class="pv2" style="font-size:22px;">${t.pro}g</span><span class="pl2">بروتين</span></div>
+        </div>`: ''}
+        
+      </div>
+    </div>
+
+    <!-- P2: INTRO -->
+    <div class="pp" id="p2_intro">${bg(0.45, false)}<div class="pp-ct" style="padding-top: 25px;">
+      <!-- Header -->
+      <div class="meal-header" style="margin-bottom: 15px; width: 100%;">
+        <div class="meal-header-center">
+          <span style="font-family:'Orbitron'; font-size:12px; letter-spacing:2px; color:#d63031; font-weight:800;">NUTRIPLAN</span>
+        </div>
+        <div class="meal-header-right">
+          <img src="${logoPhoto}" style="height: 42px; width: auto; filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));">
+        </div>
+      </div>
+      <div class="pp-ph pp-ph-red"><h2>مقدمة عن النظام</h2><div class="phs">I N T R O D U C T I O N</div><div class="phl2"></div></div>
+      <div class="pp-text-red" style="margin-top: 30px;">
+        <h3 style="font-size: 26px; margin-bottom: 20px;">مقدمة عامة</h3>
+        ${(o.intro || '').split('\n\n').map(p => `<p style="font-size: 19px; line-height: 2;">${e(p).replace(/\n/g, '<br>')}</p>`).join('')}
+      </div>
+    </div></div>
+
+    <!-- P2: NUTRITION INFO -->
+    <div class="pp" id="p2_nutrition">${bg(0.45, false)}<div class="pp-ct" style="padding-top: 25px;">
+      <!-- Header -->
+      <div class="meal-header" style="margin-bottom: 15px; width: 100%;">
+        <div class="meal-header-center">
+          <span style="font-family:'Orbitron'; font-size:12px; letter-spacing:2px; color:#d63031; font-weight:800;">NUTRIPLAN</span>
+        </div>
+        <div class="meal-header-right">
+          <img src="${logoPhoto}" style="height: 42px; width: auto; filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));">
+        </div>
+      </div>
+      <div class="pp-ph pp-ph-red"><h2>معلومات عن التغذية</h2><div class="phs">N U T R I T I O N &nbsp; I N F O</div><div class="phl2"></div></div>
+      <div class="pp-text-red">
+        <h3 style="margin-top:18px">معلومات عن التغذية</h3>
+        ${(o.nutritionInfo || '').split('\n\n').map(p => `<p>${e(p).replace(/\n/g, '<br>')}</p>`).join('')}
+      </div>
+    </div></div>
+
+    ${mealHtml}
+
+    <!-- P4: GUIDELINES -->
+    <div class="pp" id="p4">${bg(0.45, false)}<div class="pp-ct" style="padding-top: 25px;">
+      <!-- Header -->
+      <div class="meal-header" style="margin-bottom: 15px; width: 100%;">
+        <div class="meal-header-center">
+          <span style="font-family:'Orbitron'; font-size:12px; letter-spacing:2px; color:#d63031; font-weight:800;">NUTRIPLAN</span>
+        </div>
+        <div class="meal-header-right">
+          <img src="${logoPhoto}" style="height: 42px; width: auto; filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));">
+        </div>
+      </div>
+      <div class="pp-ph pp-ph-red"><h2>التعليمات والمكملات</h2><div class="phs">G U I D E L I N E S</div><div class="phl2"></div></div>
+      ${[['اقتراح بالمكملات  (( اختياري ))', np.supps, 'ss'], [' اقتراح الفيتامينات (( اختياري ))', np.vitamins, 'sv'], ['✅ الاهتمام', np.focus, 'so'], ['⚠️ التقليل', np.reduce, 'sd'], ['🚫 الممنوع', np.forbidden, 'sf']].map(([tt, ct, cls]) => L(ct).length ? `<div class="pp-sec-red" style="flex-shrink:0;"><div class="stt">${tt}</div>${L(ct).map(x => `<div class="si2">• ${e(x)}</div>`).join('')}</div>` : ``).join('')}
+      
+    </div></div>
+
+    <!-- P6: FAQ -->
+    <div class="pp" id="p6">${bg(0.45, false)}<div class="pp-ct" style="padding-top: 25px;">
+      <!-- Header -->
+      <div class="meal-header" style="margin-bottom: 15px; width: 100%;">
+        <div class="meal-header-center">
+          <span style="font-family:'Orbitron'; font-size:12px; letter-spacing:2px; color:#d63031; font-weight:800;">NUTRIPLAN</span>
+        </div>
+        <div class="meal-header-right">
+          <img src="${logoPhoto}" style="height: 42px; width: auto; filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));">
+        </div>
+      </div>
+      <div class="pp-ph pp-ph-red"><h2>أسئلة شائعة عن الدايت</h2><div class="phs">F . A . Q</div><div class="phl2"></div></div>
+      <div class="pp-text-red">
+        ${faqItems.map(f => `<div class="qa-red" style="flex-shrink:0;"><div class="qq">❓ ${e(f.q)}</div><div class="qa-a">${e(f.a)}</div></div>`).join('')}
+      </div>
+      
+    </div></div>`
+
+        await document.fonts.ready;
+        await new Promise(r => setTimeout(r, 700));
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        for (let i = 0; i < pagesIds.length; i++) {
+          const el = document.getElementById(pagesIds[i]);
+          if (!el) continue;
+          const canvas = await html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#0d1219', logging: false, width: 794, height: 1123, windowWidth: 794 });
+          const img = canvas.toDataURL('image/jpeg', 0.93);
+          if (i > 0) pdf.addPage();
+          pdf.addImage(img, 'JPEG', 0, 0, 210, 297);
+        }
+
+        pdf.save('nutrition_plan_' + (c.name || 'client').replace(/\s+/g, '_') + '.pdf');
+        TT('✅ تم تحميل الـ PDF بنجاح!');
+        box.innerHTML = '';
+      } catch (err) { console.error(err); TT('❌ ' + err.message); }
+      S.gen = false; R();
+    }
+
+    R();
+  </script>
+</body>
+
+</html>

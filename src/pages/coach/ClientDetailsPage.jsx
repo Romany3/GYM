@@ -4,7 +4,6 @@ import {
   User, 
   Key, 
   MessageSquare, 
-  Calendar, 
   TrendingDown, 
   Dumbbell, 
   Utensils, 
@@ -13,22 +12,13 @@ import {
   Plus, 
   Trash2, 
   Save, 
-  CheckCircle2, 
-  AlertTriangle, 
-  Activity, 
-  Flame, 
-  Award, 
-  Clock, 
   FileText, 
-  Video, 
   Check, 
-  Sparkles,
-  ChevronRight,
-  ExternalLink,
-  ShieldCheck,
   Send,
+  Camera,
   Eye,
-  Camera
+  Activity,
+  X
 } from 'lucide-react';
 
 export default function ClientDetailsPage({ 
@@ -36,9 +26,11 @@ export default function ClientDetailsPage({
   onBack, 
   showToast,
   onNavigate,
-  onOpenClientCredentials
+  onOpenClientCredentials,
+  submittedLogs = {}
 }) {
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'workout' | 'nutrition' | 'daily-logs' | 'swaps'
+  const [selectedPhotoModal, setSelectedPhotoModal] = useState(null);
 
   // Default fallback client if none passed
   const activeClient = client || {
@@ -179,7 +171,55 @@ export default function ClientDetailsPage({
     }
   };
 
-  const currentLog = dailyLogsData[selectedLogDate] || dailyLogsData['2026-08-14'];
+  const liveSubmission = submittedLogs[activeClient?.id || 'c1']?.[selectedLogDate];
+  
+  const currentLog = liveSubmission ? {
+    date: `Today - ${selectedLogDate}`,
+    workoutLogged: true,
+    workoutName: 'Day 1: Chest & Shoulders (Power)',
+    workoutDuration: '54 mins',
+    rpeScore: '8.5 / 10',
+    clientWorkoutNotes: liveSubmission.extraNotes || 'Hit 85kg on Incline Bench for 4 sets of 8. Felt strong! Left shoulder felt totally fine with the warm-up protocol.',
+    completedExercises: liveSubmission.completedExercises?.length ? liveSubmission.completedExercises.map(e => ({
+      name: e.name,
+      loggedSets: e.loggedSets,
+      status: e.isFullyCompleted ? 'COMPLETED' : 'PARTIAL'
+    })) : [
+      { name: 'Barbell Incline Bench Press', loggedSets: '4 sets x 85 kg (8, 8, 8, 8 reps)', status: 'COMPLETED' },
+      { name: 'Seated DB Overhead Press', loggedSets: '3 sets x 26 kg (12, 11, 10 reps)', status: 'COMPLETED' },
+      { name: 'Cable Lateral Raises', loggedSets: '4 sets x 12 kg (15, 15, 14, 14 reps)', status: 'COMPLETED' }
+    ],
+    nutritionLogged: true,
+    loggedKcal: liveSubmission.totalKcalLogged || 1270,
+    loggedProtein: liveSubmission.totalProteinLogged || 96,
+    loggedCarbs: liveSubmission.totalCarbsLogged || 132,
+    loggedFats: liveSubmission.totalFatsLogged || 42,
+    loggedMeals: liveSubmission.eatenMeals?.length ? liveSubmission.eatenMeals.map(m => ({
+      name: m.category || 'Prescribed Meal',
+      food: m.name,
+      kcal: m.kcal,
+      protein: m.protein,
+      carbs: m.carbs,
+      fats: m.fats,
+      photo: null
+    })) : [
+      { name: 'Breakfast', food: 'Scrambled Eggs (3 eggs) & Toast', kcal: 520, protein: 38, carbs: 54, fats: 18, photo: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=400&q=80' },
+      { name: 'Lunch', food: 'Grilled Chicken (200g) & Rice', kcal: 750, protein: 58, carbs: 78, fats: 24, photo: null }
+    ],
+    checkin: {
+      sleepHours: liveSubmission.checkin?.sleepHours || '7.8 hrs',
+      energyLevel: liveSubmission.checkin?.energyLevel || '8 / 10',
+      soreness: 'Low',
+      stress: 'Low',
+      waterIntake: '3.5 Liters'
+    },
+    progressPhotos: liveSubmission.progressPhotos || {
+      front: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=400&q=80',
+      side: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=400&q=80',
+      back: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=400&q=80'
+    },
+    coachFeedback: null
+  } : (dailyLogsData[selectedLogDate] || dailyLogsData['2026-08-14']);
 
   // Swap requests data for this client
   const [swapRequests, setSwapRequests] = useState([
@@ -822,28 +862,38 @@ export default function ClientDetailsPage({
         </div>
       )}
 
-      {/* Tab 4: Daily Client Reviews & Logs Feed */}
+      {/* Tab 4: Daily Client Reviews & Logs Feed (Unified & Matched to Client Portal Style) */}
       {activeTab === 'daily-logs' && (
         <div className="space-y-6">
-          {/* Header & Log Date Picker */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#121724] border border-slate-800/90 rounded-2xl p-4 shadow-lg">
+          {/* Header & Date Switcher */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#121724] border border-slate-800/90 rounded-2xl p-5 shadow-xl">
             <div>
-              <h3 className="font-serif-header text-lg font-bold text-slate-100 flex items-center gap-2">
-                <ClipboardCheck className="w-5 h-5 text-emerald-400" />
-                <span>Daily Log & Review Submissions</span>
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded border border-emerald-800/80 flex items-center gap-1">
+                  <ClipboardCheck className="w-3 h-3" />
+                  CLIENT REVIEW & LOG FEED
+                </span>
+                {liveSubmission && (
+                  <span className="text-[10px] font-extrabold text-blue-300 bg-blue-950 px-2.5 py-0.5 rounded-full border border-blue-800">
+                    LIVE CLIENT SUBMISSION RECEIVED ({liveSubmission.submittedAt || 'Today'})
+                  </span>
+                )}
+              </div>
+              <h3 className="font-serif-header text-xl font-bold text-slate-100">
+                Daily Log & Weekly Evaluation Review
               </h3>
               <p className="text-xs text-slate-400">
-                Review daily workouts, logged meals, food photos, and wellness scores sent by {activeClient.name}
+                Review daily workouts, logged meals, dynamic macros, wellness scores, and weekly progress photos sent by {activeClient.name}
               </p>
             </div>
 
             {/* Date Switcher */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               {['2026-08-14', '2026-08-13'].map((dStr) => (
                 <button
                   key={dStr}
                   onClick={() => setSelectedLogDate(dStr)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                  className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                     selectedLogDate === dStr
                       ? 'bg-blue-600 text-white border-blue-500 shadow-md shadow-blue-600/30'
                       : 'bg-[#171e2e] text-slate-400 border-slate-700 hover:text-slate-200'
@@ -856,75 +906,161 @@ export default function ClientDetailsPage({
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left Column: Workout Logged & Meals Logged Feed */}
+            {/* Left Column: Workout Protocol & Nutrition & Weekly Photos */}
             <div className="lg:col-span-8 space-y-6">
-              {/* Daily Workout Log Card */}
-              <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 shadow-lg space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                  <div className="flex items-center gap-2">
-                    <Dumbbell className="w-5 h-5 text-red-400" />
+
+              {/* 1. Daily Prescribed Workout Protocol Log Card */}
+              <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 md:p-6 shadow-xl space-y-5">
+                <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-red-950/80 border border-red-800/60 flex items-center justify-center text-red-400">
+                      <Dumbbell className="w-5 h-5" />
+                    </div>
                     <div>
-                      <h4 className="font-serif-header text-sm font-bold text-slate-100">
+                      <h4 className="font-serif-header text-lg font-bold text-white">
                         {currentLog.workoutName}
                       </h4>
-                      <span className="text-[10px] text-slate-400">Duration: {currentLog.workoutDuration} • RPE: {currentLog.rpeScore}</span>
+                      <span className="text-xs text-slate-400">
+                        Duration: {currentLog.workoutDuration} • RPE Target: {currentLog.rpeScore}
+                      </span>
                     </div>
                   </div>
 
-                  <span className="px-2.5 py-1 bg-emerald-950/80 text-emerald-400 border border-emerald-800/60 rounded-full text-[10px] font-bold">
+                  <span className="px-3 py-1 bg-emerald-950/80 text-emerald-400 border border-emerald-800/60 rounded-full text-[10px] font-extrabold flex items-center gap-1">
                     ✓ LOGGED BY CLIENT
                   </span>
                 </div>
 
-                {/* Client Workout Notes */}
-                <div className="bg-[#171e2e] border border-slate-700/60 rounded-xl p-3 text-xs text-slate-300 italic">
-                  💬 Client Note: "{currentLog.clientWorkoutNotes}"
-                </div>
+                {/* Client Workout Notes Quote Block */}
+                {currentLog.clientWorkoutNotes && (
+                  <div className="bg-[#171e2e] border border-slate-700/60 rounded-xl p-3.5 text-xs text-slate-300 italic flex items-start gap-2">
+                    <span className="text-blue-400 font-bold shrink-0">💬 Client Note:</span>
+                    <span>"{currentLog.clientWorkoutNotes}"</span>
+                  </div>
+                )}
 
-                {/* Exercises Completed Breakdown */}
-                <div className="space-y-2">
-                  <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">COMPLETED SETS & WEIGHTS</span>
+                {/* Exercises & Logged Sets Breakdown */}
+                <div className="space-y-3">
+                  <span className="text-[10px] font-extrabold text-slate-400 tracking-wider uppercase block">
+                    COMPLETED EXERCISES, SETS & WEIGHTS
+                  </span>
                   {currentLog.completedExercises.map((ex, i) => (
-                    <div key={i} className="flex items-center justify-between bg-[#171e2e] p-3 rounded-xl border border-slate-800 text-xs">
-                      <span className="font-bold text-slate-200">{ex.name}</span>
-                      <span className="font-mono text-emerald-400 font-semibold">{ex.loggedSets}</span>
+                    <div key={i} className="bg-[#171e2e] p-4 rounded-xl border border-slate-700/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                      <div>
+                        <span className="font-bold text-sm text-slate-100 block">{ex.name}</span>
+                        <span className="font-mono text-emerald-400 font-semibold text-xs mt-0.5 block">
+                          {ex.loggedSets}
+                        </span>
+                      </div>
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold border shrink-0 ${
+                        ex.status === 'COMPLETED'
+                          ? 'bg-emerald-950/90 text-emerald-400 border-emerald-800'
+                          : 'bg-amber-950/90 text-amber-300 border-amber-800'
+                      }`}>
+                        {ex.status === 'COMPLETED' ? '✓ FULLY COMPLETED' : 'PARTIAL LOG'}
+                      </span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Daily Food Log & Photos Card */}
-              <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 shadow-lg space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                  <div className="flex items-center gap-2">
-                    <Utensils className="w-5 h-5 text-amber-400" />
+              {/* 2. Prescribed Nutrition & Meals Plan Review Card */}
+              <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 md:p-6 shadow-xl space-y-5">
+                <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-950/80 border border-amber-800/60 flex items-center justify-center text-amber-400">
+                      <Utensils className="w-5 h-5" />
+                    </div>
                     <div>
-                      <h4 className="font-serif-header text-sm font-bold text-slate-100">Logged Meals & Food Photos</h4>
-                      <span className="text-[10px] text-slate-400">
-                        Logged: {currentLog.loggedKcal} kcal (Protein: {currentLog.loggedProtein}g • Carbs: {currentLog.loggedCarbs}g • Fats: {currentLog.loggedFats}g)
+                      <h4 className="font-serif-header text-lg font-bold text-white">Nutrition & Logged Meal Plan</h4>
+                      <span className="text-xs text-slate-400">
+                        Target: {nutritionTargets.kcal || 2450} kcal • P: {nutritionTargets.protein || 180}g • C: {nutritionTargets.carbs || 240}g • F: {nutritionTargets.fats || 80}g
                       </span>
                     </div>
                   </div>
 
-                  <span className="px-2.5 py-1 bg-amber-950/80 text-amber-300 border border-amber-800/60 rounded-full text-[10px] font-bold">
-                    DAILY NUTRITION
+                  <span className="px-3 py-1 bg-amber-950/80 text-amber-300 border border-amber-800/60 rounded-full text-[10px] font-extrabold">
+                    DAILY NUTRITION LOG
                   </span>
                 </div>
 
+                {/* 4 Dynamic Macro Progress Summary Bars (Matching Client Portal) */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#171e2e] border border-slate-700/60 rounded-xl p-4">
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">CALORIES</span>
+                    <span className="text-xs sm:text-sm font-black text-slate-100">
+                      {currentLog.loggedKcal} / {nutritionTargets.kcal || 2450} kcal
+                    </span>
+                    <div className="w-full h-1.5 bg-slate-800 rounded-full mt-1.5 overflow-hidden">
+                      <div
+                        className="h-full bg-blue-500 rounded-full transition-all duration-300"
+                        style={{ width: `${Math.min(100, Math.round((currentLog.loggedKcal / (nutritionTargets.kcal || 2450)) * 100))}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">PROTEIN</span>
+                    <span className="text-xs sm:text-sm font-black text-rose-400">
+                      {currentLog.loggedProtein}g / {nutritionTargets.protein || 180}g
+                    </span>
+                    <div className="w-full h-1.5 bg-slate-800 rounded-full mt-1.5 overflow-hidden">
+                      <div
+                        className="h-full bg-rose-500 rounded-full transition-all duration-300"
+                        style={{ width: `${Math.min(100, Math.round((currentLog.loggedProtein / (nutritionTargets.protein || 180)) * 100))}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">CARBS</span>
+                    <span className="text-xs sm:text-sm font-black text-amber-400">
+                      {currentLog.loggedCarbs}g / {nutritionTargets.carbs || 240}g
+                    </span>
+                    <div className="w-full h-1.5 bg-slate-800 rounded-full mt-1.5 overflow-hidden">
+                      <div
+                        className="h-full bg-amber-500 rounded-full transition-all duration-300"
+                        style={{ width: `${Math.min(100, Math.round((currentLog.loggedCarbs / (nutritionTargets.carbs || 240)) * 100))}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">FATS</span>
+                    <span className="text-xs sm:text-sm font-black text-emerald-400">
+                      {currentLog.loggedFats}g / {nutritionTargets.fats || 80}g
+                    </span>
+                    <div className="w-full h-1.5 bg-slate-800 rounded-full mt-1.5 overflow-hidden">
+                      <div
+                        className="h-full bg-emerald-500 rounded-full transition-all duration-300"
+                        style={{ width: `${Math.min(100, Math.round((currentLog.loggedFats / (nutritionTargets.fats || 80)) * 100))}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Logged Meal Cards Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {currentLog.loggedMeals.map((meal, mIdx) => (
-                    <div key={mIdx} className="bg-[#171e2e] border border-slate-700/60 rounded-xl p-3.5 space-y-2">
-                      <div className="flex items-center justify-between">
+                    <div key={mIdx} className="bg-[#171e2e] border border-slate-700/60 rounded-xl p-4 space-y-2">
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                         <span className="font-bold text-xs text-blue-300">{meal.name}</span>
-                        <span className="text-[10px] font-mono text-slate-400">{meal.kcal} kcal</span>
+                        <span className="text-xs font-mono text-slate-200 font-bold">{meal.kcal} kcal</span>
                       </div>
-                      <p className="text-xs text-slate-300">{meal.food}</p>
+                      <p className="text-xs font-semibold text-slate-200">{meal.food}</p>
+                      <div className="text-[10px] font-mono flex items-center gap-1.5 pt-0.5 text-slate-400">
+                        <span className="text-rose-400 font-semibold">P: {meal.protein || 0}g</span>
+                        <span>•</span>
+                        <span className="text-amber-400 font-semibold">C: {meal.carbs || 0}g</span>
+                        <span>•</span>
+                        <span className="text-emerald-400 font-semibold">F: {meal.fats || 0}g</span>
+                      </div>
 
                       {meal.photo && (
                         <div className="relative rounded-lg overflow-hidden border border-slate-700 aspect-video mt-2">
                           <img src={meal.photo} alt={meal.name} className="w-full h-full object-cover" />
-                          <span className="absolute bottom-1 right-1 bg-slate-950/80 px-2 py-0.5 rounded text-[9px] font-bold text-slate-200">
-                            Photo Uploaded
+                          <span className="absolute bottom-1 right-1 bg-slate-950/90 px-2 py-0.5 rounded text-[9px] font-bold text-emerald-400 border border-emerald-800">
+                            ✓ Meal Photo
                           </span>
                         </div>
                       )}
@@ -932,49 +1068,133 @@ export default function ClientDetailsPage({
                   ))}
                 </div>
               </div>
+
+              {/* 3. Weekly Evaluation & Progress Photos Review Card */}
+              <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 md:p-6 shadow-xl space-y-5">
+                <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-sky-950/80 border border-sky-800/60 flex items-center justify-center text-sky-400">
+                      <Camera className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-serif-header text-lg font-bold text-white">Weekly Evaluation & Progress Photos</h4>
+                      <span className="text-xs text-slate-400">
+                        Sunday Check-In: Energy rating, sleep quality, and 3 physique progress photos
+                      </span>
+                    </div>
+                  </div>
+
+                  <span className="px-3 py-1 bg-sky-950/80 text-sky-300 border border-sky-800/60 rounded-full text-[10px] font-extrabold">
+                    WEEKLY REVIEW
+                  </span>
+                </div>
+
+                {/* Energy & Sleep Score Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="bg-[#171e2e] border border-slate-700/60 rounded-xl p-4 space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-semibold text-slate-300">Energy & Vitality</span>
+                      <span className="text-sm font-extrabold text-blue-400 font-mono">{currentLog.checkin?.energyLevel || '8 / 10'}</span>
+                    </div>
+                    <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-500 rounded-full" style={{ width: '80%' }} />
+                    </div>
+                  </div>
+
+                  <div className="bg-[#171e2e] border border-slate-700/60 rounded-xl p-4 space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-semibold text-slate-300">Sleep Quality & Duration</span>
+                      <span className="text-sm font-extrabold text-sky-400 font-mono">{currentLog.checkin?.sleepHours || '7.8 hrs'}</span>
+                    </div>
+                    <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-sky-500 rounded-full" style={{ width: '78%' }} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3 Progress Photos Gallery */}
+                <div className="space-y-3 pt-2 border-t border-slate-800">
+                  <span className="text-xs font-bold text-slate-200 uppercase tracking-wider block">
+                    3 WEEKLY PROGRESS PHOTOS (FRONT / SIDE / BACK)
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {[
+                      { pose: 'front', title: 'FRONT VIEW' },
+                      { pose: 'side', title: 'SIDE VIEW' },
+                      { pose: 'back', title: 'BACK VIEW' },
+                    ].map(({ pose, title }) => {
+                      const photoUrl = currentLog.progressPhotos?.[pose];
+                      return (
+                        <div key={pose} className="bg-[#171e2e] border border-slate-700/60 rounded-xl p-3 space-y-2 text-center">
+                          <span className="text-[10px] font-extrabold text-slate-300 tracking-wider block uppercase">
+                            {title}
+                          </span>
+                          {photoUrl ? (
+                            <div className="relative rounded-lg overflow-hidden border border-emerald-500/60 aspect-[3/4] bg-slate-900 group cursor-pointer" onClick={() => setSelectedPhotoModal(photoUrl)}>
+                              <img src={photoUrl} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                              <div className="absolute inset-0 bg-slate-950/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold text-xs gap-1">
+                                <Eye className="w-4 h-4 text-emerald-400" /> Click to Enlarge
+                              </div>
+                              <span className="absolute bottom-1 right-1 bg-slate-950/90 text-emerald-400 px-2 py-0.5 rounded text-[9px] font-bold">
+                                ✓ Photo Submitted
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="h-36 rounded-lg border-2 border-dashed border-slate-800 flex flex-col items-center justify-center text-slate-500 space-y-1 bg-[#121724]">
+                              <Camera className="w-6 h-6 text-slate-600" />
+                              <span className="text-[10px] font-semibold text-slate-500">Not Uploaded Yet</span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Right Column: Check-in Scorecard & Coach Feedback */}
             <div className="lg:col-span-4 space-y-6">
-              {/* Daily Wellness Check-in */}
-              <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 shadow-lg space-y-4">
-                <h4 className="font-serif-header text-sm font-bold text-slate-100 pb-3 border-b border-slate-800">
-                  Daily Wellness Check-In
+              {/* Daily Wellness Check-in Summary Card */}
+              <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 shadow-xl space-y-4">
+                <h4 className="font-serif-header text-base font-bold text-slate-100 pb-3 border-b border-slate-800 flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-emerald-400" />
+                  <span>Daily Wellness Scorecard</span>
                 </h4>
 
                 <div className="space-y-3 text-xs">
-                  <div className="flex justify-between py-1.5 border-b border-slate-800/50">
+                  <div className="flex justify-between py-2 border-b border-slate-800/60">
                     <span className="text-slate-400">Sleep Duration</span>
-                    <span className="font-bold text-blue-400">{currentLog.checkin.sleepHours}</span>
+                    <span className="font-bold text-blue-400">{currentLog.checkin?.sleepHours || '7.8 hrs'}</span>
                   </div>
-                  <div className="flex justify-between py-1.5 border-b border-slate-800/50">
+                  <div className="flex justify-between py-2 border-b border-slate-800/60">
                     <span className="text-slate-400">Energy Level</span>
-                    <span className="font-bold text-emerald-400">{currentLog.checkin.energyLevel}</span>
+                    <span className="font-bold text-emerald-400">{currentLog.checkin?.energyLevel || '8 / 10'}</span>
                   </div>
-                  <div className="flex justify-between py-1.5 border-b border-slate-800/50">
+                  <div className="flex justify-between py-2 border-b border-slate-800/60">
                     <span className="text-slate-400">Muscle Soreness</span>
-                    <span className="font-bold text-amber-400">{currentLog.checkin.soreness}</span>
+                    <span className="font-bold text-amber-400">{currentLog.checkin?.soreness || 'Low'}</span>
                   </div>
-                  <div className="flex justify-between py-1.5 border-b border-slate-800/50">
+                  <div className="flex justify-between py-2 border-b border-slate-800/60">
                     <span className="text-slate-400">Stress Score</span>
-                    <span className="font-bold text-slate-200">{currentLog.checkin.stress}</span>
+                    <span className="font-bold text-slate-200">{currentLog.checkin?.stress || 'Low'}</span>
                   </div>
-                  <div className="flex justify-between py-1.5 border-b border-slate-800/50">
+                  <div className="flex justify-between py-2 border-b border-slate-800/60">
                     <span className="text-slate-400">Water Logged</span>
-                    <span className="font-bold text-blue-300">{currentLog.checkin.waterIntake}</span>
+                    <span className="font-bold text-blue-300">{currentLog.checkin?.waterIntake || '3.5 Liters'}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Coach Feedback Note Editor */}
-              <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 shadow-lg space-y-4">
-                <h4 className="font-serif-header text-sm font-bold text-slate-100 flex items-center gap-2">
+              {/* Coach Feedback Note Editor Card */}
+              <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 shadow-xl space-y-4">
+                <h4 className="font-serif-header text-base font-bold text-slate-100 flex items-center gap-2 pb-3 border-b border-slate-800">
                   <MessageSquare className="w-4 h-4 text-blue-400" />
                   <span>Coach Response & Review</span>
                 </h4>
 
                 {currentLog.coachFeedback && (
-                  <div className="bg-blue-950/60 border border-blue-800/60 rounded-xl p-3 text-xs text-blue-200">
+                  <div className="bg-blue-950/60 border border-blue-800/60 rounded-xl p-3.5 text-xs text-blue-200">
                     <span className="font-bold text-blue-400 block mb-1">Previous Coach Feedback:</span>
                     "{currentLog.coachFeedback}"
                   </div>
@@ -983,17 +1203,17 @@ export default function ClientDetailsPage({
                 <textarea
                   value={coachFeedbackInput}
                   onChange={(e) => setCoachFeedbackInput(e.target.value)}
-                  rows={4}
-                  className="w-full bg-[#171e2e] border border-slate-700/70 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-blue-500 resize-none"
-                  placeholder="Write feedback for client on today's workout and food log..."
+                  rows={5}
+                  className="w-full bg-[#171e2e] border border-slate-700/70 rounded-xl p-3.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500 resize-none placeholder:text-slate-500"
+                  placeholder="Write feedback for client on today's workout, nutrition macros, and photos..."
                 />
 
                 <button
                   onClick={handleSendCoachFeedback}
-                  className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-blue-600/30 transition-all cursor-pointer"
+                  className="w-full py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 transition-all cursor-pointer"
                 >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>Send Feedback Note</span>
+                  <Send className="w-4 h-4" />
+                  <span>Send Feedback Note to Client</span>
                 </button>
               </div>
             </div>
@@ -1043,6 +1263,20 @@ export default function ClientDetailsPage({
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+      {/* Photo Enlarge Lightbox Modal */}
+      {selectedPhotoModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/90 flex items-center justify-center p-4" onClick={() => setSelectedPhotoModal(null)}>
+          <div className="relative max-w-2xl max-h-[90vh] bg-[#121724] border border-slate-800 rounded-2xl overflow-hidden p-2 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setSelectedPhotoModal(null)}
+              className="absolute top-4 right-4 p-2 rounded-full bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-700 transition-all cursor-pointer z-10"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <img src={selectedPhotoModal} alt="Progress Photo Large" className="w-full h-auto max-h-[80vh] object-contain rounded-xl" />
           </div>
         </div>
       )}
