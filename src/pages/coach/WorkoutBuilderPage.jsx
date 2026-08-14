@@ -11,9 +11,9 @@ import {
   Users,
   FileText
 } from 'lucide-react';
-import WatchVideoModal from '../../components/modals/WatchVideoModal';
-import AddEditLibraryExerciseModal from '../../components/modals/AddEditLibraryExerciseModal';
-import WorkoutPdfModal from '../../components/modals/WorkoutPdfModal';
+import WatchVideoModal from '@/components/modals/WatchVideoModal';
+import AddEditLibraryExerciseModal from '@/components/modals/AddEditLibraryExerciseModal';
+import WorkoutPdfModal from '@/components/modals/WorkoutPdfModal';
 
 export default function WorkoutBuilderPage({ 
   showToast,
