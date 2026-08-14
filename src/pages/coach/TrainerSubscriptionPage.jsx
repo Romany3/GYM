@@ -135,7 +135,7 @@ export default function TrainerSubscriptionPage({
               <CreditCard className="w-6 h-6" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs font-bold text-emerald-400 bg-emerald-950 px-2.5 py-0.5 rounded-md border border-emerald-800/60 uppercase">
                   ACTIVE SUBSCRIPTION
                 </span>

@@ -17,7 +17,6 @@ import {
   Bell,
   Check,
   Menu,
-  Search,
   LogOut,
   ArrowLeftRight,
   Apple,
@@ -33,7 +32,6 @@ import ClientFoodSwapsPage from './ClientFoodSwapsPage';
 export default function ClientPortalPage({ clientData, onLogout, showToast, onSubmitDailyLog, onSubmitWeeklyCheckin }) {
   const [activeTab, setActiveTab] = useState('daily-checkin'); // 'daily-checkin' | 'food-swaps' | 'substitutions' | 'notifications'
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   const getClientHeaderTitle = () => {
@@ -563,18 +561,6 @@ export default function ClientPortalPage({ clientData, onLogout, showToast, onSu
 
           {/* Right Controls */}
           <div className="flex items-center gap-2 sm:gap-4 md:gap-6 shrink-0">
-            {/* Search Bar */}
-            <div className="relative w-28 sm:w-48 md:w-64">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search workout, meals..."
-                className="w-full bg-[#131926] text-slate-200 text-xs placeholder:text-slate-500 rounded-xl pl-9 pr-3 py-2 border border-slate-700/50 focus:outline-none focus:border-blue-500/60 transition-all"
-              />
-            </div>
-
             {/* Action Buttons */}
             <div className="flex items-center gap-1.5 sm:gap-3">
               {/* Notification Bell Button */}
@@ -644,7 +630,7 @@ export default function ClientPortalPage({ clientData, onLogout, showToast, onSu
 
                 <button
                   onClick={handleDailyLogSubmit}
-                  className="px-5 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
+                  className="w-full sm:w-auto px-5 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
                 >
                   <Send className="w-4 h-4" />
                   <span>{isDailyLogSubmittedToday ? 'Resubmit Daily Log Only' : 'Submit Daily Log Only'}</span>
@@ -652,13 +638,13 @@ export default function ClientPortalPage({ clientData, onLogout, showToast, onSu
               </div>
 
               {/* Weekly Evaluation Reminder Alert Box */}
-              <div className="bg-gradient-to-r from-amber-950/80 via-slate-900 to-slate-900 border border-amber-500/40 rounded-2xl p-4 shadow-lg flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
+              <div className="bg-gradient-to-r from-amber-950/80 via-slate-900 to-slate-900 border border-amber-500/40 rounded-2xl p-4 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-start sm:items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
                     <Bell className="w-5 h-5 animate-bounce" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-amber-200 flex items-center gap-2">
+                    <h4 className="text-xs font-bold text-amber-200 flex flex-wrap items-center gap-2">
                       <span>Weekly Evaluation & Progress Photos Reminder</span>
                       <span className="px-2 py-0.5 bg-amber-900/80 text-amber-300 rounded text-[9px] uppercase font-mono">Due Every Sunday</span>
                     </h4>
@@ -670,7 +656,7 @@ export default function ClientPortalPage({ clientData, onLogout, showToast, onSu
 
                 <button
                   onClick={handleScrollToWeeklyForm}
-                  className="px-3.5 py-2 bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-700/60 rounded-xl text-xs font-bold transition-all shrink-0 whitespace-nowrap cursor-pointer flex items-center gap-1 shadow-md hover:shadow-amber-500/20 active:scale-95"
+                  className="w-full sm:w-auto px-3.5 py-2 bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-700/60 rounded-xl text-xs font-bold transition-all shrink-0 whitespace-nowrap cursor-pointer flex items-center justify-center gap-1 shadow-md hover:shadow-amber-500/20 active:scale-95"
                 >
                   Jump to Weekly Form ↓
                 </button>

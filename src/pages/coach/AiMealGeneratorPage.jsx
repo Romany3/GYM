@@ -236,7 +236,7 @@ export default function AiMealGeneratorPage({ showToast }) {
 
         <button
           onClick={handleSaveAsTemplate}
-          className="py-2.5 px-5 bg-gradient-to-r from-blue-400 via-sky-300 to-blue-300 hover:from-blue-300 hover:to-sky-200 text-slate-950 font-bold text-xs rounded-xl shadow-lg flex items-center gap-2 transition-all cursor-pointer"
+          className="w-full md:w-auto py-2.5 px-5 bg-gradient-to-r from-blue-400 via-sky-300 to-blue-300 hover:from-blue-300 hover:to-sky-200 text-slate-950 font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
         >
           <Save className="w-4 h-4" />
           <span>Save as Template</span>
@@ -397,7 +397,7 @@ export default function AiMealGeneratorPage({ showToast }) {
 
       {/* Macro Telemetry Summary Bar (Matching Screenshot) */}
       <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2">
           <h3 className="font-serif-header text-sm font-bold text-slate-200 uppercase tracking-wider">
             AI Generated Plan Macro Summary
           </h3>
@@ -464,15 +464,15 @@ export default function AiMealGeneratorPage({ showToast }) {
                 className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4 flex flex-col justify-between"
               >
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
                     <div>
                       <h4 className="text-sm font-bold text-slate-100">{meal.title}</h4>
                       <span className="text-[10px] text-slate-400 font-mono">{meal.time}</span>
                     </div>
 
-                    <div className="text-right">
+                    <div className="text-left sm:text-right">
                       <span className="text-xs font-extrabold text-white block">{mealTotalKcal} kcal</span>
-                      <span className="text-[10px] font-mono text-slate-400">
+                      <span className="text-[10px] font-mono text-slate-400 whitespace-nowrap">
                         P: {Math.round(mealTotalP)}g • C: {Math.round(mealTotalC)}g • F: {Math.round(mealTotalF)}g
                       </span>
                     </div>
@@ -483,38 +483,39 @@ export default function AiMealGeneratorPage({ showToast }) {
                     {meal.items.map((item, itemIdx) => (
                       <div
                         key={itemIdx}
-                        className="bg-[#171e2e] p-3 rounded-xl border border-slate-800 flex items-center justify-between gap-3"
+                        className="bg-[#171e2e] p-3 rounded-xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5"
                       >
-                        <div className="space-y-0.5 min-w-0 flex-1">
+                        <div className="space-y-1.5 min-w-0 flex-1">
                           <span className="font-bold text-slate-200 block truncate">{item.name}</span>
-                          <div className="flex items-center gap-2 text-[10px] text-slate-400 font-mono">
-                            <span>{item.kcal} kcal</span>
-                            <span>•</span>
-                            <span className="text-blue-400">P:{item.p}g</span>
-                            <span>•</span>
-                            <span className="text-sky-400">C:{item.c}g</span>
-                            <span>•</span>
-                            <span className="text-amber-400">F:{item.f}g</span>
+                          <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-slate-400 font-mono">
+                            <span className="font-bold text-slate-300">{item.kcal} kcal</span>
+                            <span className="text-slate-600">•</span>
+                            <span className="text-blue-400 bg-blue-950/80 px-1.5 py-0.5 rounded border border-blue-800/50">P: {item.p}g</span>
+                            <span className="text-sky-400 bg-sky-950/80 px-1.5 py-0.5 rounded border border-sky-800/50">C: {item.c}g</span>
+                            <span className="text-amber-400 bg-amber-950/80 px-1.5 py-0.5 rounded border border-amber-800/50">F: {item.f}g</span>
                           </div>
                         </div>
 
                         {/* Portion Grams Input */}
-                        <div className="flex items-center gap-2 shrink-0">
-                          <input
-                            type="number"
-                            step="5"
-                            value={item.portionGrams}
-                            onChange={(e) => handleUpdateItemGram(mealIdx, itemIdx, e.target.value)}
-                            className="w-16 bg-slate-900 text-slate-100 font-mono font-bold text-xs text-center p-1.5 rounded-lg border border-slate-700 focus:outline-none focus:border-red-500"
-                          />
-                          <span className="text-slate-400 text-xs font-mono">g</span>
+                        <div className="flex items-center justify-between sm:justify-end gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800/80 shrink-0">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[11px] text-slate-400 font-semibold sm:hidden">Portion:</span>
+                            <input
+                              type="number"
+                              step="5"
+                              value={item.portionGrams}
+                              onChange={(e) => handleUpdateItemGram(mealIdx, itemIdx, e.target.value)}
+                              className="w-16 bg-slate-900 text-slate-100 font-mono font-bold text-xs text-center p-1.5 rounded-lg border border-slate-700 focus:outline-none focus:border-red-500"
+                            />
+                            <span className="text-slate-400 text-xs font-mono">g</span>
+                          </div>
 
                           <button
                             onClick={() => handleRemoveItem(mealIdx, itemIdx)}
-                            className="p-1 text-slate-500 hover:text-red-400 rounded transition-colors"
+                            className="p-1.5 text-slate-400 hover:text-red-400 rounded-lg hover:bg-slate-800 transition-colors"
                             title="Remove Food"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </div>

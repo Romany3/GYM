@@ -299,10 +299,10 @@ export default function FoodSwapRequestsPage({ showToast }) {
 
               {/* 1-Click Action Buttons for Pending Requests */}
               {req.status === 'PENDING' && (
-                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800/80">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-2 border-t border-slate-800/80">
                   <button
                     onClick={() => handleOpenRejectModal(req)}
-                    className="py-2 px-4 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/60 font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all cursor-pointer"
+                    className="w-full sm:w-auto flex items-center justify-center py-2 px-4 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/60 font-bold text-xs rounded-xl gap-1.5 transition-all cursor-pointer"
                   >
                     <X className="w-3.5 h-3.5" />
                     <span>Decline Swap</span>
@@ -310,7 +310,7 @@ export default function FoodSwapRequestsPage({ showToast }) {
 
                   <button
                     onClick={() => handleOpenApproveModal(req)}
-                    className="py-2 px-5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-md shadow-emerald-500/20 flex items-center gap-1.5 transition-all cursor-pointer"
+                    className="w-full sm:w-auto flex items-center justify-center py-2 px-5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-md shadow-emerald-500/20 gap-1.5 transition-all cursor-pointer"
                   >
                     <Check className="w-4 h-4" />
                     <span>Approve Food Swap</span>

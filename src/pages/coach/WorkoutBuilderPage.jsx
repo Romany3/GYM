@@ -250,10 +250,10 @@ export default function WorkoutBuilderPage({
         </div>
 
         {/* Top Header Quick Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           <button
             onClick={() => setIsPdfModalOpen(true)}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white border border-rose-500/50 text-xs font-bold transition-all cursor-pointer shadow-md shadow-red-950/40"
+            className="flex-1 md:flex-initial flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white border border-rose-500/50 text-xs font-bold transition-all cursor-pointer shadow-md shadow-red-950/40"
             title="Export Workout Plan PDF"
           >
             <FileText className="w-4 h-4" />
@@ -262,7 +262,7 @@ export default function WorkoutBuilderPage({
 
           <button
             onClick={() => onOpenBatchAssignModal && onOpenBatchAssignModal('Hypertrophy Split 4-Day Protocol')}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 text-xs font-semibold transition-all cursor-pointer shadow-sm"
+            className="flex-1 md:flex-initial flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 text-xs font-semibold transition-all cursor-pointer shadow-sm"
           >
             <Users className="w-4 h-4 text-blue-400" />
             <span>Batch Copy Routine</span>
@@ -463,8 +463,8 @@ export default function WorkoutBuilderPage({
                 className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 shadow-xl space-y-4 relative group"
               >
                 {/* Exercise Item Header */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 flex-1 max-w-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-800/60">
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
                     <span className="w-6 h-6 rounded-md bg-[#1d273a] text-slate-200 text-xs font-mono font-bold flex items-center justify-center border border-slate-700 shrink-0">
                       {ex.num}
                     </span>
@@ -485,7 +485,7 @@ export default function WorkoutBuilderPage({
                   </div>
 
                   {/* Superset Toggle & Drag Handle */}
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-slate-400 font-medium">Superset</span>
                       <button

@@ -6,13 +6,13 @@ import {
   Search, 
   Plus, 
   MessageSquare, 
-  User, 
   Key, 
   TrendingDown, 
   Calendar,
   ChevronLeft,
   ChevronRight,
-  Eye
+  Eye,
+  Ban
 } from 'lucide-react';
 
 export default function ClientsPage({ 
@@ -21,7 +21,9 @@ export default function ClientsPage({
   showToast,
   onNavigate,
   clients: externalClients,
-  onUpdateClients
+  onUpdateClients,
+  revokedPasskeys = {},
+  onToggleRevokePasskey
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
@@ -263,8 +265,8 @@ export default function ClientsPage({
                   }`}
                 >
                   {/* Top Header: Avatar, Name, Code & Status */}
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
                       {client.avatar ? (
                         <img
                           src={client.avatar}
@@ -276,37 +278,44 @@ export default function ClientsPage({
                           {client.initials}
                         </div>
                       )}
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-bold text-sm sm:text-base text-slate-100">{client.name}</h4>
-                          <span className="text-[10px] text-slate-400 font-mono bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700/60">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                          <h4 className="font-bold text-sm sm:text-base text-slate-100 truncate">{client.name}</h4>
+                          <span className="text-[10px] text-slate-400 font-mono bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700/60 shrink-0">
                             {client.code}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-400 mt-0.5">{client.email}</p>
+                        <p className="text-xs text-slate-400 mt-0.5 truncate">{client.email}</p>
                       </div>
                     </div>
 
-                    <span
-                      className={`text-[10px] font-bold tracking-wider uppercase px-3 py-1 rounded-full border shrink-0 ${
-                        client.status === 'ACTIVE'
-                          ? 'bg-blue-950/80 border-blue-800 text-blue-300 shadow-sm'
-                          : client.status === 'AT RISK'
-                          ? 'bg-red-950/80 border-red-900 text-red-300 shadow-sm'
-                          : 'bg-amber-950/80 border-amber-800 text-amber-300 shadow-sm'
-                      }`}
-                    >
-                      {client.status}
-                    </span>
+                    <div className="flex items-center gap-2 flex-wrap shrink-0">
+                      {revokedPasskeys[client.passkey || 'FA-9B2X71'] && (
+                        <span className="text-[10px] font-extrabold tracking-wider uppercase px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800">
+                          🚫 REVOKED
+                        </span>
+                      )}
+                      <span
+                        className={`text-[10px] font-bold tracking-wider uppercase px-3 py-1 rounded-full border ${
+                          client.status === 'ACTIVE'
+                            ? 'bg-blue-950/80 border-blue-800 text-blue-300 shadow-sm'
+                            : client.status === 'AT RISK'
+                            ? 'bg-red-950/80 border-red-900 text-red-300 shadow-sm'
+                            : 'bg-amber-950/80 border-amber-800 text-amber-300 shadow-sm'
+                        }`}
+                      >
+                        {client.status}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Client Details Grid */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-3 border-t border-slate-800/80">
-                    <div>
+                    <div className="min-w-0">
                       <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Goal</span>
                       <span className="font-semibold text-slate-200 truncate block mt-0.5">{client.goal}</span>
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Current Plan</span>
                       <span
                         className={`font-semibold truncate block mt-0.5 ${
@@ -320,11 +329,11 @@ export default function ClientsPage({
                         {client.plan}
                       </span>
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Compliance</span>
                       {client.compliance !== null ? (
                         <div className="flex items-center gap-2 mt-1">
-                          <div className="w-16 bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                          <div className="w-16 bg-slate-800 rounded-full h-1.5 overflow-hidden shrink-0">
                             <div
                               style={{ width: `${client.compliance}%` }}
                               className={`h-full rounded-full ${
@@ -338,21 +347,21 @@ export default function ClientsPage({
                         <span className="text-slate-500 mt-0.5 block">--</span>
                       )}
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Last Active</span>
                       <span className="text-slate-300 font-semibold block mt-0.5">{client.lastActive}</span>
                     </div>
                   </div>
 
                   {/* Actions Row */}
-                  <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800/80">
+                  <div className="flex flex-wrap sm:flex-nowrap items-center justify-start sm:justify-end gap-2 pt-3 border-t border-slate-800/80">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         if (onNavigate) onNavigate('client-details', client);
                         if (showToast) showToast(`Opening details for ${client.name}`);
                       }}
-                      className="px-3 py-1.5 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white border border-rose-500/50 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-red-900/30 transition-all cursor-pointer"
+                      className="flex-1 sm:flex-initial px-3 py-1.5 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white border border-rose-500/50 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-red-900/30 transition-all cursor-pointer"
                       title="View Client Details, Programs & Daily Reviews"
                     >
                       <Eye className="w-3.5 h-3.5" />
@@ -367,34 +376,51 @@ export default function ClientsPage({
                           showToast(`Passkey for ${client.name}: ${client.passkey || 'FA-9B2X71'}`);
                         }
                       }}
-                      className="px-3 py-1.5 bg-blue-950/70 hover:bg-blue-900/90 text-blue-300 border border-blue-800/60 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+                      className="flex-1 sm:flex-initial px-3 py-1.5 bg-blue-950/70 hover:bg-blue-900/90 text-blue-300 border border-blue-800/60 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm"
                       title="View Client Passkey & Invite Link"
                     >
                       <Key className="w-3.5 h-3.5 text-blue-400" />
                       <span>Passkey</span>
                     </button>
+
+                    {/* Cancel / Restore Passkey Action Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const pk = client.passkey || 'FA-9B2X71';
+                        if (onToggleRevokePasskey) onToggleRevokePasskey(pk);
+                      }}
+                      className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer border shadow-sm ${
+                        revokedPasskeys[client.passkey || 'FA-9B2X71']
+                          ? 'bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border-emerald-800/80'
+                          : 'bg-rose-950/80 hover:bg-rose-900 text-rose-300 border-rose-800/80'
+                      }`}
+                      title={revokedPasskeys[client.passkey || 'FA-9B2X71'] ? "Reactivate client login passkey" : "Cancel & Revoke client login passkey"}
+                    >
+                      {revokedPasskeys[client.passkey || 'FA-9B2X71'] ? (
+                        <>
+                          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>Restore Passkey</span>
+                        </>
+                      ) : (
+                        <>
+                          <Ban className="w-3.5 h-3.5 text-rose-400" />
+                          <span>Cancel Passkey</span>
+                        </>
+                      )}
+                    </button>
+
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         if (onNavigate) onNavigate('coach-chat');
                         if (showToast) showToast(`Opening chat with ${client.name}`);
                       }}
-                      className="px-3 py-1.5 bg-[#171e2e] hover:bg-slate-800 text-blue-300 border border-slate-700/60 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+                      className="flex-1 sm:flex-initial px-3 py-1.5 bg-[#171e2e] hover:bg-slate-800 text-blue-300 border border-slate-700/60 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                       title="Chat with Athlete"
                     >
                       <MessageSquare className="w-3.5 h-3.5 text-blue-400" />
                       <span>Message</span>
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (onNavigate) onNavigate('client-details', client);
-                      }}
-                      className="px-3 py-1.5 bg-[#171e2e] hover:bg-slate-800 text-slate-300 border border-slate-700/60 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
-                      title="Adjust Nutrition & Training Plan"
-                    >
-                      <User className="w-3.5 h-3.5" />
-                      <span>Plan</span>
                     </button>
                   </div>
                 </div>

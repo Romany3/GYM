@@ -1,9 +1,7 @@
-import { Search, Bell, Mail, Menu } from 'lucide-react';
+import { Bell, Mail, Menu } from 'lucide-react';
 
 export default function Header({ 
   activeTab, 
-  searchQuery, 
-  setSearchQuery, 
   onOpenMobileSidebar,
   onNavigate
 }) {
@@ -40,17 +38,6 @@ export default function Header({
     }
   };
 
-  const getSearchPlaceholder = () => {
-    switch (activeTab) {
-      case 'clients':
-        return 'Search clients by name, goal...';
-      case 'workout-builder':
-        return 'Search exercises...';
-      default:
-        return 'Search...';
-    }
-  };
-
   return (
     <header className="h-20 px-4 md:px-8 border-b border-slate-800/80 bg-[#0b0e17]/90 backdrop-blur-md flex items-center justify-between sticky top-0 z-30">
       {/* Title & Mobile Hamburger Button */}
@@ -70,17 +57,6 @@ export default function Header({
 
       {/* Right Controls */}
       <div className="flex items-center gap-2 sm:gap-4 md:gap-6 shrink-0">
-        {/* Search Bar */}
-        <div className="relative w-28 sm:w-48 md:w-72">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={getSearchPlaceholder()}
-            className="w-full bg-[#131926] text-slate-200 text-xs placeholder:text-slate-500 rounded-xl pl-9 pr-3 py-2 border border-slate-700/50 focus:outline-none focus:border-blue-500/60 transition-all"
-          />
-        </div>
 
         {/* Coach Subscription & Capacity Badge */}
         <button

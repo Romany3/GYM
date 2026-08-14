@@ -65,7 +65,7 @@ export default function DailyPlanCreator({
         </div>
 
         {/* Delivery Format Toggle Pills */}
-        <div className="flex items-center bg-[#131926] p-1 rounded-xl border border-slate-800 text-xs font-semibold">
+        <div className="flex items-center gap-1 bg-[#131926] p-1 rounded-xl border border-slate-800 text-xs font-semibold overflow-x-auto scrollbar-none max-w-full shrink-0">
           <button
             onClick={() => setPlanType('digital')}
             className={`px-3 py-1.5 rounded-lg transition-all ${

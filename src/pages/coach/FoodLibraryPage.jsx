@@ -95,10 +95,10 @@ export default function FoodLibraryPage({ showToast }) {
         </div>
 
         {/* Top Header Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
           <button
             onClick={() => setIsAddFoodOpen(true)}
-            className="flex items-center gap-2 py-2.5 px-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all cursor-pointer"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Add Custom Food Item</span>

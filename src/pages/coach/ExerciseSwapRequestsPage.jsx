@@ -284,10 +284,10 @@ export default function ExerciseSwapRequestsPage({ showToast }) {
 
               {/* Action Buttons for Pending Requests */}
               {req.status === 'PENDING' && (
-                <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-800/80">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2.5 pt-2 border-t border-slate-800/80">
                   <button
                     onClick={() => handleReject(req.id, req.clientName)}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition-all cursor-pointer border border-slate-700"
+                    className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition-all cursor-pointer border border-slate-700"
                   >
                     <X className="w-4 h-4 text-pink-400" />
                     <span>Reject Request</span>
@@ -295,7 +295,7 @@ export default function ExerciseSwapRequestsPage({ showToast }) {
 
                   <button
                     onClick={() => handleApprove(req.id, req.suggestedAlternative)}
-                    className="flex items-center gap-1.5 px-5 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-md shadow-emerald-500/20"
+                    className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-5 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-md shadow-emerald-500/20"
                   >
                     <Check className="w-4 h-4" />
                     <span>Approve & Update Routine</span>

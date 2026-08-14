@@ -45,8 +45,24 @@ export default function App() {
 
   // Master Active Tab Routing State (For Coach Panel)
   const [activeTab, setActiveTab] = useState('overview');
-  const [searchQuery, setSearchQuery] = useState('');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  // Passkey Revocation / Cancellation State
+  const [revokedPasskeys, setRevokedPasskeys] = useState({});
+
+  const handleToggleRevokePasskey = (passkey) => {
+    if (!passkey) return;
+    setRevokedPasskeys((prev) => {
+      const isRevoked = !!prev[passkey];
+      const nextState = { ...prev, [passkey]: !isRevoked };
+      if (!isRevoked) {
+        setToast({ message: `Passkey ${passkey} has been CANCELLED/REVOKED! Client access blocked.`, type: 'warning' });
+      } else {
+        setToast({ message: `Passkey ${passkey} RESTORED! Client access unblocked.`, type: 'info' });
+      }
+      return nextState;
+    });
+  };
 
   // Coach Subscription State
   const [coachSubscription, setCoachSubscription] = useState({
@@ -432,6 +448,7 @@ export default function App() {
           </div>
         </div>
         <ClientAuthPage
+          revokedPasskeys={revokedPasskeys}
           onClientLoginSuccess={(clientInfo) => {
             setCurrentClientData(clientInfo);
             setAppMode('client_portal');
@@ -515,8 +532,6 @@ export default function App() {
         {/* Shared Master Header */}
         <Header
           activeTab={activeTab}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
           selectedClient={selectedClient}
           onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
           onNavigate={setActiveTab}
@@ -589,6 +604,8 @@ export default function App() {
                 setCreatedClientCredentials(clientData);
                 setIsCredentialsOpen(true);
               }}
+              revokedPasskeys={revokedPasskeys}
+              onToggleRevokePasskey={handleToggleRevokePasskey}
               onNavigate={(tab, payload) => {
                 if (tab === 'client-details') {
                   if (payload) setSelectedClientForDetails(payload);
@@ -608,6 +625,8 @@ export default function App() {
               onBack={() => setActiveTab('clients')}
               showToast={showToast}
               submittedLogs={clientSubmittedLogs}
+              revokedPasskeys={revokedPasskeys}
+              onToggleRevokePasskey={handleToggleRevokePasskey}
               onNavigate={(tab, payload) => {
                 if (tab === 'client-details') {
                   if (payload) setSelectedClientForDetails(payload);
@@ -719,6 +738,8 @@ export default function App() {
         onClose={() => setIsCredentialsOpen(false)}
         clientData={createdClientCredentials}
         showToast={showToast}
+        revokedPasskeys={revokedPasskeys}
+        onToggleRevokePasskey={handleToggleRevokePasskey}
       />
 
       <ExerciseChangeRequestModal

@@ -80,7 +80,7 @@ export default function OverviewPage({
 
         <button
           onClick={onOpenAnnouncement}
-          className="flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-r from-blue-300 via-sky-200 to-blue-200 hover:from-blue-200 hover:to-sky-100 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-r from-blue-300 via-sky-200 to-blue-200 hover:from-blue-200 hover:to-sky-100 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer"
         >
           <Megaphone className="w-4 h-4 text-slate-950" />
           <span>Send Announcement to All Clients</span>
@@ -293,84 +293,89 @@ export default function OverviewPage({
         <div className="lg:col-span-8 space-y-6">
           {/* Action Required Alerts Panel */}
           <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 shadow-xl space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-pink-400" />
-                <h2 className="font-serif-header text-lg font-semibold text-slate-100">
-                  Action Required Alerts
-                </h2>
+            <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800/80">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                  <AlertCircle className="w-4 h-4" />
+                </div>
+                <div>
+                  <h2 className="font-serif-header text-lg font-bold text-slate-100">
+                    Action Required Alerts
+                  </h2>
+                  <p className="text-[11px] text-slate-400">Immediate attention needed for client retention & billing</p>
+                </div>
               </div>
-              <span className="bg-pink-950/80 text-pink-300 border border-pink-800/60 font-bold text-[10px] tracking-wider px-2.5 py-0.5 rounded-full uppercase">
+              <span className="bg-rose-950/90 text-rose-300 border border-rose-800/80 font-extrabold text-[10px] tracking-wider px-3 py-1 rounded-full uppercase shrink-0 shadow-sm">
                 2 Critical Alerts
               </span>
             </div>
 
             {/* Alert Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Alert Card 1: Jason Stark */}
-              <div className="bg-[#171e2e] border border-red-900/60 rounded-xl p-4 space-y-3 relative overflow-hidden">
-                <div className="flex items-center justify-between">
+              <div className="bg-[#161c2a] border border-rose-900/50 hover:border-rose-700/70 rounded-2xl p-4.5 space-y-3.5 relative overflow-hidden transition-all shadow-lg group">
+                <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-3">
                     <img
                       src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
                       alt="Jason Stark"
-                      className="w-10 h-10 rounded-xl object-cover border border-slate-700"
+                      className="w-10 h-10 rounded-full object-cover ring-2 ring-rose-500/40 shadow-md shrink-0"
                     />
                     <div>
-                      <h4 className="text-xs font-bold text-slate-100">Jason Stark</h4>
-                      <span className="text-[9px] font-bold text-red-400 uppercase tracking-widest">
-                        AT RISK
+                      <h4 className="text-xs font-bold text-slate-100 group-hover:text-rose-300 transition-colors">Jason Stark</h4>
+                      <span className="text-[9px] font-extrabold text-rose-400 bg-rose-950/80 px-2 py-0.5 rounded border border-rose-800/60 uppercase tracking-widest">
+                        AT RISK • MISSING LOGS
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-400">
-                  No activity logs for <strong className="text-slate-200">4 days</strong>. Last check-in: Monday.
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  No activity logs for <strong className="text-rose-300 font-bold">4 consecutive days</strong>. Last check-in: Monday.
                 </p>
 
                 <div className="grid grid-cols-2 gap-2 pt-1">
                   <button
-                    onClick={() => showToast && showToast('Nudge notification sent to Jason Stark')}
-                    className="py-1.5 bg-[#1f293d] hover:bg-[#28354f] border border-blue-500/40 text-blue-300 font-bold text-[11px] rounded-lg transition-all cursor-pointer"
+                    onClick={() => showToast && showToast('Nudge notification sent to Jason Stark', 'info')}
+                    className="py-2 bg-rose-950/60 hover:bg-rose-900/90 border border-rose-800/80 text-rose-200 font-bold text-[11px] rounded-xl transition-all cursor-pointer shadow-sm text-center"
                   >
-                    NUDGE CLIENT
+                    Nudge Client
                   </button>
                   <button
                     onClick={() => onNavigate && onNavigate('clients')}
-                    className="py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-[11px] rounded-lg transition-all cursor-pointer"
+                    className="py-2 bg-[#1c2436] hover:bg-[#242f47] border border-slate-700 text-slate-200 font-semibold text-[11px] rounded-xl transition-all cursor-pointer text-center"
                   >
-                    VIEW LOGS
+                    View Profile
                   </button>
                 </div>
               </div>
 
               {/* Alert Card 2: Renewal Due */}
-              <div className="bg-[#171e2e] border border-slate-700/60 rounded-xl p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-blue-400">
-                      <CreditCard className="w-4 h-4" />
+              <div className="bg-[#161c2a] border border-amber-900/50 hover:border-amber-700/70 rounded-2xl p-4.5 space-y-3.5 relative overflow-hidden transition-all shadow-lg group">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0 shadow-md">
+                      <CreditCard className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-slate-100">Renewal Due</h4>
-                      <span className="text-[9px] font-bold text-slate-400 tracking-wider">
-                        3 DAYS LEFT
+                      <h4 className="text-xs font-bold text-slate-100 group-hover:text-amber-300 transition-colors">Renewal Pending</h4>
+                      <span className="text-[9px] font-extrabold text-amber-400 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-800/60 uppercase tracking-wider">
+                        SARAH JENKINS • 3 DAYS LEFT
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-400">
-                  Sarah Jenkins subscription expires on Friday. Automatic renewal pending.
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Pro Athlete Plan subscription expires on Friday. Automatic renewal pending confirmation.
                 </p>
 
                 <div className="pt-1">
                   <button
                     onClick={() => showToast && showToast('Invoice preview opened for Sarah Jenkins', 'info')}
-                    className="w-full py-1.5 bg-[#1b2539] hover:bg-[#23304a] border border-slate-700 text-slate-200 font-bold text-[11px] rounded-lg transition-all cursor-pointer"
+                    className="w-full py-2 bg-amber-950/60 hover:bg-amber-900/80 border border-amber-800/80 text-amber-200 font-bold text-[11px] rounded-xl transition-all cursor-pointer shadow-sm text-center"
                   >
-                    VIEW INVOICE
+                    Review Invoice & Remind
                   </button>
                 </div>
               </div>
@@ -380,21 +385,26 @@ export default function OverviewPage({
           {/* Recent Activity Panel */}
           <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 shadow-xl space-y-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-blue-400" />
-                <h2 className="font-serif-header text-lg font-semibold text-slate-100">
-                  Recent Activity
-                </h2>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                  <Clock className="w-4 h-4" />
+                </div>
+                <div>
+                  <h2 className="font-serif-header text-lg font-bold text-slate-100">
+                    Recent Activity
+                  </h2>
+                  <p className="text-[11px] text-slate-400">Real-time workout & check-in feed</p>
+                </div>
               </div>
 
               {/* Filter Pills */}
-              <div className="flex items-center gap-2 text-xs">
-                <div className="flex items-center bg-[#131926] p-1 rounded-xl border border-slate-800 font-semibold">
+              <div className="flex items-center gap-2 text-xs overflow-x-auto scrollbar-none max-w-full pb-1 sm:pb-0">
+                <div className="flex items-center bg-[#131926] p-1 rounded-xl border border-slate-800 font-semibold shrink-0">
                   {['All', 'Workouts', 'Nutrition', 'Check-ins'].map((tab) => (
                     <button
                       key={tab}
                       onClick={() => setActivityFilter(tab)}
-                      className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                      className={`px-3 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                         activityFilter === tab
                           ? 'bg-blue-600/40 text-blue-200 border border-blue-500/40'
                           : 'text-slate-400 hover:text-slate-200'
@@ -406,11 +416,14 @@ export default function OverviewPage({
                 </div>
 
                 <button
-                  onClick={() => showToast && showToast('Viewing all client logs', 'info')}
-                  className="text-[11px] text-slate-400 hover:text-blue-300 font-semibold flex items-center gap-1 ml-2 transition-colors cursor-pointer"
+                  onClick={() => {
+                    if (onNavigate) onNavigate('notifications');
+                    if (showToast) showToast('Opening Notifications & Activity Log', 'info');
+                  }}
+                  className="text-[11px] text-slate-300 hover:text-blue-300 font-bold bg-[#171e2e] hover:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700/60 flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ml-1"
                 >
                   <span>View All</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
+                  <ChevronRight className="w-3.5 h-3.5 text-blue-400" />
                 </button>
               </div>
             </div>

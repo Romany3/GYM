@@ -7,7 +7,8 @@ import {
   CheckCircle2, 
   Clock, 
   Trash2,
-  CheckCheck
+  CheckCheck,
+  Bell
 } from 'lucide-react';
 
 export default function NotificationsPage({ onNavigate, onOpenChangeRequests, showToast }) {
@@ -120,30 +121,33 @@ export default function NotificationsPage({ onNavigate, onOpenChangeRequests, sh
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold text-amber-400 bg-amber-950 px-2.5 py-0.5 rounded border border-amber-800/60 uppercase tracking-widest">
-              NOTIFICATION CENTER
-            </span>
-            {unreadCount > 0 && (
-              <span className="text-xs font-bold text-blue-300 bg-blue-950 px-2 py-0.5 rounded-full border border-blue-800/60">
-                {unreadCount} Unread
-              </span>
-            )}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#121724] border border-slate-800/90 rounded-3xl p-5 sm:p-6 shadow-xl">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0 shadow-lg">
+            <Bell className="w-6 h-6" />
           </div>
-          <h1 className="font-serif-header text-3xl font-bold text-white tracking-tight mt-1">
-            Notifications & Alerts
-          </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Real-time feed of client exercise swap requests, check-ins, and subscription events.
-          </p>
+          <div>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <h1 className="font-serif-header text-xl sm:text-3xl font-bold text-white tracking-tight">
+                Notifications & Activity Log
+              </h1>
+              {unreadCount > 0 && (
+                <span className="text-xs font-extrabold text-amber-300 bg-amber-950/80 px-3 py-1 rounded-full border border-amber-800/80 shadow-sm flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                  {unreadCount} Unread
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-slate-400 mt-1">
+              Click any notification action to navigate directly to the requested section.
+            </p>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 w-full md:w-auto">
           <button
             onClick={handleMarkAllRead}
-            className="flex items-center gap-2 py-2 px-3.5 bg-[#131926] hover:bg-slate-800 text-slate-300 border border-slate-700/60 rounded-xl text-xs font-semibold transition-all cursor-pointer"
+            className="w-full md:w-auto flex items-center justify-center gap-2 py-2.5 px-4 bg-[#171e2e] hover:bg-slate-800 text-slate-200 border border-slate-700/60 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm"
           >
             <CheckCheck className="w-4 h-4 text-emerald-400" />
             <span>Mark All as Read</span>
