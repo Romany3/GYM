@@ -26,7 +26,7 @@ import {
   Trash2,
   ExternalLink
 } from 'lucide-react';
-import WatchVideoModal from '../components/Modals/WatchVideoModal';
+import WatchVideoModal from '../../components/modals/WatchVideoModal';
 import ClientSubstitutionsPage from './ClientSubstitutionsPage';
 import ClientFoodSwapsPage from './ClientFoodSwapsPage';
 
