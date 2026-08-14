@@ -24,6 +24,7 @@ import ExerciseSwapRequestsPage from './pages/coach/ExerciseSwapRequestsPage';
 import FoodSwapRequestsPage from './pages/coach/FoodSwapRequestsPage';
 import CoachChatPage from './pages/coach/CoachChatPage';
 import TrainerSubscriptionPage from './pages/coach/TrainerSubscriptionPage';
+import ClientDetailsPage from './pages/coach/ClientDetailsPage';
 import CoachAuthPage from './pages/auth/CoachAuthPage';
 import ClientAuthPage from './pages/auth/ClientAuthPage';
 import ClientPortalPage from './pages/client/ClientPortalPage';
@@ -32,6 +33,7 @@ import { CheckCircle2, Monitor } from 'lucide-react';
 export default function App() {
   // Master Application Mode State ('coach_panel' | 'coach_auth' | 'client_auth' | 'client_portal')
   const [appMode, setAppMode] = useState('coach_panel');
+  const [selectedClientForDetails, setSelectedClientForDetails] = useState(null);
   const [currentClientData, setCurrentClientData] = useState({
     id: 'c1',
     name: 'Marcus Jensen',
@@ -542,8 +544,36 @@ export default function App() {
                 setCreatedClientCredentials(clientData);
                 setIsCredentialsOpen(true);
               }}
-              onNavigate={setActiveTab}
+              onNavigate={(tab, payload) => {
+                if (tab === 'client-details') {
+                  if (payload) setSelectedClientForDetails(payload);
+                  setActiveTab('client-details');
+                } else {
+                  setActiveTab(tab);
+                }
+              }}
               showToast={showToast}
+            />
+          )}
+
+          {/* 4.2. CLIENT DETAILS & REVIEW PAGE */}
+          {activeTab === 'client-details' && (
+            <ClientDetailsPage
+              client={selectedClientForDetails}
+              onBack={() => setActiveTab('clients')}
+              showToast={showToast}
+              onNavigate={(tab, payload) => {
+                if (tab === 'client-details') {
+                  if (payload) setSelectedClientForDetails(payload);
+                  setActiveTab('client-details');
+                } else {
+                  setActiveTab(tab);
+                }
+              }}
+              onOpenClientCredentials={(clientData) => {
+                setCreatedClientCredentials(clientData);
+                setIsCredentialsOpen(true);
+              }}
             />
           )}
 

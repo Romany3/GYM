@@ -11,7 +11,8 @@ import {
   TrendingDown, 
   Calendar,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Eye
 } from 'lucide-react';
 
 export default function ClientsPage({ 
@@ -348,6 +349,18 @@ export default function ClientsPage({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
+                        if (onNavigate) onNavigate('client-details', client);
+                        if (showToast) showToast(`Opening details for ${client.name}`);
+                      }}
+                      className="px-3 py-1.5 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white border border-rose-500/50 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-red-900/30 transition-all cursor-pointer"
+                      title="View Client Details, Programs & Daily Reviews"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Details</span>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
                         if (onOpenClientCredentials) {
                           onOpenClientCredentials(client);
                         } else if (showToast) {
@@ -375,7 +388,7 @@ export default function ClientsPage({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (onNavigate) onNavigate('nutrition-engine');
+                        if (onNavigate) onNavigate('client-details', client);
                       }}
                       className="px-3 py-1.5 bg-[#171e2e] hover:bg-slate-800 text-slate-300 border border-slate-700/60 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
                       title="Adjust Nutrition & Training Plan"
