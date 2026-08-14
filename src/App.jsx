@@ -12,6 +12,7 @@ import AnnouncementModal from '@/components/modals/AnnouncementModal';
 import ClientCredentialsModal from '@/components/modals/ClientCredentialsModal';
 import ExerciseChangeRequestModal from '@/components/modals/ExerciseChangeRequestModal';
 import BatchAssignModal from '@/components/modals/BatchAssignModal';
+import NutritionPdfModal from '@/components/modals/NutritionPdfModal';
 import OverviewPage from '@/pages/coach/OverviewPage';
 import ClientsPage from '@/pages/coach/ClientsPage';
 import FoodLibraryPage from '@/pages/coach/FoodLibraryPage';
@@ -298,6 +299,7 @@ export default function App() {
   ]);
   const [isBatchAssignOpen, setIsBatchAssignOpen] = useState(false);
   const [batchAssignProgramTitle, setBatchAssignProgramTitle] = useState('Hypertrophy Split 4-Day Protocol');
+  const [isNutritionPdfOpen, setIsNutritionPdfOpen] = useState(false);
 
   // Client Daily Logs Submissions Master State
   const [clientSubmittedLogs, setClientSubmittedLogs] = useState({});
@@ -571,6 +573,7 @@ export default function App() {
                   onAddExercise={() => setIsAddExerciseOpen(true)}
                   onDeleteExercise={handleDeleteExercise}
                   onDuplicateDays={() => showToast('Plan duplicated across Mon - Sun!')}
+                  onOpenNutritionPdf={() => setIsNutritionPdfOpen(true)}
                 />
               </section>
 
@@ -654,7 +657,10 @@ export default function App() {
 
           {/* 5.5. AI MEAL TEMPLATE GENERATOR PAGE */}
           {activeTab === 'ai-meal-generator' && (
-            <AiMealGeneratorPage showToast={showToast} />
+            <AiMealGeneratorPage 
+              showToast={showToast}
+              onOpenNutritionPdf={() => setIsNutritionPdfOpen(true)}
+            />
           )}
 
           {/* 6. WORKOUT BUILDER PAGE */}
@@ -769,6 +775,18 @@ export default function App() {
       <AnnouncementModal
         isOpen={isAnnouncementOpen}
         onClose={() => setIsAnnouncementOpen(false)}
+        showToast={showToast}
+      />
+
+      <NutritionPdfModal
+        isOpen={isNutritionPdfOpen}
+        onClose={() => setIsNutritionPdfOpen(false)}
+        targetKcal={selectedClient.targetKcal}
+        proteinGrams={proteinGrams}
+        carbsGrams={carbsGrams}
+        fatsGrams={fatsGrams}
+        meals={meals}
+        clientData={selectedClient}
         showToast={showToast}
       />
     </div>

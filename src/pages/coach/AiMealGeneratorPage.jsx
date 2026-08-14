@@ -6,10 +6,11 @@ import {
   Sliders, 
   CheckCircle2, 
   Trash2, 
-  Clock
+  Clock,
+  FileText
 } from 'lucide-react';
 
-export default function AiMealGeneratorPage({ showToast }) {
+export default function AiMealGeneratorPage({ showToast, onOpenNutritionPdf }) {
   // Input Settings
   const [targetKcal, setTargetKcal] = useState(2000);
   const [goalPreset, setGoalPreset] = useState('Balanced'); // 'Balanced' | 'Fat Loss' | 'Hypertrophy' | 'High Protein'
@@ -374,6 +375,17 @@ export default function AiMealGeneratorPage({ showToast }) {
 
           {/* Action Trigger Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-2">
+            {onOpenNutritionPdf && (
+              <button
+                type="button"
+                onClick={onOpenNutritionPdf}
+                className="w-full sm:w-auto px-5 py-3 bg-[#171e2e] hover:bg-slate-800 text-slate-200 border border-slate-700/60 font-bold rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md"
+              >
+                <FileText className="w-4 h-4 text-red-400" />
+                <span>Export Program PDF</span>
+              </button>
+            )}
+
             <button
               onClick={handleGenerateAiPlan}
               disabled={isGenerating}
