@@ -18,7 +18,10 @@ import {
   Camera,
   Eye,
   Activity,
-  X
+  X,
+  Sun,
+  Moon,
+  Cookie
 } from 'lucide-react';
 
 export default function ClientDetailsPage({ 
@@ -62,11 +65,86 @@ export default function ClientDetailsPage({
 
   // State for Nutrition Targets
   const [nutritionTargets, setNutritionTargets] = useState({
-    kcal: activeClient.targetKcal || 2650,
-    protein: activeClient.proteinG || 195,
-    carbs: activeClient.carbsG || 280,
-    fats: activeClient.fatsG || 70,
+    kcal: activeClient.targetKcal || 2450,
+    protein: activeClient.proteinG || 180,
+    carbs: activeClient.carbsG || 240,
+    fats: activeClient.fatsG || 80,
   });
+
+  // State for Prescribed Meal Plan
+  const [prescribedMeals, setPrescribedMeals] = useState({
+    breakfast: {
+      title: 'Breakfast',
+      icon: Sun,
+      items: [
+        { id: 'pm1', name: 'Scrambled Eggs (3 eggs) & Toast', kcal: 520, protein: 38, carbs: 54, fats: 18 }
+      ]
+    },
+    lunch: {
+      title: 'Lunch',
+      icon: Utensils,
+      items: [
+        { id: 'pm2', name: 'Grilled Chicken (200g) & Rice', kcal: 750, protein: 58, carbs: 78, fats: 24 }
+      ]
+    },
+    dinner: {
+      title: 'Dinner',
+      icon: Moon,
+      items: [
+        { id: 'pm3', name: 'Salmon Filet & Sweet Potato', kcal: 720, protein: 54, carbs: 76, fats: 22 }
+      ]
+    },
+    snacks: {
+      title: 'Snacks',
+      icon: Cookie,
+      items: [
+        { id: 'pm4', name: 'Whey Protein Scoop & Almonds', kcal: 460, protein: 30, carbs: 32, fats: 16 }
+      ]
+    }
+  });
+
+  const [addingMealCategory, setAddingMealCategory] = useState(null);
+  const [newMealForm, setNewMealForm] = useState({ name: '', kcal: 400, protein: 30, carbs: 40, fats: 12 });
+
+  const handleAddPrescribedMealItem = (catKey) => {
+    if (!newMealForm.name.trim()) {
+      if (showToast) showToast('Please enter a meal name', 'warning');
+      return;
+    }
+
+    const uniqueId = `pm_${catKey}_${prescribedMeals[catKey]?.items.length || 0}_${newMealForm.name.toLowerCase().replace(/\s+/g, '_')}`;
+    const newItem = {
+      id: uniqueId,
+      name: newMealForm.name,
+      kcal: Number(newMealForm.kcal) || 0,
+      protein: Number(newMealForm.protein) || 0,
+      carbs: Number(newMealForm.carbs) || 0,
+      fats: Number(newMealForm.fats) || 0,
+    };
+
+    setPrescribedMeals((prev) => ({
+      ...prev,
+      [catKey]: {
+        ...prev[catKey],
+        items: [...prev[catKey].items, newItem],
+      },
+    }));
+
+    setAddingMealCategory(null);
+    setNewMealForm({ name: '', kcal: 400, protein: 30, carbs: 40, fats: 12 });
+    if (showToast) showToast(`Added "${newItem.name}" to ${catKey.toUpperCase()} plan!`);
+  };
+
+  const handleDeletePrescribedMealItem = (catKey, itemId) => {
+    setPrescribedMeals((prev) => ({
+      ...prev,
+      [catKey]: {
+        ...prev[catKey],
+        items: prev[catKey].items.filter((item) => item.id !== itemId),
+      },
+    }));
+    if (showToast) showToast(`Removed meal item from ${catKey.toUpperCase()} plan`, 'info');
+  };
 
   // State for assigned workout days
   const [workoutDays, setWorkoutDays] = useState([
@@ -857,6 +935,190 @@ export default function ClientDetailsPage({
                 />
                 <span className="text-xs font-bold text-slate-400">grams</span>
               </div>
+            </div>
+          </div>
+
+          {/* Prescribed Meal Plan Builder Section */}
+          <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 md:p-6 shadow-xl space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-950/80 border border-amber-800/60 flex items-center justify-center text-amber-400">
+                  <Utensils className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-serif-header text-lg font-bold text-white">Prescribed Daily Meals Plan</h4>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Customize the specific meals prescribed for {activeClient.name} across Breakfast, Lunch, Dinner, and Snacks.
+                  </p>
+                </div>
+              </div>
+
+              {/* Prescribed Plan Totals vs Target Badge */}
+              {(() => {
+                const allItems = Object.values(prescribedMeals).flatMap(c => c.items);
+                const totalKcal = allItems.reduce((acc, curr) => acc + (curr.kcal || 0), 0);
+                const totalP = allItems.reduce((acc, curr) => acc + (curr.protein || 0), 0);
+                const totalC = allItems.reduce((acc, curr) => acc + (curr.carbs || 0), 0);
+                const totalF = allItems.reduce((acc, curr) => acc + (curr.fats || 0), 0);
+
+                return (
+                  <div className="text-right text-xs font-mono">
+                    <span className="font-bold text-slate-200 block">
+                      Plan Total: <span className="text-blue-400 font-extrabold">{totalKcal}</span> / {nutritionTargets.kcal} kcal
+                    </span>
+                    <span className="text-[10px] text-slate-400 mt-0.5 block">
+                      P: <span className="text-rose-400 font-semibold">{totalP}g</span> • C: <span className="text-amber-400 font-semibold">{totalC}g</span> • F: <span className="text-emerald-400 font-semibold">{totalF}g</span>
+                    </span>
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* Categorized Prescribed Meal Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Object.keys(prescribedMeals).map((catKey) => {
+                const cat = prescribedMeals[catKey];
+                const IconComp = cat.icon || Utensils;
+                const categoryTotalKcal = cat.items.reduce((a, b) => a + (b.kcal || 0), 0);
+
+                return (
+                  <div key={catKey} className="bg-[#171e2e] border border-slate-700/60 rounded-xl p-4 space-y-3">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                      <span className="font-bold text-xs text-blue-300 flex items-center gap-2">
+                        <IconComp className="w-4 h-4 text-amber-400" />
+                        <span>{cat.title} Plan</span>
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-mono text-slate-400 font-semibold bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                          {categoryTotalKcal} kcal
+                        </span>
+                        <button
+                          onClick={() => setAddingMealCategory(addingMealCategory === catKey ? null : catKey)}
+                          className="px-2 py-1 bg-blue-600/80 hover:bg-blue-500 text-white rounded-lg text-[10px] font-bold flex items-center gap-1 transition-all cursor-pointer"
+                        >
+                          <Plus className="w-3 h-3" />
+                          <span>Add Item</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Prescribed Items List */}
+                    <div className="space-y-2">
+                      {cat.items.map((item) => (
+                        <div
+                          key={item.id}
+                          className="flex items-center justify-between p-3 rounded-lg bg-[#121724] border border-slate-800 text-xs hover:border-slate-700 transition-all"
+                        >
+                          <div className="space-y-0.5">
+                            <span className="font-semibold text-slate-200 block">{item.name}</span>
+                            <div className="text-[10px] font-mono flex items-center gap-1.5 text-slate-400">
+                              <span className="text-rose-400 font-semibold">P: {item.protein || 0}g</span>
+                              <span>•</span>
+                              <span className="text-amber-400 font-semibold">C: {item.carbs || 0}g</span>
+                              <span>•</span>
+                              <span className="text-emerald-400 font-semibold">F: {item.fats || 0}g</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="font-mono text-xs text-slate-300 font-bold">{item.kcal} kcal</span>
+                            <button
+                              onClick={() => handleDeletePrescribedMealItem(catKey, item.id)}
+                              className="p-1 text-slate-500 hover:text-rose-400 hover:bg-rose-950/40 rounded transition-all cursor-pointer"
+                              title="Delete meal item"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+
+                      {cat.items.length === 0 && (
+                        <p className="text-xs text-slate-500 italic py-2 text-center">
+                          No prescribed meal items in {cat.title} yet. Click "+ Add Item" above.
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Inline Add Meal Form */}
+                    {addingMealCategory === catKey && (
+                      <div className="bg-[#121724] border border-blue-500/50 rounded-xl p-3.5 space-y-3 mt-3 animate-in fade-in duration-200">
+                        <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                          <span className="text-xs font-bold text-blue-300">Add Prescribed Meal to {cat.title}</span>
+                          <button onClick={() => setAddingMealCategory(null)} className="text-slate-400 hover:text-slate-200">
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div className="space-y-2">
+                          <input
+                            type="text"
+                            placeholder="Meal name (e.g. 200g Steak & Sweet Potato)"
+                            value={newMealForm.name}
+                            onChange={(e) => setNewMealForm(prev => ({ ...prev, name: e.target.value }))}
+                            className="w-full bg-[#1b2336] text-xs text-slate-100 rounded-lg p-2 border border-slate-700 focus:outline-none focus:border-blue-500 placeholder:text-slate-500"
+                          />
+
+                          <div className="grid grid-cols-4 gap-2 text-xs">
+                            <div>
+                              <span className="text-[9px] text-slate-400 block font-semibold">Calories (kcal)</span>
+                              <input
+                                type="number"
+                                value={newMealForm.kcal}
+                                onChange={(e) => setNewMealForm(prev => ({ ...prev, kcal: Number(e.target.value) }))}
+                                className="w-full bg-[#1b2336] text-slate-100 font-bold rounded-lg p-1.5 border border-slate-700 text-center text-xs"
+                              />
+                            </div>
+                            <div>
+                              <span className="text-[9px] text-rose-400 block font-semibold">Protein (g)</span>
+                              <input
+                                type="number"
+                                value={newMealForm.protein}
+                                onChange={(e) => setNewMealForm(prev => ({ ...prev, protein: Number(e.target.value) }))}
+                                className="w-full bg-[#1b2336] text-slate-100 font-bold rounded-lg p-1.5 border border-slate-700 text-center text-xs"
+                              />
+                            </div>
+                            <div>
+                              <span className="text-[9px] text-amber-400 block font-semibold">Carbs (g)</span>
+                              <input
+                                type="number"
+                                value={newMealForm.carbs}
+                                onChange={(e) => setNewMealForm(prev => ({ ...prev, carbs: Number(e.target.value) }))}
+                                className="w-full bg-[#1b2336] text-slate-100 font-bold rounded-lg p-1.5 border border-slate-700 text-center text-xs"
+                              />
+                            </div>
+                            <div>
+                              <span className="text-[9px] text-emerald-400 block font-semibold">Fats (g)</span>
+                              <input
+                                type="number"
+                                value={newMealForm.fats}
+                                onChange={(e) => setNewMealForm(prev => ({ ...prev, fats: Number(e.target.value) }))}
+                                className="w-full bg-[#1b2336] text-slate-100 font-bold rounded-lg p-1.5 border border-slate-700 text-center text-xs"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-end gap-2 pt-1">
+                          <button
+                            onClick={() => setAddingMealCategory(null)}
+                            className="px-3 py-1.5 text-xs text-slate-400 hover:text-slate-200"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={() => handleAddPrescribedMealItem(catKey)}
+                            className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow-md shadow-blue-600/30"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>Save Meal Item</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
