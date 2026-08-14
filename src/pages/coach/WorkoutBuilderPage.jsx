@@ -8,7 +8,8 @@ import {
   Trash2, 
   Pencil,
   X,
-  Users
+  Users,
+  FileText
 } from 'lucide-react';
 import WatchVideoModal from '../../components/modals/WatchVideoModal';
 import AddEditLibraryExerciseModal from '../../components/modals/AddEditLibraryExerciseModal';
@@ -18,6 +19,8 @@ export default function WorkoutBuilderPage({
   showToast,
   onOpenBatchAssignModal
 }) {
+  // Modal State for PDF Export
+  const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   // Category Filter State
   const [activeCategory, setActiveCategory] = useState('All');
 
@@ -248,6 +251,15 @@ export default function WorkoutBuilderPage({
 
         {/* Top Header Quick Actions */}
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsPdfModalOpen(true)}
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white border border-rose-500/50 text-xs font-bold transition-all cursor-pointer shadow-md shadow-red-950/40"
+            title="Export Workout Plan PDF"
+          >
+            <FileText className="w-4 h-4" />
+            <span>Export PDF</span>
+          </button>
+
           <button
             onClick={() => onOpenBatchAssignModal && onOpenBatchAssignModal('Hypertrophy Split 4-Day Protocol')}
             className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 text-xs font-semibold transition-all cursor-pointer shadow-sm"
@@ -593,6 +605,15 @@ export default function WorkoutBuilderPage({
         onClose={() => setIsAddEditLibraryOpen(false)}
         onSave={handleSaveLibraryExercise}
         exerciseToEdit={exerciseToEdit}
+      />
+
+      <WorkoutPdfModal
+        isOpen={isPdfModalOpen}
+        onClose={() => setIsPdfModalOpen(false)}
+        days={days}
+        routineExercises={routineExercises}
+        libraryExercises={libraryExercises}
+        showToast={showToast}
       />
     </div>
   );

@@ -30,6 +30,9 @@ export default function WorkoutPdfModal({
 
   if (!isOpen) return null;
 
+  // Total pages count (Cover + Training Days)
+  const totalPages = days.length + 1;
+
   // Calculate total exercises count
   const totalExercisesCount = days.reduce((acc, d) => {
     const exList = routineExercises[d.id] || [];
@@ -104,7 +107,13 @@ export default function WorkoutPdfModal({
         });
       }
 
-      const fileName = `Workout_Plan_${(clientInfo.name || 'Client').replace(/\s+/g, '_')}.pdf`;
+      // Format filename with client name and today's date (YYYY-MM-DD)
+      const clientNameSanitized = (clientInfo.name || 'Client')
+        .trim()
+        .replace(/[/\\?%*:|"<>]/g, '')
+        .replace(/\s+/g, '_');
+      const todayStr = new Date().toISOString().split('T')[0];
+      const fileName = `${clientNameSanitized}_${todayStr}.pdf`;
       pdf.save(fileName);
 
       if (showToast) showToast('✅ Workout PDF exported successfully!');
