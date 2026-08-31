@@ -21,51 +21,77 @@ export default function ClientSubstitutionsPage({ showToast, activeExercises = [
   const [searchQuery, setSearchQuery] = useState('');
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false);
 
+  const isAr = typeof window !== 'undefined' && document.documentElement.lang === 'ar';
+
   // Substitution Requests State
   const [requests, setRequests] = useState([
     {
       id: 'sub_1',
-      originalExercise: 'Barbell Back Squat',
+      originalExerciseEn: 'Barbell Back Squat',
+      originalExerciseAr: 'سكوات بالبار الخلفي',
       targetMuscle: 'Quadriceps',
-      reasonCategory: 'Joint Discomfort',
-      reasonNote: 'Slight patellar tendon irritation when going below parallel on heavy barbell squats.',
-      suggestedAlternative: 'Bulgarian Split Squat (Dumbbell)',
+      reasonCategoryEn: 'Joint Discomfort',
+      reasonCategoryAr: 'آلام في المفاصل',
+      reasonNoteEn: 'Slight patellar tendon irritation when going below parallel on heavy barbell squats.',
+      reasonNoteAr: 'تهيج خفيف في وتر الركبة عند التعمق في السكوات بالبار الثقيل.',
+      suggestedAlternativeEn: 'Bulgarian Split Squat (Dumbbell)',
+      suggestedAlternativeAr: 'بلغاريان سبليت سكوات (دمبل)',
       status: 'APPROVED',
-      coachResponseNote: 'Approved. Shift to Bulgarian Split Squat 3x10-12 to reduce axial loading while keeping quad tension high.',
-      requestedDate: 'Today, 09:15 AM',
+      coachResponseNoteEn: 'Approved. Shift to Bulgarian Split Squat 3x10-12 to reduce axial loading while keeping quad tension high.',
+      coachResponseNoteAr: 'تمت الموافقة. تحول إلى البلغاريان سبليت سكوات 3×10-12 لتخفيف الحمل الفقرى مع الحفاظ على التوتر العالي.',
+      requestedDateEn: 'Today, 09:15 AM',
+      requestedDateAr: 'اليوم، 09:15 صباحاً',
     },
     {
       id: 'sub_2',
-      originalExercise: 'Incline Hammer Strength Press',
+      originalExerciseEn: 'Incline Hammer Strength Press',
+      originalExerciseAr: 'ضغط صدر علوي على جهاز الهامر',
       targetMuscle: 'Upper Chest',
-      reasonCategory: 'Equipment Missing',
-      reasonNote: 'Our commercial gym does not have the plate-loaded Hammer Strength incline machine.',
-      suggestedAlternative: 'Incline Dumbbell Chest Press',
+      reasonCategoryEn: 'Equipment Missing',
+      reasonCategoryAr: 'الجهاز غير متوفر',
+      reasonNoteEn: 'Our commercial gym does not have the plate-loaded Hammer Strength incline machine.',
+      reasonNoteAr: 'الصالة الرياضية لا تحتوي على جهاز الهامر للضغط العلوي.',
+      suggestedAlternativeEn: 'Incline Dumbbell Chest Press',
+      suggestedAlternativeAr: 'ضغط صدر علوي بالدمبل',
       status: 'PENDING',
-      coachResponseNote: null,
-      requestedDate: 'Yesterday, 04:30 PM',
+      coachResponseNoteEn: null,
+      coachResponseNoteAr: null,
+      requestedDateEn: 'Yesterday, 04:30 PM',
+      requestedDateAr: 'أمس، 04:30 مساءً',
     },
     {
       id: 'sub_3',
-      originalExercise: 'Seated Cable Row (V-Bar)',
+      originalExerciseEn: 'Seated Cable Row (V-Bar)',
+      originalExerciseAr: 'سحب ظهر جالس بالكيبل (مسكة V)',
       targetMuscle: 'Lats & Rhomboids',
-      reasonCategory: 'Busy Gym Machine',
-      reasonNote: 'Cable tower is constantly occupied during 6 PM rush hour.',
-      suggestedAlternative: 'Single-Arm Dumbbell Row',
+      reasonCategoryEn: 'Busy Gym Machine',
+      reasonCategoryAr: 'الجهاز مشغول',
+      reasonNoteEn: 'Cable tower is constantly occupied during 6 PM rush hour.',
+      reasonNoteAr: 'جهاز الكيبل مشغول باستمرار خلال ساعات الذروة.',
+      suggestedAlternativeEn: 'Single-Arm Dumbbell Row',
+      suggestedAlternativeAr: 'سحب ظهر بالدمبل ذراع واحدة',
       status: 'APPROVED',
-      coachResponseNote: 'Great substitute! Focus on pulling elbow towards hip crease for maximum lat contraction.',
-      requestedDate: 'Aug 06, 2026',
+      coachResponseNoteEn: 'Great substitute! Focus on pulling elbow towards hip crease for maximum lat contraction.',
+      coachResponseNoteAr: 'بديل ممتاز! ركز على سحب الكوع نحو الخصر لأقصى انقباض لعضلات الظهر.',
+      requestedDateEn: 'Aug 06, 2026',
+      requestedDateAr: '06 أغسطس 2026',
     },
     {
       id: 'sub_4',
-      originalExercise: 'Standing Overhead Barbell Press',
+      originalExerciseEn: 'Standing Overhead Barbell Press',
+      originalExerciseAr: 'ضغط أكتاف بالبار واقفاً',
       targetMuscle: 'Shoulders',
-      reasonCategory: 'Injury History',
-      reasonNote: 'Past AC joint impingement on heavy barbell overhead press.',
-      suggestedAlternative: 'Seated Dumbbell Shoulder Press (Neutral Grip)',
+      reasonCategoryEn: 'Injury History',
+      reasonCategoryAr: 'إصابة سابقة',
+      reasonNoteEn: 'Past AC joint impingement on heavy barbell overhead press.',
+      reasonNoteAr: 'إصابة سابقة في مفصل الكتف عند رفع البار الثقيل فوق الرأس.',
+      suggestedAlternativeEn: 'Seated Dumbbell Shoulder Press (Neutral Grip)',
+      suggestedAlternativeAr: 'ضغط أكتاف بالدمبل جالساً (مسكة محايدة)',
       status: 'REJECTED',
-      coachResponseNote: 'Rejected overhead press. Let\'s substitute with High Incline DB Flyes to keep shoulder joint safe.',
-      requestedDate: 'Aug 01, 2026',
+      coachResponseNoteEn: 'Rejected overhead press. Let\'s substitute with High Incline DB Flyes to keep shoulder joint safe.',
+      coachResponseNoteAr: 'تم رفض التبديل. سنستبدله بتجميع علوي بالدمبل للحفاظ على سلامة الكتف.',
+      requestedDateEn: 'Aug 01, 2026',
+      requestedDateAr: '01 أغسطس 2026',
     },
   ]);
 
@@ -86,14 +112,20 @@ export default function ClientSubstitutionsPage({ showToast, activeExercises = [
 
     const newReq = {
       id: 'sub_' + Date.now(),
-      originalExercise: selectedExerciseName,
+      originalExerciseEn: selectedExerciseName,
+      originalExerciseAr: selectedExerciseName,
       targetMuscle: 'Target Group',
-      reasonCategory,
-      reasonNote: reasonNote || 'Requested substitute exercise for personal routine optimization.',
-      suggestedAlternative,
+      reasonCategoryEn: reasonCategory,
+      reasonCategoryAr: reasonCategory,
+      reasonNoteEn: reasonNote || 'Requested substitute exercise for personal routine optimization.',
+      reasonNoteAr: reasonNote || 'طلب تمرين بديل لتحسين البرنامج التدريبي.',
+      suggestedAlternativeEn: suggestedAlternative,
+      suggestedAlternativeAr: suggestedAlternative,
       status: 'PENDING',
-      coachResponseNote: null,
-      requestedDate: 'Just now',
+      coachResponseNoteEn: null,
+      coachResponseNoteAr: null,
+      requestedDateEn: 'Just now',
+      requestedDateAr: 'الآن',
     };
 
     setRequests([newReq, ...requests]);
@@ -110,10 +142,14 @@ export default function ClientSubstitutionsPage({ showToast, activeExercises = [
 
   const filteredRequests = requests.filter((req) => {
     const matchesFilter = activeFilter === 'ALL' || req.status === activeFilter;
+    const orig = isAr ? req.originalExerciseAr : req.originalExerciseEn;
+    const alt = isAr ? req.suggestedAlternativeAr : req.suggestedAlternativeEn;
+    const note = isAr ? req.reasonNoteAr : req.reasonNoteEn;
+
     const matchesSearch = 
-      req.originalExercise.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      req.suggestedAlternative.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      req.reasonNote.toLowerCase().includes(searchQuery.toLowerCase());
+      orig.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      alt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      note.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
@@ -124,14 +160,14 @@ export default function ClientSubstitutionsPage({ showToast, activeExercises = [
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-bold text-blue-400 bg-blue-950 px-2.5 py-0.5 rounded border border-blue-800/60 uppercase tracking-widest flex items-center gap-1">
-              <ArrowLeftRight className="w-3 h-3 text-blue-400" /> ATHLETE ROUTINE OPTIMIZATION
+              <ArrowLeftRight className="w-3 h-3 text-blue-400" /> {t('clientPortal.exerciseSwapsBadge')}
             </span>
           </div>
           <h1 className="font-serif-header text-3xl font-bold text-white tracking-tight mt-1">
             {t('clientPortal.exerciseSubstitutions')}
           </h1>
           <p className="text-xs text-slate-400 mt-0.5">
-            Request movement substitutions due to joint discomfort, missing gym equipment, or time constraints.
+            {t('clientPortal.exerciseSwapsSubtitle')}
           </p>
         </div>
 
@@ -140,7 +176,7 @@ export default function ClientSubstitutionsPage({ showToast, activeExercises = [
           className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-500/20 transition-all cursor-pointer shrink-0"
         >
           <Plus className="w-4 h-4" />
-          <span>Request Exercise Change</span>
+          <span>{t('clientPortal.requestExerciseChange')}</span>
         </button>
       </div>
 
@@ -152,7 +188,7 @@ export default function ClientSubstitutionsPage({ showToast, activeExercises = [
             <Clock className="w-4 h-4 text-amber-400" />
           </div>
           <div className="text-3xl font-extrabold text-white font-mono">{pendingCount}</div>
-          <span className="text-[11px] text-amber-400 font-semibold">Awaiting coach evaluation</span>
+          <span className="text-[11px] text-amber-400 font-semibold">{t('clientPortal.awaitingCoach')}</span>
         </div>
 
         <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-lg space-y-2">
@@ -161,7 +197,7 @@ export default function ClientSubstitutionsPage({ showToast, activeExercises = [
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           </div>
           <div className="text-3xl font-extrabold text-white font-mono">{approvedCount}</div>
-          <span className="text-[11px] text-emerald-400 font-semibold">Active in daily workout split</span>
+          <span className="text-[11px] text-emerald-400 font-semibold">{t('clientPortal.activeWorkoutSplit')}</span>
         </div>
 
         <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-lg space-y-2">
@@ -184,7 +220,7 @@ export default function ClientSubstitutionsPage({ showToast, activeExercises = [
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search change requests..."
+            placeholder={t('clientPortal.searchChangeRequests')}
             className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl ps-10 pe-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
           />
         </div>
@@ -225,190 +261,95 @@ export default function ClientSubstitutionsPage({ showToast, activeExercises = [
             </p>
           </div>
         ) : (
-          filteredRequests.map((req) => (
-            <div
-              key={req.id}
-              className={`bg-[#121724] border rounded-2xl p-5 shadow-xl transition-all space-y-4 ${
-                req.status === 'PENDING'
-                  ? 'border-amber-500/40 bg-gradient-to-r from-amber-950/10 via-[#121724] to-[#121724]'
-                  : req.status === 'APPROVED'
-                  ? 'border-emerald-800/60'
-                  : 'border-slate-800/80 opacity-80'
-              }`}
-            >
-              {/* Header Info */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-slate-200">Requested: {req.requestedDate}</span>
-                </div>
+          filteredRequests.map((req) => {
+            const dateLabel = isAr ? req.requestedDateAr : req.requestedDateEn;
+            const origEx = isAr ? req.originalExerciseAr : req.originalExerciseEn;
+            const reasonCat = isAr ? req.reasonCategoryAr : req.reasonCategoryEn;
+            const reasonNoteStr = isAr ? req.reasonNoteAr : req.reasonNoteEn;
+            const altEx = isAr ? req.suggestedAlternativeAr : req.suggestedAlternativeEn;
+            const coachNote = isAr ? req.coachResponseNoteAr : req.coachResponseNoteEn;
 
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full border ${
-                      req.status === 'PENDING'
-                        ? 'bg-amber-950/80 text-amber-300 border-amber-800/60'
+            return (
+              <div
+                key={req.id}
+                className={`bg-[#121724] border rounded-2xl p-5 shadow-xl transition-all space-y-4 ${
+                  req.status === 'PENDING'
+                    ? 'border-amber-500/40 bg-gradient-to-r from-amber-950/10 via-[#121724] to-[#121724]'
+                    : req.status === 'APPROVED'
+                    ? 'border-emerald-800/60'
+                    : 'border-slate-800/80 opacity-80'
+                }`}
+              >
+                {/* Header Info */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-slate-200">
+                      {t('clientPortal.requestedOn', { date: dateLabel })}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full border ${
+                        req.status === 'PENDING'
+                          ? 'bg-amber-950/80 text-amber-300 border-amber-800/60'
+                          : req.status === 'APPROVED'
+                          ? 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60'
+                          : 'bg-slate-900 text-slate-400 border-slate-800'
+                      }`}
+                    >
+                      {req.status === 'PENDING'
+                        ? t('swaps.underReview')
                         : req.status === 'APPROVED'
-                        ? 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60'
-                        : 'bg-slate-900 text-slate-400 border-slate-800'
-                    }`}
-                  >
-                    {req.status === 'PENDING'
-                      ? t('swaps.underReview')
-                      : req.status === 'APPROVED'
-                      ? t('swaps.approvedSwaps')
-                      : t('swaps.rejected')}
-                  </span>
+                        ? t('swaps.approvedSwaps')
+                        : t('swaps.rejected')}
+                    </span>
+                  </div>
                 </div>
+
+                {/* Movement Comparison Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                  {/* Original Exercise */}
+                  <div className="bg-[#171e2e] border border-slate-800 p-3.5 rounded-xl space-y-1.5">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                      {t('clientPortal.originalPrescribedExercise')}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <Dumbbell className="w-4 h-4 text-slate-400" />
+                      <span className="font-bold text-slate-200 text-sm">{origEx}</span>
+                    </div>
+                    <div className="pt-1 text-[11px] text-amber-300 font-semibold flex items-center gap-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      <span>{t('swaps.reason')} ({reasonCat}): "{reasonNoteStr}"</span>
+                    </div>
+                  </div>
+
+                  {/* Suggested Alternative */}
+                  <div className="bg-[#162133] border border-blue-500/30 p-3.5 rounded-xl space-y-1.5">
+                    <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider block">
+                      {t('clientPortal.suggestedAlternativeExercise')}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-emerald-400" />
+                      <span className="font-bold text-emerald-300 text-sm">{altEx}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Coach Review Note */}
+                {coachNote && (
+                  <div className="p-3 bg-[#171e2e] border border-slate-800 rounded-xl text-xs text-slate-300">
+                    <strong className="text-blue-400 font-bold block mb-0.5">
+                      {isAr ? 'ملاحظة قرار المدرب:' : 'Coach Decision Note:'}
+                    </strong>
+                    "{coachNote}"
+                  </div>
+                )}
               </div>
-
-              {/* Movement Comparison Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                {/* Original Exercise */}
-                <div className="bg-[#171e2e] border border-slate-800 p-3.5 rounded-xl space-y-1.5">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                    {t('swaps.currentMovement')}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <Dumbbell className="w-4 h-4 text-slate-400" />
-                    <span className="font-bold text-slate-200 text-sm">{req.originalExercise}</span>
-                  </div>
-                  <div className="pt-1 text-[11px] text-amber-300 font-semibold flex items-center gap-1">
-                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                    <span>{t('swaps.reason')} ({req.reasonCategory}): "{req.reasonNote}"</span>
-                  </div>
-                </div>
-
-                {/* Suggested Alternative */}
-                <div className="bg-[#162133] border border-blue-500/30 p-3.5 rounded-xl space-y-1.5">
-                  <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider block">
-                    {t('swaps.suggestedAlternativeMovement')}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-emerald-400" />
-                    <span className="font-bold text-emerald-300 text-sm">{req.suggestedAlternative}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Coach Review Note */}
-              {req.coachResponseNote && (
-                <div className="p-3 bg-[#171e2e] border border-slate-800 rounded-xl text-xs text-slate-300">
-                  <strong className="text-blue-400 font-bold block mb-0.5">Coach Decision Note:</strong>
-                  "{req.coachResponseNote}"
-                </div>
-              )}
-            </div>
-          ))
+            );
+          })
         )}
       </div>
-
-      {/* New Request Modal */}
-      {isNewRequestOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[#121724] border border-slate-800 rounded-2xl p-6 max-w-lg w-full space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="font-serif-header text-lg font-bold text-slate-100 flex items-center gap-2">
-                <ArrowLeftRight className="w-5 h-5 text-blue-400" />
-                <span>Request Exercise Substitution</span>
-              </h3>
-              <button
-                onClick={() => setIsNewRequestOpen(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateRequest} className="space-y-4 text-xs">
-              <div>
-                <label className="text-[11px] font-bold text-slate-400 block mb-1">
-                  Select Exercise to Substitute
-                </label>
-                <select
-                  value={selectedExerciseName}
-                  onChange={(e) => setSelectedExerciseName(e.target.value)}
-                  className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl p-2.5 border border-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer"
-                >
-                  {activeExercises.length > 0 ? (
-                    activeExercises.map((ex) => (
-                      <option key={ex.id || ex.name} value={ex.name}>
-                        {ex.name} ({ex.category || 'Target Group'})
-                      </option>
-                    ))
-                  ) : (
-                    <>
-                      <option value="Barbell Back Squat">Barbell Back Squat</option>
-                      <option value="Barbell Bench Press">Barbell Bench Press</option>
-                      <option value="Conventional Deadlift">Conventional Deadlift</option>
-                      <option value="Overhead Barbell Press">Overhead Barbell Press</option>
-                    </>
-                  )}
-                </select>
-              </div>
-
-              <div>
-                <label className="text-[11px] font-bold text-slate-400 block mb-1">
-                  Reason for Substitution
-                </label>
-                <select
-                  value={reasonCategory}
-                  onChange={(e) => setReasonCategory(e.target.value)}
-                  className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl p-2.5 border border-slate-700 focus:outline-none focus:border-blue-500 cursor-pointer"
-                >
-                  <option value="Joint Discomfort">Joint Discomfort / Pain</option>
-                  <option value="Equipment Missing">Gym Equipment Missing</option>
-                  <option value="Busy Gym Machine">Busy Machine During Peak Hours</option>
-                  <option value="Injury History">Injury History Precaution</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-[11px] font-bold text-slate-400 block mb-1">
-                  Suggested Alternative Exercise
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Bulgarian Split Squat or Leg Press"
-                  value={suggestedAlternative}
-                  onChange={(e) => setSuggestedAlternative(e.target.value)}
-                  className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl p-2.5 border border-slate-700 focus:outline-none focus:border-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="text-[11px] font-bold text-slate-400 block mb-1">
-                  Additional Notes for Coach
-                </label>
-                <textarea
-                  rows="3"
-                  placeholder="Describe your discomfort level or gym equipment situation..."
-                  value={reasonNote}
-                  onChange={(e) => setReasonNote(e.target.value)}
-                  className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl p-2.5 border border-slate-700 focus:outline-none focus:border-blue-500"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setIsNewRequestOpen(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition-all cursor-pointer"
-                >
-                  {t('common.cancel')}
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-bold text-xs rounded-xl transition-all cursor-pointer shadow-md shadow-blue-500/20 flex items-center gap-1.5"
-                >
-                  <Send className="w-3.5 h-3.5 rtl:rotate-180" />
-                  <span>Submit Request</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

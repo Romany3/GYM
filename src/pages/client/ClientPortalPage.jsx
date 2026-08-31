@@ -472,10 +472,10 @@ export default function ClientPortalPage({
           {/* Navigation Items */}
           <nav className="space-y-1.5">
             {[
-              { id: 'daily-checkin', label: 'Daily Check-In & Protocol', icon: ClipboardCheck },
-              { id: 'food-swaps', label: 'Food Swaps', icon: Apple },
-              { id: 'substitutions', label: 'Exercise Swaps', icon: ArrowLeftRight },
-              { id: 'notifications', label: 'Notifications', icon: Bell },
+              { id: 'daily-checkin', label: t('clientPortal.dailyCheckin'), icon: ClipboardCheck },
+              { id: 'food-swaps', label: t('clientPortal.foodSwaps'), icon: Apple },
+              { id: 'substitutions', label: t('clientPortal.exerciseSubstitutions'), icon: ArrowLeftRight },
+              { id: 'notifications', label: t('clientPortal.notifications'), icon: Bell },
             ].map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -511,7 +511,7 @@ export default function ClientPortalPage({
             >
               <div className="flex items-center gap-3.5">
                 <MessageSquare className="w-4 h-4 text-blue-400" />
-                <span>Coach Chat</span>
+                <span>{t('clientPortal.coachChat')}</span>
               </div>
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             </button>
@@ -634,15 +634,15 @@ export default function ClientPortalPage({
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-blue-300 bg-blue-900/60 px-2.5 py-0.5 rounded border border-blue-700/60">
-                      DAILY ATHLETE PROTOCOL & CHECK-IN
+                      {t('clientPortal.bannerTag')}
                     </span>
                     {isDailyLogSubmittedToday ? (
                       <span className="text-[10px] font-extrabold text-emerald-400 bg-emerald-950/90 px-2.5 py-0.5 rounded-full border border-emerald-800/80 flex items-center gap-1">
-                        ✓ SUBMITTED TODAY ({submittedTimestamp})
+                        ✓ {t('clientPortal.done')} ({submittedTimestamp})
                       </span>
                     ) : (
                       <span className="text-[10px] font-extrabold text-amber-400 bg-amber-950/90 px-2.5 py-0.5 rounded-full border border-amber-800/80 flex items-center gap-1 animate-pulse">
-                        • PENDING TODAY'S SUBMISSION
+                        • {t('clientPortal.pendingToday')}
                       </span>
                     )}
                     {(progressPhotos.front || progressPhotos.side || progressPhotos.back) && (
@@ -652,10 +652,10 @@ export default function ClientPortalPage({
                     )}
                   </div>
                   <h2 className="font-serif-header text-xl sm:text-2xl font-bold text-white mt-1.5">
-                    Daily Check-In & Training Protocol
+                    {t('clientPortal.dailyCheckin')}
                   </h2>
                   <p className="text-xs text-slate-300 mt-0.5">
-                    Execute your daily workout protocol, check off prescribed meals, and submit your daily log to Coach Alex Thorne.
+                    {t('clientPortal.dailyCheckinSubtitle')}
                   </p>
                 </div>
 
@@ -664,7 +664,7 @@ export default function ClientPortalPage({
                   className="w-full sm:w-auto px-5 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
                 >
                   <Send className="w-4 h-4" />
-                  <span>{isDailyLogSubmittedToday ? 'Resubmit Daily Log Only' : 'Submit Daily Log Only'}</span>
+                  <span>{isDailyLogSubmittedToday ? t('clientPortal.resubmitLogOnly') : t('clientPortal.submitLogOnly')}</span>
                 </button>
               </div>
 
@@ -676,11 +676,11 @@ export default function ClientPortalPage({
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-amber-200 flex flex-wrap items-center gap-2">
-                      <span>Weekly Evaluation & Progress Photos Reminder</span>
-                      <span className="px-2 py-0.5 bg-amber-900/80 text-amber-300 rounded text-[9px] uppercase font-mono">Due Every Sunday</span>
+                      <span>{t('clientPortal.weeklyReminderTitle')}</span>
+                      <span className="px-2 py-0.5 bg-amber-900/80 text-amber-300 rounded text-[9px] uppercase font-mono">{t('clientPortal.weeklyReminderTag')}</span>
                     </h4>
                     <p className="text-[11px] text-slate-300 mt-0.5">
-                      Don't forget to submit your weekly progress photos (Front, Side, Back) and rate your weekly energy & sleep quality below.
+                      {t('clientPortal.weeklyReminderDesc')}
                     </p>
                   </div>
                 </div>
@@ -689,7 +689,7 @@ export default function ClientPortalPage({
                   onClick={handleScrollToWeeklyForm}
                   className="w-full sm:w-auto px-3.5 py-2 bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-700/60 rounded-xl text-xs font-bold transition-all shrink-0 whitespace-nowrap cursor-pointer flex items-center justify-center gap-1 shadow-md hover:shadow-amber-500/20 active:scale-95"
                 >
-                  Jump to Weekly Form ↓
+                  {t('clientPortal.jumpToWeekly')} ↓
                 </button>
               </div>
             </div>
@@ -746,7 +746,7 @@ export default function ClientPortalPage({
                             )}
                           </div>
                           <p className="text-xs text-slate-400 mt-1">
-                            Prescribed: <strong className="text-slate-200">{ex.sets} Sets x {ex.reps} Reps</strong> • Tempo: <span className="font-mono text-blue-300 font-bold">{ex.tempo}</span>
+                            {t('clientPortal.prescribedFormat', { sets: ex.sets, reps: ex.reps, tempo: ex.tempo })}
                           </p>
                         </div>
 
@@ -761,7 +761,7 @@ export default function ClientPortalPage({
                             }`}
                           >
                             <Check className="w-3.5 h-3.5" />
-                            <span>{isAllSetsComplete ? 'Done ✅' : 'Check All'}</span>
+                            <span>{isAllSetsComplete ? t('clientPortal.done') : t('clientPortal.checkAll')}</span>
                           </button>
 
                           <button
@@ -772,7 +772,7 @@ export default function ClientPortalPage({
                             className="flex items-center gap-1 px-2.5 py-1.5 bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 border border-blue-800/60 text-xs font-semibold rounded-xl transition-all cursor-pointer"
                           >
                             <Play className="w-3.5 h-3.5" />
-                            <span>Demo</span>
+                            <span>{t('clientPortal.demo')}</span>
                           </button>
 
                           <button
@@ -780,7 +780,7 @@ export default function ClientPortalPage({
                             className="flex items-center gap-1 px-2.5 py-1.5 bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-800/60 text-xs font-semibold rounded-xl transition-all cursor-pointer"
                           >
                             <RefreshCw className="w-3.5 h-3.5" />
-                            <span>Swap</span>
+                            <span>{t('clientPortal.swap')}</span>
                           </button>
                         </div>
                       </div>
@@ -797,7 +797,7 @@ export default function ClientPortalPage({
                             }`}
                           >
                             <div className="flex items-center justify-between">
-                              <span className="font-bold text-xs text-blue-300">Set {set.setNum}</span>
+                              <span className="font-bold text-xs text-blue-300">{t('clientPortal.setNum', { num: set.setNum })}</span>
                               <button
                                 onClick={() => handleToggleSet(ex.id, setIdx)}
                                 className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
@@ -807,13 +807,13 @@ export default function ClientPortalPage({
                                 }`}
                               >
                                 <Check className="w-3 h-3" />
-                                <span>{set.completed ? 'Done' : 'Mark'}</span>
+                                <span>{set.completed ? t('clientPortal.done') : t('clientPortal.mark')}</span>
                               </button>
                             </div>
 
                             <div className="grid grid-cols-2 gap-2 text-xs">
                               <div>
-                                <span className="text-[10px] text-slate-400 block font-semibold">Weight (kg)</span>
+                                <span className="text-[10px] text-slate-400 block font-semibold">{t('clientPortal.weightKg')}</span>
                                 <input
                                   type="number"
                                   disabled={set.completed}
@@ -858,15 +858,23 @@ export default function ClientPortalPage({
                     <Utensils className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-serif-header text-lg font-bold text-white">Nutrition & Prescribed Meal Plan</h3>
+                    <h3 className="font-serif-header text-lg font-bold text-white">{t('clientPortal.nutritionTitle')}</h3>
                     <p className="text-xs text-slate-400 mt-0.5">
-                      Daily Target: {clientData?.targetKcal || 2450} kcal • Protein: 180g • Carbs: 240g • Fats: 80g
+                      {t('clientPortal.nutritionSubtitle', {
+                        targetKcal: clientData?.targetKcal || 2450,
+                        protein: clientData?.targetProtein || 180,
+                        carbs: clientData?.targetCarbs || 240,
+                        fats: clientData?.targetFats || 80
+                      })}
                     </p>
                   </div>
                 </div>
 
                 <span className="text-xs font-mono font-semibold text-amber-300 bg-amber-950/80 px-3 py-1.5 rounded-xl border border-amber-800/60">
-                  {Object.values(meals).flatMap(c => c.items).filter(i => i.eaten).length} / {Object.values(meals).flatMap(c => c.items).length} Meals Eaten
+                  {t('clientPortal.mealsEaten', {
+                    eaten: Object.values(meals).flatMap(c => c.items).filter(i => i.eaten).length,
+                    total: Object.values(meals).flatMap(c => c.items).length
+                  })}
                 </span>
               </div>
 
@@ -886,7 +894,7 @@ export default function ClientPortalPage({
                 return (
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#171e2e] border border-slate-700/60 rounded-xl p-4">
                     <div>
-                      <span className="text-[10px] text-slate-400 uppercase font-bold block">CALORIES</span>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">{t('clientPortal.calories')}</span>
                       <span className="text-sm font-black text-slate-100">
                         {loggedKcal} / {targetKcal} kcal
                       </span>
@@ -899,7 +907,7 @@ export default function ClientPortalPage({
                     </div>
 
                     <div>
-                      <span className="text-[10px] text-slate-400 uppercase font-bold block">PROTEIN</span>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">{t('clientPortal.protein')}</span>
                       <span className="text-sm font-black text-rose-400">{loggedProtein}g / {targetProtein}g</span>
                       <div className="w-full h-1.5 bg-slate-800 rounded-full mt-1.5 overflow-hidden">
                         <div
@@ -910,7 +918,7 @@ export default function ClientPortalPage({
                     </div>
 
                     <div>
-                      <span className="text-[10px] text-slate-400 uppercase font-bold block">CARBS</span>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">{t('clientPortal.carbs')}</span>
                       <span className="text-sm font-black text-amber-400">{loggedCarbs}g / {targetCarbs}g</span>
                       <div className="w-full h-1.5 bg-slate-800 rounded-full mt-1.5 overflow-hidden">
                         <div
@@ -921,7 +929,7 @@ export default function ClientPortalPage({
                     </div>
 
                     <div>
-                      <span className="text-[10px] text-slate-400 uppercase font-bold block">FATS</span>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">{t('clientPortal.fats')}</span>
                       <span className="text-sm font-black text-emerald-400">{loggedFats}g / {targetFats}g</span>
                       <div className="w-full h-1.5 bg-slate-800 rounded-full mt-1.5 overflow-hidden">
                         <div
@@ -994,14 +1002,14 @@ export default function ClientPortalPage({
               <div className="flex items-center justify-between border-b border-slate-800 pb-4">
                 <div>
                   <h3 className="font-serif-header text-xl font-bold text-white tracking-tight">
-                    Weekly Evaluation Form
+                    {t('clientPortal.weeklyTitle')}
                   </h3>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    Rate your weekly energy and sleep quality, and upload your 3 weekly progress photos.
+                    {t('clientPortal.weeklySubtitle')}
                   </p>
                 </div>
                 <span className="text-[10px] font-extrabold text-amber-300 bg-amber-950 px-2.5 py-1 rounded-full border border-amber-800/60">
-                  REQUIRED EVERY SUNDAY
+                  {t('clientPortal.requiredSunday')}
                 </span>
               </div>
 
@@ -1010,7 +1018,7 @@ export default function ClientPortalPage({
                 {/* Energy & Vitality */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs font-semibold">
-                    <span className="text-slate-300">Energy & Vitality (1–10)</span>
+                    <span className="text-slate-300">{t('clientPortal.energyVitality')}</span>
                     <span className="text-blue-400 font-extrabold font-mono text-sm">{energyScore} / 10</span>
                   </div>
                   <input
@@ -1026,7 +1034,7 @@ export default function ClientPortalPage({
                 {/* Sleep Quality */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs font-semibold">
-                    <span className="text-slate-300">Sleep Quality (1–10)</span>
+                    <span className="text-slate-300">{t('clientPortal.sleepQuality')}</span>
                     <span className="text-sky-400 font-extrabold font-mono text-sm">{sleepScore} / 10</span>
                   </div>
                   <input
@@ -1042,13 +1050,13 @@ export default function ClientPortalPage({
 
               {/* Upload Weekly Progress Photos Section (Matching 3-Card Layout in reference image) */}
               <div className="space-y-3 pt-4 border-t border-slate-800">
-                <h4 className="text-xs font-bold text-slate-200">Upload Weekly Progress Photos</h4>
+                <h4 className="text-xs font-bold text-slate-200">{t('clientPortal.uploadPhotosTitle')}</h4>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {[
-                    { pose: 'front', title: 'FRONT VIEW' },
-                    { pose: 'side', title: 'SIDE VIEW' },
-                    { pose: 'back', title: 'BACK VIEW' },
+                    { pose: 'front', title: t('clientPortal.frontView') },
+                    { pose: 'side', title: t('clientPortal.sideView') },
+                    { pose: 'back', title: t('clientPortal.backView') },
                   ].map(({ pose, title }) => {
                     const hasPhoto = Boolean(progressPhotos[pose]);
                     return (
@@ -1071,7 +1079,7 @@ export default function ClientPortalPage({
                           <div className="relative w-full h-24 rounded-lg overflow-hidden border border-emerald-500/60">
                             <img src={progressPhotos[pose]} alt={title} className="w-full h-full object-cover" />
                             <span className="absolute bottom-1 right-1 bg-slate-950/90 text-emerald-400 px-2 py-0.5 rounded text-[9px] font-bold">
-                              ✓ Uploaded
+                              {t('clientPortal.uploaded')}
                             </span>
                           </div>
                         ) : (
@@ -1092,19 +1100,19 @@ export default function ClientPortalPage({
               <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#171e2e] p-4 rounded-xl border border-slate-700/60">
                 <div>
                   <h5 className="text-xs font-bold text-slate-100 flex items-center gap-2 flex-wrap">
-                    <span>Weekly Evaluation Submission</span>
+                    <span>{t('clientPortal.weeklySubmission')}</span>
                     {isWeeklyEvaluationSubmitted ? (
                       <span className="text-[10px] text-emerald-400 font-extrabold bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-800">
-                        ✓ SUBMITTED THIS WEEK ({weeklySubmittedTimestamp})
+                        ✓ {t('clientPortal.done')} ({weeklySubmittedTimestamp})
                       </span>
                     ) : (
                       <span className="text-[10px] text-amber-400 font-bold bg-amber-950/80 px-2 py-0.5 rounded-full border border-amber-800">
-                        PENDING SUNDAY SUBMISSION
+                        {t('clientPortal.pendingSunday')}
                       </span>
                     )}
                   </h5>
                   <p className="text-[11px] text-slate-400 mt-0.5">
-                    Submits your weekly Energy score, Sleep score, and 3 progress photos to Coach Alex.
+                    {t('clientPortal.weeklySubmissionDesc')}
                   </p>
                 </div>
 
@@ -1113,7 +1121,7 @@ export default function ClientPortalPage({
                   className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs rounded-xl shadow-lg shadow-amber-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
                 >
                   <Calendar className="w-4 h-4" />
-                  <span>{isWeeklyEvaluationSubmitted ? 'Resubmit Weekly Evaluation' : 'Submit Weekly Evaluation & Photos'}</span>
+                  <span>{isWeeklyEvaluationSubmitted ? t('clientPortal.resubmitWeekly') : t('clientPortal.submitWeekly')}</span>
                 </button>
               </div>
             </div>
@@ -1122,31 +1130,31 @@ export default function ClientPortalPage({
             <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 md:p-6 shadow-xl space-y-3">
               <h3 className="font-serif-header text-sm font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-2.5">
                 <FileText className="w-4 h-4 text-blue-400" />
-                <span>Extra Activities & Daily Notes for Coach</span>
+                <span>{t('clientPortal.extraActivitiesTitle')}</span>
               </h3>
               <p className="text-xs text-slate-400">
-                Log any extra cardio, steps, off-plan foods, or physical comments for Coach Alex:
+                {t('clientPortal.extraActivitiesDesc')}
               </p>
               <textarea
                 value={extraActivitiesNotes}
                 onChange={(e) => setExtraActivitiesNotes(e.target.value)}
                 rows={4}
                 className="w-full bg-[#171e2e] border border-slate-700/70 rounded-xl p-3.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500 resize-none placeholder:text-slate-500"
-                placeholder="e.g. Completed 30 min fasted walk (8,500 steps). Shoulder felt great during bench press. Drank extra water today..."
+                placeholder={t('clientPortal.extraActivitiesPlaceholder')}
               />
             </div>
 
             {/* Section 5: Master Daily Check-In Submit Card */}
             <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 md:p-6 shadow-xl text-center space-y-3">
               <p className="text-xs text-slate-300 font-medium">
-                Today's eaten meals checklist, completed workout sets, and extra notes will be sent directly to Coach Alex. <span className="text-slate-400 font-normal">(Weekly Evaluation Form is submitted separately above).</span>
+                {t('clientPortal.masterSubmitDesc')}
               </p>
               <button
                 onClick={handleDailyLogSubmit}
                 className="w-full py-3.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-600 hover:from-blue-400 hover:to-indigo-400 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-500/25 active:scale-[0.99] transition-all cursor-pointer flex items-center justify-center gap-2"
               >
                 <Send className="w-4 h-4" />
-                <span>{isDailyLogSubmittedToday ? 'Resubmit Daily Check-In Only' : 'Submit Daily Check-In Only'}</span>
+                <span>{isDailyLogSubmittedToday ? t('clientPortal.resubmitLogOnly') : t('clientPortal.submitLogOnly')}</span>
               </button>
             </div>
           </div>
@@ -1211,7 +1219,11 @@ export default function ClientPortalPage({
                         : 'bg-[#171e2e] text-slate-400 hover:text-slate-200 border border-slate-800'
                     }`}
                   >
-                    {cat}
+                    {cat === 'ALL'
+                      ? t('overview.all')
+                      : cat === 'UNREAD'
+                      ? t('notifications.unreadOnly', { count: '' }).replace('()', '')
+                      : cat}
                   </button>
                 );
               })}
@@ -1332,7 +1344,7 @@ export default function ClientPortalPage({
               />
               <div>
                 <h4 className="text-xs font-bold text-slate-100">Coach Alex Thorne</h4>
-                <span className="text-[10px] text-emerald-400 font-semibold">Online & Active</span>
+                <span className="text-[10px] text-emerald-400 font-semibold">{t('clientPortal.onlineActive')}</span>
               </div>
             </div>
             <button onClick={() => setIsChatOpen(false)} className="p-1 text-slate-400 hover:text-white">
@@ -1391,7 +1403,7 @@ export default function ClientPortalPage({
             </label>
             <input
               type="text"
-              placeholder="Type message to coach..."
+              placeholder={t('clientPortal.typeMessage')}
               value={newMessageText}
               onChange={(e) => setNewMessageText(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
