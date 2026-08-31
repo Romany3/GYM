@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Utensils, 
   Check, 
@@ -12,6 +13,7 @@ import {
 } from 'lucide-react';
 
 export default function FoodSwapRequestsPage({ showToast }) {
+  const { t } = useTranslation();
   const [activeFilter, setActiveFilter] = useState('PENDING');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -104,23 +106,23 @@ export default function FoodSwapRequestsPage({ showToast }) {
   const handleOpenRejectModal = (req) => {
     setSelectedRequest(req);
     setResponseModalType('REJECT');
-    setCoachNoteInput('Keep current prescribed ingredient to maintain exact macro ratio targets for this training phase.');
+    setCoachNoteInput('Keep current prescribed meal item to stick to allocated daily macro target.');
+    setModifiedAlternativeInput(req.suggestedAlternative);
   };
 
   const handleConfirmResponse = () => {
     if (!selectedRequest) return;
 
     const newStatus = responseModalType === 'APPROVE' ? 'APPROVED' : 'REJECTED';
-    const finalSubstitute = modifiedAlternativeInput.trim() || selectedRequest.suggestedAlternative;
 
     setRequests((prev) =>
       prev.map((r) =>
         r.id === selectedRequest.id
-          ? { 
-              ...r, 
-              status: newStatus, 
+          ? {
+              ...r,
+              status: newStatus,
+              suggestedAlternative: modifiedAlternativeInput || r.suggestedAlternative,
               coachResponseNote: coachNoteInput,
-              suggestedAlternative: finalSubstitute
             }
           : r
       )
@@ -130,76 +132,106 @@ export default function FoodSwapRequestsPage({ showToast }) {
       showToast(
         newStatus === 'APPROVED'
           ? `Approved food swap for ${selectedRequest.clientName}!`
-          : `Declined food swap for ${selectedRequest.clientName}.`,
+          : `Rejected food swap request for ${selectedRequest.clientName}`,
         newStatus === 'APPROVED' ? 'success' : 'info'
       );
     }
 
+    // Close Modal
     setSelectedRequest(null);
     setResponseModalType(null);
     setCoachNoteInput('');
-    setModifiedAlternativeInput('');
   };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
-      {/* Header Controls Bar */}
+      {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-bold text-amber-400 bg-amber-950 px-2.5 py-0.5 rounded border border-amber-800/60 uppercase tracking-widest flex items-center gap-1">
-              <Utensils className="w-3 h-3 text-amber-400" /> CLIENT NUTRITION QUEUE
+              <Utensils className="w-3 h-3 text-amber-400" /> {t('swaps.foodQueueBadge')}
             </span>
+            {pendingCount > 0 && (
+              <span className="text-xs font-bold text-amber-300 bg-amber-950 px-2 py-0.5 rounded-full border border-amber-800/60 animate-pulse">
+                {t('swaps.pendingReviewCount', { count: pendingCount })}
+              </span>
+            )}
           </div>
           <h1 className="font-serif-header text-3xl font-bold text-white tracking-tight mt-1">
-            Food Swap Requests
+            {t('swaps.foodTitle')}
           </h1>
           <p className="text-xs text-slate-400 mt-0.5">
-            Review, approve, or adjust ingredient and meal substitutions submitted by your clients.
+            {t('swaps.foodSubtitle')}
           </p>
         </div>
-
-        {/* Pending Badge */}
-        {pendingCount > 0 && (
-          <div className="flex items-center gap-2 bg-amber-950/60 border border-amber-500/40 px-4 py-2 rounded-xl text-amber-300 text-xs font-bold shrink-0">
-            <Clock className="w-4 h-4 text-amber-400 animate-spin" />
-            <span>{pendingCount} Request(s) Awaiting Review</span>
-          </div>
-        )}
       </div>
 
-      {/* Filter Tabs & Search Controls */}
-      <div className="bg-[#121724] border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
-          {[
-            { id: 'PENDING', label: `Pending Review (${pendingCount})` },
-            { id: 'APPROVED', label: `Approved (${approvedCount})` },
-            { id: 'REJECTED', label: 'Rejected' },
-            { id: 'ALL', label: `All Requests (${requests.length})` },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveFilter(tab.id)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                activeFilter === tab.id
-                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                  : 'bg-[#171e2e] text-slate-400 hover:text-slate-200 border border-slate-800'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+      {/* 3 KPI Metrics Bar */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-[#121724] border border-amber-500/30 rounded-2xl p-5 shadow-lg space-y-2">
+          <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
+            <span className="uppercase tracking-wider">{t('swaps.underReview')}</span>
+            <Clock className="w-4 h-4 text-amber-400" />
+          </div>
+          <div className="text-3xl font-extrabold text-white font-mono">{pendingCount}</div>
+          <span className="text-[11px] text-amber-400 font-semibold">{t('swaps.requiresReview')}</span>
         </div>
 
-        <div className="relative w-full md:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-lg space-y-2">
+          <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
+            <span className="uppercase tracking-wider">{t('swaps.approvedSwaps')}</span>
+            <Apple className="w-4 h-4 text-emerald-400" />
+          </div>
+          <div className="text-3xl font-extrabold text-white font-mono">{approvedCount}</div>
+          <span className="text-[11px] text-emerald-400 font-semibold">{t('swaps.plansUpdated')}</span>
+        </div>
+
+        <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-lg space-y-2">
+          <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
+            <span className="uppercase tracking-wider">{t('swaps.rejected')}</span>
+            <X className="w-4 h-4 text-pink-400" />
+          </div>
+          <div className="text-3xl font-extrabold text-white font-mono">
+            {requests.filter((r) => r.status === 'REJECTED').length}
+          </div>
+          <span className="text-[11px] text-slate-400 font-semibold">{t('swaps.keptOriginalFood')}</span>
+        </div>
+      </div>
+
+      {/* Filter Bar & Search */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#121724] border border-slate-800 p-4 rounded-2xl shadow-lg">
+        <div className="relative flex-1">
+          <Search className="absolute start-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search client or food..."
-            className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl pl-9 pr-3.5 py-2 border border-slate-700/60 focus:outline-none focus:border-amber-500"
+            placeholder={t('swaps.searchFoodPlaceholder')}
+            className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl ps-10 pe-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-amber-500"
           />
+        </div>
+
+        <div className="flex items-center gap-1.5 overflow-x-auto bg-[#171e2e] p-1 rounded-xl border border-slate-800 text-xs font-semibold scrollbar-none">
+          {['PENDING', 'APPROVED', 'REJECTED', 'ALL'].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveFilter(tab)}
+              className={`px-3.5 py-1.5 rounded-lg whitespace-nowrap transition-all cursor-pointer ${
+                activeFilter === tab
+                  ? 'bg-amber-500 text-slate-950 font-bold shadow-md'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              {tab === 'PENDING'
+                ? `${t('swaps.underReview')} (${pendingCount})`
+                : tab === 'APPROVED'
+                ? t('swaps.approvedSwaps')
+                : tab === 'REJECTED'
+                ? t('swaps.rejected')
+                : t('overview.all')}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -210,9 +242,9 @@ export default function FoodSwapRequestsPage({ showToast }) {
             <div className="w-14 h-14 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-slate-500">
               <RefreshCw className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-slate-200">No Food Swap Requests Found</h3>
+            <h3 className="text-base font-bold text-slate-200">{t('swaps.noFoodRequests')}</h3>
             <p className="text-xs text-slate-400 max-w-sm mx-auto">
-              Ingredient substitution requests sent by clients from their athlete portal will appear here for 1-click review.
+              Food ingredient substitution requests submitted by clients will be listed here for quick review & approval.
             </p>
           </div>
         ) : (
@@ -227,13 +259,13 @@ export default function FoodSwapRequestsPage({ showToast }) {
                   : 'border-slate-800/80 opacity-80'
               }`}
             >
-              {/* Header: Client Info & Status */}
+              {/* Header Info */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
                 <div className="flex items-center gap-3">
                   <img
                     src={req.clientAvatar}
                     alt={req.clientName}
-                    className="w-10 h-10 rounded-full object-cover ring-2 ring-amber-500/40"
+                    className="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/40"
                   />
                   <div>
                     <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
@@ -258,62 +290,75 @@ export default function FoodSwapRequestsPage({ showToast }) {
                         : 'bg-slate-900 text-slate-400 border-slate-800'
                     }`}
                   >
-                    {req.status === 'PENDING' ? 'Under Review' : req.status}
+                    {req.status === 'PENDING'
+                      ? t('swaps.underReview')
+                      : req.status === 'APPROVED'
+                      ? t('swaps.approvedSwaps')
+                      : t('swaps.rejected')}
                   </span>
                 </div>
               </div>
 
-              {/* Food Swap Details Grid */}
+              {/* Food Substitution Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                {/* Left: Original Prescribed Food & Client Reason */}
+                {/* Original Prescribed Food */}
                 <div className="bg-[#171e2e] border border-slate-800 p-3.5 rounded-xl space-y-1.5">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                    CURRENT PRESCRIBED INGREDIENT ({req.mealCategory})
+                    {t('swaps.currentFood')}
                   </span>
                   <div className="flex items-center gap-2">
-                    <Apple className="w-4 h-4 text-amber-400" />
+                    <Utensils className="w-4 h-4 text-amber-400" />
                     <span className="font-bold text-slate-200 text-sm">{req.originalFood}</span>
+                    <span className="text-[10px] font-semibold text-blue-400 bg-blue-950 px-2 py-0.5 rounded border border-blue-800/60">
+                      {req.mealCategory}
+                    </span>
                   </div>
-                  <div className="pt-1 text-[11px] text-amber-300 font-semibold flex items-start gap-1">
-                    <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                    <span>Reason ({req.reasonCategory}): "{req.reasonNote}"</span>
+                  <div className="pt-1 text-[11px] text-amber-300 font-semibold flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    <span>{t('swaps.reason')} ({req.reasonCategory}): "{req.reasonNote}"</span>
                   </div>
                 </div>
 
-                {/* Right: Suggested Alternative & Coach Feedback */}
-                <div className="bg-[#1c1a24] border border-amber-500/30 p-3.5 rounded-xl space-y-1.5">
-                  <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">
-                    SUGGESTED FOOD SUBSTITUTE
+                {/* Suggested Alternative Food */}
+                <div className="bg-[#162133] border border-blue-500/30 p-3.5 rounded-xl space-y-1.5">
+                  <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider block">
+                    {t('swaps.suggestedAlternativeFood')}
                   </span>
                   <div className="flex items-center gap-2">
-                    <RefreshCw className="w-4 h-4 text-emerald-400" />
+                    <Sparkles className="w-4 h-4 text-emerald-400" />
                     <span className="font-bold text-emerald-300 text-sm">{req.suggestedAlternative}</span>
                   </div>
-                  {req.coachResponseNote && (
-                    <p className="text-[11px] text-slate-300 pt-1 border-t border-slate-800">
-                      <strong>Coach Note:</strong> {req.coachResponseNote}
-                    </p>
-                  )}
+                  <p className="text-[11px] text-slate-400 pt-1">
+                    Isocaloric macro profile substitution request.
+                  </p>
                 </div>
               </div>
 
-              {/* 1-Click Action Buttons for Pending Requests */}
+              {/* Coach Note if Reviewed */}
+              {req.coachResponseNote && (
+                <div className="p-3 bg-[#171e2e] border border-slate-800 rounded-xl text-xs text-slate-300">
+                  <strong className="text-blue-400 font-bold block mb-0.5">Coach Review Note:</strong>
+                  "{req.coachResponseNote}"
+                </div>
+              )}
+
+              {/* Actions for Pending Requests */}
               {req.status === 'PENDING' && (
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-2 border-t border-slate-800/80">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2.5 pt-2 border-t border-slate-800/80">
                   <button
                     onClick={() => handleOpenRejectModal(req)}
-                    className="w-full sm:w-auto flex items-center justify-center py-2 px-4 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/60 font-bold text-xs rounded-xl gap-1.5 transition-all cursor-pointer"
+                    className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition-all cursor-pointer border border-slate-700"
                   >
-                    <X className="w-3.5 h-3.5" />
-                    <span>Decline Swap</span>
+                    <X className="w-4 h-4 text-pink-400" />
+                    <span>{t('swaps.rejectRequest')}</span>
                   </button>
 
                   <button
                     onClick={() => handleOpenApproveModal(req)}
-                    className="w-full sm:w-auto flex items-center justify-center py-2 px-5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-md shadow-emerald-500/20 gap-1.5 transition-all cursor-pointer"
+                    className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-5 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-md shadow-emerald-500/20"
                   >
                     <Check className="w-4 h-4" />
-                    <span>Approve Food Swap</span>
+                    <span>{t('swaps.approveAndUpdateMeal')}</span>
                   </button>
                 </div>
               )}
@@ -322,18 +367,27 @@ export default function FoodSwapRequestsPage({ showToast }) {
         )}
       </div>
 
-      {/* Response Confirmation Modal */}
+      {/* Review & Respond Modal */}
       {responseModalType && selectedRequest && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[#121724] border border-slate-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl space-y-4 p-5">
+          <div className="bg-[#121724] border border-slate-800 rounded-2xl p-6 max-w-lg w-full space-y-4 shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="font-serif-header text-base font-bold text-white flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-amber-400" />
-                <span>{responseModalType === 'APPROVE' ? 'Approve Food Swap' : 'Decline Food Swap'}</span>
+              <h3 className="font-serif-header text-lg font-bold text-slate-100 flex items-center gap-2">
+                {responseModalType === 'APPROVE' ? (
+                  <>
+                    <Check className="w-5 h-5 text-emerald-400" />
+                    <span>Approve Food Substitution</span>
+                  </>
+                ) : (
+                  <>
+                    <X className="w-5 h-5 text-rose-400" />
+                    <span>Reject Food Substitution</span>
+                  </>
+                )}
               </h3>
               <button
                 onClick={() => setResponseModalType(null)}
-                className="text-slate-400 hover:text-slate-200 text-xs"
+                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -341,46 +395,55 @@ export default function FoodSwapRequestsPage({ showToast }) {
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block text-slate-400 font-semibold mb-1">
-                  Food Substitute ({selectedRequest.originalFood} → ?)
+                <label className="text-[11px] font-bold text-slate-400 block mb-1">
+                  Client & Prescribed Food Item
+                </label>
+                <div className="p-3 bg-[#171e2e] rounded-xl border border-slate-800 text-slate-200">
+                  <strong>{selectedRequest.clientName}</strong> • {selectedRequest.originalFood}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-400 block mb-1">
+                  Approved Substitute Item
                 </label>
                 <input
                   type="text"
                   value={modifiedAlternativeInput}
                   onChange={(e) => setModifiedAlternativeInput(e.target.value)}
-                  className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl p-2.5 border border-slate-700/60 focus:outline-none focus:border-amber-400"
+                  className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl p-2.5 border border-slate-700 focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-400 font-semibold mb-1">
-                  Coach Note to {selectedRequest.clientName}
+                <label className="text-[11px] font-bold text-slate-400 block mb-1">
+                  Coach Guidance Note (Sent to Athlete)
                 </label>
                 <textarea
                   rows="3"
                   value={coachNoteInput}
                   onChange={(e) => setCoachNoteInput(e.target.value)}
-                  className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl p-2.5 border border-slate-700/60 focus:outline-none focus:border-amber-400 resize-none"
+                  className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl p-2.5 border border-slate-700 focus:outline-none focus:border-amber-500"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
               <button
                 onClick={() => setResponseModalType(null)}
-                className="py-2 px-4 bg-slate-800 text-slate-300 font-bold text-xs rounded-xl"
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition-all cursor-pointer"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleConfirmResponse}
-                className={`py-2 px-5 font-bold text-xs rounded-xl shadow-md ${
+                className={`px-5 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer shadow-md ${
                   responseModalType === 'APPROVE'
-                    ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950'
-                    : 'bg-rose-600 hover:bg-rose-500 text-white'
+                    ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-emerald-950/40'
+                    : 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-950/40'
                 }`}
               >
-                Confirm {responseModalType === 'APPROVE' ? 'Approval' : 'Decline'}
+                {responseModalType === 'APPROVE' ? t('common.approve') : t('common.reject')}
               </button>
             </div>
           </div>

@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { SlidersHorizontal, Info, User, Sparkles, Lock, Unlock, Edit2, Check, ChevronDown, Search } from 'lucide-react';
+import { 
+  Info, 
+  User, 
+  Check, 
+  ChevronDown, 
+  Search,
+  Flame,
+  Dumbbell,
+  Wheat,
+  Droplet
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export default function TargetSetup({ 
@@ -10,8 +20,6 @@ export default function TargetSetup({
   setCarbsGrams, 
   fatsGrams, 
   setFatsGrams,
-  isLocked,
-  setIsLocked,
   selectedClient,
   clients = [],
   onSelectClient,
@@ -19,8 +27,6 @@ export default function TargetSetup({
 }) {
   const { t } = useTranslation();
   const [localTargetKcal, setLocalTargetKcal] = useState(propTargetKcal);
-  const [isEditingKcal, setIsEditingKcal] = useState(false);
-  const [showPresets, setShowPresets] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [clientSearchQuery, setClientSearchQuery] = useState('');
 
@@ -40,340 +46,235 @@ export default function TargetSetup({
   );
 
   // 1g Protein = 4 kcal, 1g Carb = 4 kcal, 1g Fat = 9 kcal
-  const proteinKcal = proteinGrams * 4;
-  const carbsKcal = carbsGrams * 4;
-  const fatsKcal = fatsGrams * 9;
+  const proteinKcal = (proteinGrams || 0) * 4;
+  const carbsKcal = (carbsGrams || 0) * 4;
+  const fatsKcal = (fatsGrams || 0) * 9;
   const totalAllocatedKcal = proteinKcal + carbsKcal + fatsKcal;
   const remainingKcal = effectiveTargetKcal - totalAllocatedKcal;
 
   // Percentage calculations
   const totalGramsKcal = totalAllocatedKcal || 1;
-  const proteinPct = Math.round((proteinKcal / totalGramsKcal) * 100);
-  const carbsPct = Math.round((carbsKcal / totalGramsKcal) * 100);
-  const fatsPct = Math.round((fatsKcal / totalGramsKcal) * 100);
+  const proteinPct = Math.round((proteinKcal / totalGramsKcal) * 100) || 0;
+  const carbsPct = Math.round((carbsKcal / totalGramsKcal) * 100) || 0;
+  const fatsPct = Math.round((fatsKcal / totalGramsKcal) * 100) || 0;
 
-  // SVG Gauge calculations
-  const radius = 70;
-  const strokeWidth = 14;
-  const circumference = 2 * Math.PI * radius;
-  const progressRatio = Math.min(1, Math.max(0, totalAllocatedKcal / (effectiveTargetKcal || 1)));
-  const strokeDashoffset = circumference - (progressRatio * circumference * 0.75); // 270 deg arc
-
-  const handleApplyPreset = (pRatio, cRatio, fRatio) => {
-    if (isLocked) return;
-    const pGrams = Math.round((effectiveTargetKcal * pRatio) / 4);
-    const cGrams = Math.round((effectiveTargetKcal * cRatio) / 4);
-    const fGrams = Math.round((effectiveTargetKcal * fRatio) / 9);
-    setProteinGrams(pGrams);
-    setCarbsGrams(cGrams);
-    setFatsGrams(fGrams);
+  const handleKcalChange = (newVal) => {
+    const val = Math.max(0, Number(newVal) || 0);
+    setLocalTargetKcal(val);
+    if (onUpdateTargetKcal) onUpdateTargetKcal(val);
   };
 
-  const handleKcalSubmit = (val) => {
-    const num = Math.max(500, Math.min(10000, Number(val) || 2450));
-    setLocalTargetKcal(num);
-    if (onUpdateTargetKcal) onUpdateTargetKcal(num);
-    setIsEditingKcal(false);
+  const handleKcalStep = (delta) => {
+    const val = Math.max(500, effectiveTargetKcal + delta);
+    setLocalTargetKcal(val);
+    if (onUpdateTargetKcal) onUpdateTargetKcal(val);
+  };
+
+  // Sync target calories to sum of macros
+  const handleSyncTargetToAllocated = () => {
+    if (totalAllocatedKcal > 0) {
+      setLocalTargetKcal(totalAllocatedKcal);
+      if (onUpdateTargetKcal) onUpdateTargetKcal(totalAllocatedKcal);
+    }
   };
 
   return (
     <div className="space-y-5 select-none">
       {/* Main Target Setup Card */}
-      <div className="bg-[#121724] border border-slate-800/90 rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden backdrop-blur-xl space-y-5">
-        {/* Ambient Top Radial Glow */}
+      <div className="bg-[#121724] border border-slate-800/90 rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden backdrop-blur-xl space-y-6">
+        {/* Ambient Radial Background Glow */}
         <div className="absolute -top-10 -right-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h2 className="font-serif-header text-xl font-bold text-slate-100 tracking-tight">
-              {t('targetSetup.title')}
-            </h2>
-            {isLocked && (
-              <span className="text-[10px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700 flex items-center gap-1">
-                <Lock className="w-3 h-3 text-amber-400" /> {t('common.locked')}
-              </span>
-            )}
+        {/* Header Title */}
+        <div className="flex items-center justify-between pb-4 border-b border-slate-800/80">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-blue-950/80 border border-blue-800/60 flex items-center justify-center text-blue-400">
+              <Flame className="w-5 h-5 text-blue-400" />
+            </div>
+            <div>
+              <h2 className="font-serif-header text-lg font-bold text-slate-100 tracking-tight">
+                {t('targetSetup.title')}
+              </h2>
+              <p className="text-[11px] text-slate-400">
+                Direct manual input for target calories & macros
+              </p>
+            </div>
           </div>
-          
-          <button 
-            onClick={() => setShowPresets(!showPresets)}
-            className={`p-2 rounded-xl transition-all cursor-pointer border ${
-              showPresets
-                ? 'bg-blue-600/30 text-blue-300 border-blue-500/50'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border-slate-800'
-            }`}
-            title="Toggle Quick Ratio Presets"
-          >
-            <SlidersHorizontal className="w-4 h-4" />
-          </button>
         </div>
 
-        {/* Quick Ratio Presets Drawer */}
-        {showPresets && (
-          <div className="p-3 bg-[#171e2e]/90 border border-slate-700/60 rounded-2xl space-y-2 text-xs animate-in fade-in zoom-in-95 duration-200">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-              {t('targetSetup.presets.title')}
-            </span>
-            <div className="grid grid-cols-2 gap-1.5 font-semibold text-[11px]">
+        {/* 1. TARGET CALORIES DIRECT INPUT BLOCK */}
+        <div className="bg-[#171e2e]/90 p-4 rounded-2xl border border-slate-800 space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+              <span>{t('targetSetup.targetKcal')}</span>
+            </label>
+            <div className="flex items-center gap-1">
               <button
-                disabled={isLocked}
-                onClick={() => handleApplyPreset(0.30, 0.45, 0.25)}
-                className="p-2 bg-slate-900/80 hover:bg-blue-950/80 text-slate-200 hover:text-blue-300 rounded-xl border border-slate-700/50 cursor-pointer transition-all disabled:opacity-40"
+                type="button"
+                onClick={() => handleKcalStep(-100)}
+                className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-mono rounded-lg border border-slate-700/60 cursor-pointer"
               >
-                {t('targetSetup.presets.balanced')}
+                -100
               </button>
               <button
-                disabled={isLocked}
-                onClick={() => handleApplyPreset(0.40, 0.40, 0.20)}
-                className="p-2 bg-slate-900/80 hover:bg-blue-950/80 text-slate-200 hover:text-blue-300 rounded-xl border border-slate-700/50 cursor-pointer transition-all disabled:opacity-40"
+                type="button"
+                onClick={() => handleKcalStep(-50)}
+                className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-mono rounded-lg border border-slate-700/60 cursor-pointer"
               >
-                {t('targetSetup.presets.highProtein')}
+                -50
               </button>
               <button
-                disabled={isLocked}
-                onClick={() => handleApplyPreset(0.25, 0.15, 0.60)}
-                className="p-2 bg-slate-900/80 hover:bg-blue-950/80 text-slate-200 hover:text-blue-300 rounded-xl border border-slate-700/50 cursor-pointer transition-all disabled:opacity-40"
+                type="button"
+                onClick={() => handleKcalStep(50)}
+                className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-mono rounded-lg border border-slate-700/60 cursor-pointer"
               >
-                {t('targetSetup.presets.keto')}
+                +50
               </button>
               <button
-                disabled={isLocked}
-                onClick={() => handleApplyPreset(0.25, 0.55, 0.20)}
-                className="p-2 bg-slate-900/80 hover:bg-blue-950/80 text-slate-200 hover:text-blue-300 rounded-xl border border-slate-700/50 cursor-pointer transition-all disabled:opacity-40"
+                type="button"
+                onClick={() => handleKcalStep(100)}
+                className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-mono rounded-lg border border-slate-700/60 cursor-pointer"
               >
-                {t('targetSetup.presets.bulking')}
+                +100
               </button>
             </div>
           </div>
-        )}
 
-        {/* Radial Circle Progress Meter with Editable Target Kcal */}
-        <div className="relative flex items-center justify-center my-2">
-          <svg className="w-52 h-52 sm:w-56 sm:h-56 -rotate-135 transform overflow-visible">
-            {/* Background Arc Track */}
-            <circle
-              cx="112"
-              cy="112"
-              r={radius}
-              stroke="#182032"
-              strokeWidth={strokeWidth}
-              strokeLinecap="round"
-              strokeDasharray={`${circumference * 0.75} ${circumference * 0.25}`}
-              fill="transparent"
+          <div className="relative flex items-center">
+            <input
+              type="number"
+              step="10"
+              value={effectiveTargetKcal}
+              onChange={(e) => handleKcalChange(e.target.value)}
+              className="w-full bg-[#121724] text-white text-xl font-bold font-mono px-4 py-2.5 rounded-xl border border-slate-700/80 focus:outline-none focus:border-blue-500"
+              placeholder="e.g. 2450"
             />
-            {/* Active Progress Arc */}
-            <circle
-              cx="112"
-              cy="112"
-              r={radius}
-              stroke="url(#gradientArc)"
-              strokeWidth={strokeWidth}
-              strokeLinecap="round"
-              strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset}
-              fill="transparent"
-              className="transition-all duration-500 ease-out"
-            />
-            <defs>
-              <linearGradient id="gradientArc" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#38bdf8" />
-                <stop offset="50%" stopColor="#3b82f6" />
-                <stop offset="100%" stopColor="#818cf8" />
-              </linearGradient>
-            </defs>
-          </svg>
+            <span className="absolute end-4 text-xs font-bold text-slate-400 font-mono pointer-events-none">
+              kcal
+            </span>
+          </div>
+        </div>
 
-          {/* Central Target Display & Direct Edit Box */}
-          <div className="absolute flex flex-col items-center justify-center text-center">
-            {isEditingKcal ? (
-              <div className="flex items-center gap-1">
-                <input
-                  type="number"
-                  autoFocus
-                  step="50"
-                  value={localTargetKcal}
-                  onChange={(e) => setLocalTargetKcal(Number(e.target.value))}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleKcalSubmit(e.target.value);
-                  }}
-                  className="w-28 bg-slate-900 text-white font-extrabold text-2xl text-center p-1 rounded-xl border border-blue-500 focus:outline-none"
-                />
+        {/* 2. DIRECT MACRO GRAM INPUTS (PROTEIN, CARBS, FATS) */}
+        <div className="space-y-3.5">
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+            Macro Targets (Manual Gram Entry)
+          </span>
+
+          {/* PROTEIN INPUT */}
+          <div className="bg-[#171e2e]/70 p-3.5 rounded-2xl border border-slate-800 space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Dumbbell className="w-4 h-4 text-blue-400" />
+                <span className="text-xs font-bold text-blue-400 tracking-wider">PROTEIN</span>
+              </div>
+              <span className="text-[11px] text-slate-400 font-mono">
+                {proteinKcal} kcal <span className="text-slate-500">({proteinPct}%)</span>
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                value={proteinGrams}
+                onChange={(e) => setProteinGrams(Math.max(0, Number(e.target.value)))}
+                className="w-full bg-[#121724] text-white font-bold font-mono text-base px-3 py-2 rounded-xl border border-slate-700/80 focus:outline-none focus:border-blue-500"
+                placeholder="0"
+              />
+              <span className="text-xs font-bold text-slate-400 font-mono shrink-0">g</span>
+            </div>
+          </div>
+
+          {/* CARBS INPUT */}
+          <div className="bg-[#171e2e]/70 p-3.5 rounded-2xl border border-slate-800 space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Wheat className="w-4 h-4 text-sky-400" />
+                <span className="text-xs font-bold text-sky-400 tracking-wider">CARBS</span>
+              </div>
+              <span className="text-[11px] text-slate-400 font-mono">
+                {carbsKcal} kcal <span className="text-slate-500">({carbsPct}%)</span>
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                value={carbsGrams}
+                onChange={(e) => setCarbsGrams(Math.max(0, Number(e.target.value)))}
+                className="w-full bg-[#121724] text-white font-bold font-mono text-base px-3 py-2 rounded-xl border border-slate-700/80 focus:outline-none focus:border-sky-500"
+                placeholder="0"
+              />
+              <span className="text-xs font-bold text-slate-400 font-mono shrink-0">g</span>
+            </div>
+          </div>
+
+          {/* FATS INPUT */}
+          <div className="bg-[#171e2e]/70 p-3.5 rounded-2xl border border-slate-800 space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Droplet className="w-4 h-4 text-indigo-400" />
+                <span className="text-xs font-bold text-indigo-400 tracking-wider">FATS</span>
+              </div>
+              <span className="text-[11px] text-slate-400 font-mono">
+                {fatsKcal} kcal <span className="text-slate-500">({fatsPct}%)</span>
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                value={fatsGrams}
+                onChange={(e) => setFatsGrams(Math.max(0, Number(e.target.value)))}
+                className="w-full bg-[#121724] text-white font-bold font-mono text-base px-3 py-2 rounded-xl border border-slate-700/80 focus:outline-none focus:border-indigo-500"
+                placeholder="0"
+              />
+              <span className="text-xs font-bold text-slate-400 font-mono shrink-0">g</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 3. CALORIE & MACRO TELEMETRY SUMMARY BOX */}
+        <div className="bg-[#0e1320] rounded-2xl p-4 border border-slate-800/90 space-y-3 text-xs shadow-inner">
+          <div className="flex justify-between items-center text-slate-300">
+            <span className="font-semibold">{t('targetSetup.allocated')}</span>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-slate-100 font-mono text-sm">
+                {totalAllocatedKcal.toLocaleString()} kcal
+              </span>
+              {totalAllocatedKcal !== effectiveTargetKcal && (
                 <button
                   type="button"
-                  onClick={() => handleKcalSubmit(localTargetKcal)}
-                  className="p-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg cursor-pointer"
+                  onClick={handleSyncTargetToAllocated}
+                  className="px-2 py-0.5 bg-blue-950 text-blue-300 hover:bg-blue-900 border border-blue-800/60 rounded text-[10px] font-bold cursor-pointer"
+                  title="Set Target kcal equal to sum of macros"
                 >
-                  <Check className="w-4 h-4" />
+                  Set as Target
                 </button>
-              </div>
-            ) : (
-              <div 
-                onClick={() => !isLocked && setIsEditingKcal(true)}
-                className="group cursor-pointer flex items-center justify-center gap-1.5"
-                title="Click to edit target calories"
-              >
-                <span className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight font-sans group-hover:text-blue-300 transition-colors">
-                  {effectiveTargetKcal.toLocaleString()}
-                </span>
-                {!isLocked && (
-                  <Edit2 className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400 opacity-0 group-hover:opacity-100 transition-all" />
-                )}
-              </div>
-            )}
-
-            <span className="text-xs font-semibold text-slate-400 mt-1">
-              Target kcal
-            </span>
-          </div>
-        </div>
-
-        {/* Macro Sliders & Direct Gram/Percentage Editors */}
-        <div className="space-y-4 my-4">
-          {/* PROTEIN */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-xs font-bold">
-              <span className="text-blue-400 tracking-wider">PROTEIN</span>
-              <div className="flex items-center gap-1.5 font-mono">
-                <input
-                  type="number"
-                  disabled={isLocked}
-                  value={proteinGrams}
-                  onChange={(e) => setProteinGrams(Math.max(0, Number(e.target.value)))}
-                  className="w-14 bg-[#171e2e] text-slate-100 text-right px-1.5 py-0.5 rounded border border-slate-700 focus:outline-none focus:border-blue-500 text-xs font-bold disabled:opacity-50"
-                />
-                <span className="text-slate-400">g</span>
-                <span className="text-slate-500 font-normal">({proteinPct}%)</span>
-              </div>
+              )}
             </div>
-            <input
-              type="range"
-              min="20"
-              max="400"
-              step="5"
-              disabled={isLocked}
-              value={proteinGrams}
-              onChange={(e) => setProteinGrams(Number(e.target.value))}
-              className="w-full h-2 bg-[#171e2e] rounded-lg appearance-none cursor-pointer accent-blue-500 disabled:opacity-50"
-            />
           </div>
 
-          {/* CARBS */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-xs font-bold">
-              <span className="text-sky-400 tracking-wider">CARBS</span>
-              <div className="flex items-center gap-1.5 font-mono">
-                <input
-                  type="number"
-                  disabled={isLocked}
-                  value={carbsGrams}
-                  onChange={(e) => setCarbsGrams(Math.max(0, Number(e.target.value)))}
-                  className="w-14 bg-[#171e2e] text-slate-100 text-right px-1.5 py-0.5 rounded border border-slate-700 focus:outline-none focus:border-sky-500 text-xs font-bold disabled:opacity-50"
-                />
-                <span className="text-slate-400">g</span>
-                <span className="text-slate-500 font-normal">({carbsPct}%)</span>
-              </div>
-            </div>
-            <input
-              type="range"
-              min="20"
-              max="500"
-              step="5"
-              disabled={isLocked}
-              value={carbsGrams}
-              onChange={(e) => setCarbsGrams(Number(e.target.value))}
-              className="w-full h-2 bg-[#171e2e] rounded-lg appearance-none cursor-pointer accent-sky-400 disabled:opacity-50"
-            />
-          </div>
-
-          {/* FATS */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-xs font-bold">
-              <span className="text-indigo-400 tracking-wider">FATS</span>
-              <div className="flex items-center gap-1.5 font-mono">
-                <input
-                  type="number"
-                  disabled={isLocked}
-                  value={fatsGrams}
-                  onChange={(e) => setFatsGrams(Math.max(0, Number(e.target.value)))}
-                  className="w-14 bg-[#171e2e] text-slate-100 text-right px-1.5 py-0.5 rounded border border-slate-700 focus:outline-none focus:border-indigo-500 text-xs font-bold disabled:opacity-50"
-                />
-                <span className="text-slate-400">g</span>
-                <span className="text-slate-500 font-normal">({fatsPct}%)</span>
-              </div>
-            </div>
-            <input
-              type="range"
-              min="10"
-              max="200"
-              step="5"
-              disabled={isLocked}
-              value={fatsGrams}
-              onChange={(e) => setFatsGrams(Number(e.target.value))}
-              className="w-full h-2 bg-[#171e2e] rounded-lg appearance-none cursor-pointer accent-indigo-400 disabled:opacity-50"
-            />
-          </div>
-        </div>
-
-        {/* Telemetry Summary Stats Box */}
-        <div className="bg-[#0e1320] rounded-2xl p-4 border border-slate-800/90 space-y-2.5 text-xs shadow-inner">
-          <div className="flex justify-between text-slate-300">
-            <span className="font-semibold">{t('targetSetup.allocated')}</span>
-            <span className="font-bold text-slate-100 font-mono">{totalAllocatedKcal.toLocaleString()} kcal</span>
-          </div>
-          <div className="flex justify-between items-center text-slate-300 pt-1 border-t border-slate-800/60">
+          <div className="flex justify-between items-center text-slate-300 pt-2 border-t border-slate-800/60">
             <span className="font-semibold">{t('targetSetup.remaining')}</span>
             <div className="flex items-center gap-1.5 font-bold font-mono">
               {remainingKcal === 0 ? (
-                <span className="text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-800/60">
+                <span className="text-emerald-400 bg-emerald-950/80 px-2.5 py-1 rounded-full border border-emerald-800/60 flex items-center gap-1">
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
                   {t('targetSetup.balanced')}
                 </span>
               ) : remainingKcal > 0 ? (
-                <span className="text-amber-400 flex items-center gap-1">
-                  {t('targetSetup.underTarget', { kcal: remainingKcal.toLocaleString() })}
+                <span className="text-amber-400 bg-amber-950/60 px-2.5 py-1 rounded-full border border-amber-800/60 flex items-center gap-1">
                   <Info className="w-3.5 h-3.5 text-amber-400" />
+                  {t('targetSetup.underTarget', { kcal: remainingKcal.toLocaleString() })}
                 </span>
               ) : (
-                <span className="text-rose-400 bg-rose-950 px-2 py-0.5 rounded-full border border-rose-800/60">
+                <span className="text-rose-400 bg-rose-950/80 px-2.5 py-1 rounded-full border border-rose-800/60">
                   {t('targetSetup.overTarget', { kcal: Math.abs(remainingKcal).toLocaleString() })}
                 </span>
               )}
             </div>
           </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="space-y-2.5 pt-1">
-          <button
-            onClick={() => handleApplyPreset(0.30, 0.45, 0.25)}
-            disabled={isLocked}
-            className="w-full py-3 px-4 rounded-2xl font-bold text-xs bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white flex items-center justify-center gap-2 shadow-lg shadow-indigo-950/40 disabled:opacity-50 transition-all cursor-pointer hover:scale-[1.01]"
-          >
-            <Sparkles className="w-4 h-4 text-sky-300 animate-pulse" />
-            <span>{t('common.autoBalance')}</span>
-          </button>
-
-          <button
-            onClick={() => setIsLocked(!isLocked)}
-            className={`w-full py-2.5 px-4 rounded-2xl font-bold text-xs transition-all border flex items-center justify-center gap-2 cursor-pointer ${
-              isLocked
-                ? 'bg-slate-800 text-amber-300 border-slate-700 hover:bg-slate-700 shadow-sm'
-                : 'bg-[#171e2e] hover:bg-[#1e273b] text-slate-200 border-slate-700/70'
-            }`}
-          >
-            {isLocked ? (
-              <>
-                <Lock className="w-4 h-4 text-amber-400" />
-                <span>{t('common.locked')}</span>
-              </>
-            ) : (
-              <>
-                <Unlock className="w-4 h-4 text-blue-400" />
-                <span>{t('common.lockTargets')}</span>
-              </>
-            )}
-          </button>
         </div>
       </div>
 

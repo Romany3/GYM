@@ -94,9 +94,9 @@ export default function Header({
               <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 px-1.5 py-0.2 rounded border border-emerald-800/60 uppercase">
                 {t('common.proCoach')}
               </span>
-              <span className="text-xs font-semibold text-slate-200">18 / 25 Clients</span>
+              <span className="text-xs font-semibold text-slate-200">18 / 25 {t('common.clientsBadge', 'Clients')}</span>
             </div>
-            <span className="text-[10px] text-slate-400">21 Days Left • Upgrade</span>
+            <span className="text-[10px] text-slate-400">{t('common.daysLeftUpgrade', '21 Days Left • Upgrade')}</span>
           </div>
           <div className="w-12 bg-slate-800 h-1.5 rounded-full overflow-hidden border border-slate-700">
             <div className="bg-gradient-to-r from-blue-500 to-indigo-500 h-full w-[72%]" />

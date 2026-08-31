@@ -489,18 +489,15 @@ export default function WorkoutBuilderPage({
                   {/* Superset Toggle & Drag Handle */}
                   <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-slate-400 font-medium">Superset</span>
+                      <span className="text-xs text-slate-400 font-medium">{t('workout.superset')}</span>
                       <button
+                        type="button"
                         onClick={() => handleUpdateExercise(ex.id, 'superset', !ex.superset)}
-                        className={`w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer ${
-                          ex.superset ? 'bg-blue-500' : 'bg-slate-700'
+                        className={`w-10 h-5 flex items-center rounded-full p-0.5 transition-colors cursor-pointer shrink-0 ${
+                          ex.superset ? 'bg-blue-600 justify-end' : 'bg-slate-700 justify-start'
                         }`}
                       >
-                        <div
-                          className={`w-4 h-4 rounded-full bg-white transition-transform ${
-                            ex.superset ? 'translate-x-4' : 'translate-x-0'
-                          }`}
-                        />
+                        <div className="w-4 h-4 rounded-full bg-white shadow-md transition-all" />
                       </button>
                     </div>
 

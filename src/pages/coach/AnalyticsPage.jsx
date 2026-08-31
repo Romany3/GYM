@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   FileText, 
   TrendingUp, 
@@ -10,11 +11,21 @@ import {
 } from 'lucide-react';
 
 export default function AnalyticsPage({ showToast }) {
+  const { t } = useTranslation();
   const [selectedClient, setSelectedClient] = useState('Marcus Johnson');
   const [selectedPose, setSelectedPose] = useState('Front View');
 
   const handleExportPdf = () => {
     if (showToast) showToast(`Exporting Progress Report for ${selectedClient}...`);
+  };
+
+  const getPoseLabel = (poseStr) => {
+    switch (poseStr) {
+      case 'Front View': return t('analytics.frontView');
+      case 'Side Profile': return t('analytics.sideProfile');
+      case 'Back View': return t('analytics.backView');
+      default: return poseStr;
+    }
   };
 
   return (
@@ -24,14 +35,14 @@ export default function AnalyticsPage({ showToast }) {
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-bold text-blue-400 bg-blue-950 px-2.5 py-0.5 rounded border border-blue-800/60 uppercase tracking-widest">
-              ATHLETE TELEMETRY & PROGRESS
+              {t('analytics.badge')}
             </span>
           </div>
           <h1 className="font-serif-header text-3xl md:text-4xl font-bold tracking-tight text-white mt-1">
-            Client Progress <span className="italic font-normal text-blue-300">&</span> Transformations
+            {t('analytics.title')}
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            In-depth body composition telemetry, visual photo comparators, and anthropometric metrics.
+            {t('analytics.subtitle')}
           </p>
         </div>
 
@@ -40,7 +51,7 @@ export default function AnalyticsPage({ showToast }) {
           <select
             value={selectedClient}
             onChange={(e) => setSelectedClient(e.target.value)}
-            className="bg-[#121826] text-slate-200 text-xs font-semibold rounded-xl px-3.5 py-2.5 border border-slate-700/80 focus:outline-none focus:border-blue-500"
+            className="bg-[#121826] text-slate-200 text-xs font-semibold rounded-xl px-3.5 py-2.5 border border-slate-700/80 focus:outline-none focus:border-blue-500 cursor-pointer"
           >
             <option value="Marcus Johnson">Marcus Johnson</option>
             <option value="Elena Rodriguez">Elena Rodriguez</option>
@@ -53,192 +64,137 @@ export default function AnalyticsPage({ showToast }) {
             className="flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-r from-blue-300 via-sky-200 to-blue-200 hover:from-blue-200 hover:to-sky-100 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer shrink-0"
           >
             <FileText className="w-4 h-4 text-slate-950" />
-            <span>Export Client PDF Report</span>
+            <span>{t('analytics.exportPdf')}</span>
           </button>
         </div>
       </div>
 
-      {/* 3 Summary KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* 4 Summary Telemetry Stat Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-lg space-y-2">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
-            <span className="uppercase tracking-wider">TOTAL TRANSFORMATIONS</span>
-            <Award className="w-4 h-4 text-amber-400" />
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
+            <span className="uppercase tracking-wider">{t('clients.compliance')}</span>
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           </div>
-          <div className="text-3xl font-extrabold text-white">38</div>
-          <span className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
-            <CheckCircle2 className="w-3.5 h-3.5" /> Completed this year
-          </span>
+          <div className="text-3xl font-extrabold text-white">{t('analytics.complianceVal')}</div>
+          <span className="text-[11px] text-emerald-400 font-semibold">{t('analytics.complianceDesc')}</span>
         </div>
 
         <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-lg space-y-2">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
-            <span className="uppercase tracking-wider">AVG. WEIGHT REDUCTION</span>
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
+            <span className="uppercase tracking-wider">{t('analytics.recomp')}</span>
             <TrendingUp className="w-4 h-4 text-blue-400" />
           </div>
-          <div className="text-3xl font-extrabold text-white">-12.4 lbs</div>
-          <span className="text-[11px] text-blue-300 font-semibold">Per 12-week program split</span>
+          <div className="text-3xl font-extrabold text-white">{t('analytics.recompVal')}</div>
+          <span className="text-[11px] text-blue-400 font-semibold">{t('analytics.recompDesc')}</span>
         </div>
 
         <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-lg space-y-2">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
-            <span className="uppercase tracking-wider">MACRO COMPLIANCE</span>
-            <Activity className="w-4 h-4 text-emerald-400" />
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
+            <span className="uppercase tracking-wider">{t('analytics.streak')}</span>
+            <Activity className="w-4 h-4 text-amber-400" />
           </div>
-          <div className="text-3xl font-extrabold text-white">94.2%</div>
-          <span className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
-            <CheckCircle2 className="w-3.5 h-3.5" /> High client adherence rate
-          </span>
+          <div className="text-3xl font-extrabold text-white">{t('analytics.streakDays', { count: 14 })}</div>
+          <span className="text-[11px] text-amber-400 font-semibold">{t('analytics.streakDesc')}</span>
+        </div>
+
+        <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-lg space-y-2">
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
+            <span className="uppercase tracking-wider">{t('analytics.prs')}</span>
+            <Award className="w-4 h-4 text-purple-400" />
+          </div>
+          <div className="text-3xl font-extrabold text-white">{t('analytics.prsCount', { count: 8 })}</div>
+          <span className="text-[11px] text-purple-400 font-semibold">{t('analytics.prsDesc')}</span>
         </div>
       </div>
 
-      {/* Visual Progress Photos Side-by-Side Comparator */}
-      <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-6 shadow-xl space-y-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2">
-              <Camera className="w-4 h-4 text-blue-400" />
-              <h3 className="font-serif-header text-lg font-semibold text-slate-100">
-                Visual Transformation Comparator (Side-by-Side)
+      {/* Progress Comparator Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Visual Photo Comparator (Col 8) */}
+        <div className="lg:col-span-8 bg-[#121724] border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+            <div>
+              <h3 className="font-serif-header text-lg font-bold text-slate-100 flex items-center gap-2">
+                <Camera className="w-4 h-4 text-blue-400" />
+                <span>{t('analytics.comparatorTitle')}</span>
               </h3>
+              <p className="text-xs text-slate-400 mt-0.5">
+                {t('analytics.comparatorSubtitle')}
+              </p>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Compare client progress photos over time across multiple view angles.
-            </p>
-          </div>
-          <div className="flex items-center gap-2 text-xs">
-            <span className="text-slate-400 font-semibold">Selected Client:</span>
-            <span className="text-blue-300 font-bold bg-blue-950/60 px-2.5 py-1 rounded-lg border border-blue-800/40">
-              {selectedClient}
-            </span>
-          </div>
-        </div>
 
-        {/* View Pose Selector */}
-        <div className="flex gap-2 border-b border-slate-800 pb-3">
-          {['Front View', 'Side View', 'Back View'].map((pose) => (
-            <button
-              key={pose}
-              onClick={() => setSelectedPose(pose)}
-              className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${
-                selectedPose === pose
-                  ? 'bg-blue-600/30 text-blue-200 border border-blue-500/40 shadow-sm'
-                  : 'bg-[#171e2e] text-slate-400 hover:text-slate-200 border border-slate-800'
-              }`}
-            >
-              {pose}
-            </button>
-          ))}
-        </div>
-
-        {/* Photos Side-by-Side Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Before Photo */}
-          <div className="bg-[#161c2a] border border-slate-800 rounded-xl p-4 space-y-3">
-            <div className="flex items-center justify-between text-xs font-bold text-slate-300">
-              <span className="text-amber-400 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-800/60">
-                BEFORE (Jan 10, 2024)
-              </span>
-              <span>Weight: 88.5 kg</span>
+            {/* Pose Filter */}
+            <div className="flex items-center gap-1 bg-[#171e2e] p-1 rounded-xl border border-slate-800 text-xs font-semibold shrink-0">
+              {['Front View', 'Side Profile', 'Back View'].map((pose) => (
+                <button
+                  key={pose}
+                  onClick={() => setSelectedPose(pose)}
+                  className={`px-3 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                    selectedPose === pose
+                      ? 'bg-blue-600/40 text-blue-200 border border-blue-500/40'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  {getPoseLabel(pose)}
+                </button>
+              ))}
             </div>
-            <div className="aspect-[4/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-800 relative group">
-              <img
-                src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=600&q=80"
-                alt="Before Transformation"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute bottom-2 left-2 bg-slate-950/80 backdrop-blur-md px-2.5 py-1 rounded-lg text-[10px] font-mono text-slate-300">
-                Body Fat: 22.4%
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Baseline Photo */}
+            <div className="space-y-2">
+              <div className="relative rounded-2xl overflow-hidden border border-slate-700/80 aspect-[4/5] bg-slate-950">
+                <img
+                  src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=600&q=80"
+                  alt="Baseline"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-3 start-3 bg-slate-950/80 border border-slate-800 text-slate-200 text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-md">
+                  {t('analytics.baselineTag')}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* After Photo */}
-          <div className="bg-[#161c2a] border border-slate-800 rounded-xl p-4 space-y-3">
-            <div className="flex items-center justify-between text-xs font-bold text-slate-300">
-              <span className="text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800/60">
-                CURRENT (Aug 01, 2024)
-              </span>
-              <span className="text-emerald-400 font-bold">Weight: 81.2 kg (-7.3 kg)</span>
-            </div>
-            <div className="aspect-[4/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-800 relative group">
-              <img
-                src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80"
-                alt="Current Transformation"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute bottom-2 left-2 bg-emerald-950/80 border border-emerald-800/60 backdrop-blur-md px-2.5 py-1 rounded-lg text-[10px] font-mono text-emerald-300 font-bold">
-                Body Fat: 14.8% (-7.6%)
+            {/* Latest Progress Photo */}
+            <div className="space-y-2">
+              <div className="relative rounded-2xl overflow-hidden border border-blue-500/50 aspect-[4/5] bg-slate-950 ring-2 ring-blue-500/20">
+                <img
+                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=600&q=80"
+                  alt="Latest"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-3 start-3 bg-blue-950/90 border border-blue-800/80 text-blue-300 text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-md uppercase">
+                  {t('analytics.latestTag')}
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Key Body Measurements Breakdown Table */}
-        <div className="bg-[#0f1420] border border-slate-800/80 rounded-xl p-4 space-y-2">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 mb-3 flex items-center gap-1.5">
+        {/* Anthropometric Measurements (Col 4) */}
+        <div className="lg:col-span-4 bg-[#121724] border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
+          <h3 className="font-serif-header text-lg font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-3">
             <Ruler className="w-4 h-4 text-blue-400" />
-            Anthropometric Circumferences History (cm)
-          </h4>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-            <div className="p-2.5 bg-[#161c2a] rounded-lg border border-slate-800">
-              <span className="text-[10px] text-slate-400 block">Chest</span>
-              <span className="font-bold text-slate-200">104 cm → 108 cm</span>
-              <span className="text-[10px] text-emerald-400 block mt-0.5 font-bold">+4 cm (Hypertrophy)</span>
-            </div>
-            <div className="p-2.5 bg-[#161c2a] rounded-lg border border-slate-800">
-              <span className="text-[10px] text-slate-400 block">Waist</span>
-              <span className="font-bold text-slate-200">89 cm → 81 cm</span>
-              <span className="text-[10px] text-emerald-400 block mt-0.5 font-bold">-8 cm (Fat Reduction)</span>
-            </div>
-            <div className="p-2.5 bg-[#161c2a] rounded-lg border border-slate-800">
-              <span className="text-[10px] text-slate-400 block">Arms (Flexed)</span>
-              <span className="font-bold text-slate-200">38 cm → 41 cm</span>
-              <span className="text-[10px] text-emerald-400 block mt-0.5 font-bold">+3 cm</span>
-            </div>
-            <div className="p-2.5 bg-[#161c2a] rounded-lg border border-slate-800">
-              <span className="text-[10px] text-slate-400 block">Thighs</span>
-              <span className="font-bold text-slate-200">60 cm → 63 cm</span>
-              <span className="text-[10px] text-emerald-400 block mt-0.5 font-bold">+3 cm</span>
-            </div>
-          </div>
-        </div>
-      </div>
+            <span>{t('analytics.tapeTitle')}</span>
+          </h3>
 
-      {/* Goal Hit Rates Progress Bars */}
-      <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-6 shadow-xl space-y-4">
-        <h3 className="font-serif-header text-lg font-semibold text-slate-100">
-          Client Transformation Progress & Goal Hit Rates
-        </h3>
-
-        <div className="space-y-4 pt-2">
-          <div>
-            <div className="flex justify-between text-xs font-semibold mb-1 text-slate-300">
-              <span>Strength & Muscle Building Goals</span>
-              <span className="text-blue-300 font-bold">96% Hit Rate</span>
+          <div className="space-y-3 text-xs">
+            <div className="p-3 bg-[#171e2e] rounded-xl border border-slate-800/80 flex items-center justify-between">
+              <span className="text-slate-400 font-semibold">{t('analytics.waist')}</span>
+              <span className="font-mono font-bold text-emerald-400">82 cm (-4 cm)</span>
             </div>
-            <div className="w-full bg-slate-800 rounded-full h-2">
-              <div className="bg-blue-400 h-full rounded-full w-[96%]" />
+            <div className="p-3 bg-[#171e2e] rounded-xl border border-slate-800/80 flex items-center justify-between">
+              <span className="text-slate-400 font-semibold">{t('analytics.chest')}</span>
+              <span className="font-mono font-bold text-blue-400">104 cm (+3 cm)</span>
             </div>
-          </div>
-
-          <div>
-            <div className="flex justify-between text-xs font-semibold mb-1 text-slate-300">
-              <span>Fat Loss & Body Composition</span>
-              <span className="text-sky-300 font-bold">88% Hit Rate</span>
+            <div className="p-3 bg-[#171e2e] rounded-xl border border-slate-800/80 flex items-center justify-between">
+              <span className="text-slate-400 font-semibold">{t('analytics.biceps')}</span>
+              <span className="font-mono font-bold text-blue-400">39 cm (+1.5 cm)</span>
             </div>
-            <div className="w-full bg-slate-800 rounded-full h-2">
-              <div className="bg-sky-400 h-full rounded-full w-[88%]" />
-            </div>
-          </div>
-
-          <div>
-            <div className="flex justify-between text-xs font-semibold mb-1 text-slate-300">
-              <span>Endurance & Athletic Conditioning</span>
-              <span className="text-indigo-300 font-bold">91% Hit Rate</span>
-            </div>
-            <div className="w-full bg-slate-800 rounded-full h-2">
-              <div className="bg-indigo-400 h-full rounded-full w-[91%]" />
+            <div className="p-3 bg-[#171e2e] rounded-xl border border-slate-800/80 flex items-center justify-between">
+              <span className="text-slate-400 font-semibold">{t('analytics.thigh')}</span>
+              <span className="font-mono font-bold text-blue-400">61 cm (+2 cm)</span>
             </div>
           </div>
         </div>

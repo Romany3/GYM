@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Dumbbell, 
   Lock, 
@@ -9,6 +10,7 @@ import {
 } from 'lucide-react';
 
 export default function CoachAuthPage({ onLoginSuccess, onSwitchToClientAuth }) {
+  const { t } = useTranslation();
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('alex.thorne@fitarch.app');
   const [password, setPassword] = useState('password123');
@@ -39,7 +41,7 @@ export default function CoachAuthPage({ onLoginSuccess, onSwitchToClientAuth }) 
             <Dumbbell className="w-7 h-7 text-white rotate-45" />
           </div>
           <h1 className="font-serif-header text-2xl font-bold tracking-tight text-white">
-            Fit<span className="text-blue-300 font-normal">Arch</span> Coach Portal
+            Fit<span className="text-blue-300 font-normal">Arch</span> {t('nav.coachSignIn')}
           </h1>
           <p className="text-xs text-slate-400 mt-1">
             {isRegister ? 'Create your master personal trainer account' : 'Sign in to manage client training, nutrition & analytics'}
@@ -55,7 +57,7 @@ export default function CoachAuthPage({ onLoginSuccess, onSwitchToClientAuth }) 
               !isRegister ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            Coach Sign In
+            {t('nav.coachSignIn')}
           </button>
           <button
             type="button"
@@ -64,39 +66,40 @@ export default function CoachAuthPage({ onLoginSuccess, onSwitchToClientAuth }) 
               isRegister ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            Register Account
+            Register Facility
           </button>
         </div>
 
-        {/* Form */}
+        {/* Form Inputs */}
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           {isRegister && (
             <>
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Full Name</label>
+                <label className="block text-slate-300 font-bold mb-1">Coach Full Name</label>
                 <div className="relative">
-                  <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <User className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <input
                     type="text"
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Coach Alex Thorne"
-                    className="w-full bg-[#171e2e] text-slate-100 rounded-xl pl-10 pr-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
+                    placeholder="e.g. Alex Thorne"
+                    className="w-full bg-[#171e2e] text-slate-200 ps-9 pe-3 py-2.5 rounded-xl border border-slate-700 focus:outline-none focus:border-blue-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Gym / Brand Name</label>
+                <label className="block text-slate-300 font-bold mb-1">Gym / Brand Name</label>
                 <div className="relative">
-                  <Building className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <Building className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <input
                     type="text"
+                    required
                     value={brandName}
                     onChange={(e) => setBrandName(e.target.value)}
-                    placeholder="Thorne Elite Performance"
-                    className="w-full bg-[#171e2e] text-slate-100 rounded-xl pl-10 pr-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
+                    placeholder="e.g. Thorne Performance Gym"
+                    className="w-full bg-[#171e2e] text-slate-200 ps-9 pe-3 py-2.5 rounded-xl border border-slate-700 focus:outline-none focus:border-blue-500"
                   />
                 </div>
               </div>
@@ -104,52 +107,51 @@ export default function CoachAuthPage({ onLoginSuccess, onSwitchToClientAuth }) 
           )}
 
           <div>
-            <label className="block text-slate-300 font-semibold mb-1">Work Email Address</label>
+            <label className="block text-slate-300 font-bold mb-1">{t('auth.email')}</label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Mail className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="coach@fitarch.app"
-                className="w-full bg-[#171e2e] text-slate-100 rounded-xl pl-10 pr-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
+                className="w-full bg-[#171e2e] text-slate-200 ps-9 pe-3 py-2.5 rounded-xl border border-slate-700 focus:outline-none focus:border-blue-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-slate-300 font-semibold mb-1">Password</label>
+            <label className="block text-slate-300 font-bold mb-1">{t('auth.password')}</label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Lock className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••••••"
-                className="w-full bg-[#171e2e] text-slate-100 rounded-xl pl-10 pr-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
+                placeholder="••••••••"
+                className="w-full bg-[#171e2e] text-slate-200 ps-9 pe-3 py-2.5 rounded-xl border border-slate-700 focus:outline-none focus:border-blue-500"
               />
             </div>
           </div>
 
           <button
             type="submit"
-            className="w-full py-3 bg-gradient-to-r from-blue-400 via-sky-300 to-blue-300 hover:from-blue-300 hover:to-sky-200 text-slate-950 font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer mt-2"
+            className="w-full py-3 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all cursor-pointer mt-2"
           >
-            <span>{isRegister ? 'Create Coach Account' : 'Sign In to Dashboard'}</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>{isRegister ? 'Create Coach Account & Launch' : t('auth.signIn')}</span>
+            <ArrowRight className="w-4 h-4 rtl:rotate-180" />
           </button>
         </form>
 
-        {/* Switch to Client Sign In Link */}
-        <div className="text-center pt-1 border-t border-slate-800/80">
+        {/* Switch to Client Portal Access Link */}
+        <div className="pt-4 border-t border-slate-800/80 text-center">
           <button
-            type="button"
             onClick={onSwitchToClientAuth}
             className="text-xs text-blue-400 hover:text-blue-300 font-semibold transition-colors cursor-pointer"
           >
-            Are you a Client? Sign in with Passkey →
+            Are you an Athlete? Login with Client Passkey →
           </button>
         </div>
       </div>

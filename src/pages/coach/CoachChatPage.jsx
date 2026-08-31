@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   MessageSquare, 
   Send, 
@@ -10,6 +11,7 @@ import {
 } from 'lucide-react';
 
 export default function CoachChatPage({ showToast }) {
+  const { t } = useTranslation();
   const [selectedClientId, setSelectedClientId] = useState('c1');
   const [showMobileChatView, setShowMobileChatView] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -137,7 +139,20 @@ export default function CoachChatPage({ showToast }) {
     setMessageInput('');
     setSelectedImage(null);
 
-    if (showToast) showToast(`Sent message to ${activeClient.name}`);
+    if (showToast) showToast(t('chat.sentToast', { name: activeClient.name }));
+  };
+
+  const getTierTranslation = (tierStr) => {
+    if (!tierStr) return '';
+    if (tierStr === 'PRO ATHLETE') return t('common.proAthlete');
+    if (tierStr === 'ELITE VIP') return t('common.vip');
+    if (tierStr === 'STARTER') return t('common.standard');
+    return tierStr;
+  };
+
+  const getTimeTranslation = (timeStr) => {
+    if (timeStr === 'Yesterday') return t('chat.yesterday');
+    return timeStr;
   };
 
   return (
@@ -147,14 +162,14 @@ export default function CoachChatPage({ showToast }) {
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-bold text-blue-400 bg-blue-950 px-2.5 py-0.5 rounded border border-blue-800/60 uppercase tracking-widest flex items-center gap-1">
-              <MessageSquare className="w-3 h-3 text-blue-400" /> REAL-TIME ATHLETE MESSAGING
+              <MessageSquare className="w-3 h-3 text-blue-400" /> {t('chat.badge')}
             </span>
           </div>
           <h1 className="font-serif-header text-3xl font-bold text-white tracking-tight mt-1">
-            Coach Client Chat
+            {t('chat.title')}
           </h1>
           <p className="text-xs text-slate-400 mt-0.5">
-            Directly communicate with your active athletes, review form check photos, and provide real-time guidance.
+            {t('chat.subtitle')}
           </p>
         </div>
       </div>
@@ -166,13 +181,13 @@ export default function CoachChatPage({ showToast }) {
           {/* Roster Search Bar */}
           <div className="p-4 border-b border-slate-800">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search athlete or program..."
-                className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl pl-9 pr-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
+                placeholder={t('chat.searchPlaceholder')}
+                className="w-full bg-[#171e2e] text-slate-200 text-xs rounded-xl ps-9 pe-3.5 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500"
               />
             </div>
           </div>
@@ -188,9 +203,9 @@ export default function CoachChatPage({ showToast }) {
                     setSelectedClientId(client.id);
                     setShowMobileChatView(true);
                   }}
-                  className={`w-full p-4 flex items-center gap-3.5 text-left transition-all cursor-pointer relative ${
+                  className={`w-full p-4 flex items-center gap-3.5 text-left rtl:text-right transition-all cursor-pointer relative ${
                     isSelected
-                      ? 'bg-[#182133] border-l-4 border-l-blue-400'
+                      ? 'bg-[#182133] border-s-4 border-s-blue-400'
                       : 'hover:bg-slate-800/40'
                   }`}
                 >
@@ -208,7 +223,7 @@ export default function CoachChatPage({ showToast }) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <h4 className="text-xs font-bold text-slate-100 truncate">{client.name}</h4>
-                      <span className="text-[10px] text-slate-500 font-mono shrink-0">{client.time}</span>
+                      <span className="text-[10px] text-slate-500 font-mono shrink-0">{getTimeTranslation(client.time)}</span>
                     </div>
                     <p className="text-[11px] text-slate-400 truncate">{client.lastMessage}</p>
                     <span className="inline-block mt-1 text-[9px] font-bold text-blue-400 bg-blue-950/80 px-2 py-0.5 rounded border border-blue-800/60 uppercase">
@@ -231,8 +246,8 @@ export default function CoachChatPage({ showToast }) {
                 className="lg:hidden p-2 text-slate-400 hover:text-white flex items-center gap-1.5 text-xs font-bold bg-[#171e2e] rounded-xl border border-slate-700/60 transition-colors cursor-pointer"
                 title="Return"
               >
-                <ArrowLeft className="w-4 h-4 text-blue-400" />
-                <span>Return</span>
+                <ArrowLeft className="w-4 h-4 text-blue-400 rtl:rotate-180" />
+                <span>{t('chat.return')}</span>
               </button>
               <div className="relative">
                 <img
@@ -248,10 +263,12 @@ export default function CoachChatPage({ showToast }) {
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-bold text-slate-100">{activeClient.name}</h3>
                   <span className="text-[10px] font-bold text-blue-400 bg-blue-950 px-2 py-0.5 rounded border border-blue-800/60 uppercase">
-                    {activeClient.tier}
+                    {getTierTranslation(activeClient.tier)}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400">{activeClient.program} • {activeClient.online ? 'Online Now' : 'Offline'}</p>
+                <p className="text-[11px] text-slate-400">
+                  {activeClient.program} • {activeClient.online ? t('chat.onlineNow') : t('chat.offline')}
+                </p>
               </div>
             </div>
           </div>
@@ -269,8 +286,8 @@ export default function CoachChatPage({ showToast }) {
                     <div
                       className={`p-3.5 rounded-2xl shadow-md ${
                         isCoach
-                          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-br-none'
-                          : 'bg-[#171e2e] text-slate-200 border border-slate-800 rounded-bl-none'
+                          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-br-none rtl:rounded-br-2xl rtl:rounded-bl-none'
+                          : 'bg-[#171e2e] text-slate-200 border border-slate-800 rounded-bl-none rtl:rounded-bl-2xl rtl:rounded-br-none'
                       }`}
                     >
                       {msg.text && <p className="leading-relaxed">{msg.text}</p>}
@@ -285,7 +302,7 @@ export default function CoachChatPage({ showToast }) {
                           />
                           <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white font-bold text-[11px]">
                             <Camera className="w-4 h-4" />
-                            <span>View Photo</span>
+                            <span>{t('chat.viewPhoto')}</span>
                           </div>
                         </div>
                       )}
@@ -313,7 +330,7 @@ export default function CoachChatPage({ showToast }) {
                   <X className="w-3 h-3" />
                 </button>
               </div>
-              <span className="text-xs text-blue-300 font-semibold">Image file attached ready to send</span>
+              <span className="text-xs text-blue-300 font-semibold">{t('chat.imageAttached')}</span>
             </div>
           )}
 
@@ -337,7 +354,7 @@ export default function CoachChatPage({ showToast }) {
               value={messageInput}
               onChange={(e) => setMessageInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-              placeholder={`Type a message to ${activeClient.name}...`}
+              placeholder={t('chat.typeMessage', { name: activeClient.name })}
               className="flex-1 bg-[#171e2e] text-slate-200 text-xs rounded-xl px-4 py-2.5 border border-slate-700/60 focus:outline-none focus:border-blue-500 font-medium"
             />
 
@@ -345,8 +362,8 @@ export default function CoachChatPage({ showToast }) {
               onClick={handleSendMessage}
               className="py-2.5 px-5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-500/20 flex items-center gap-2 transition-all cursor-pointer shrink-0"
             >
-              <Send className="w-4 h-4" />
-              <span>Send</span>
+              <Send className="w-4 h-4 rtl:rotate-180" />
+              <span>{t('chat.send')}</span>
             </button>
           </div>
         </div>

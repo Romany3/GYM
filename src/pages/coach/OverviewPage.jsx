@@ -32,12 +32,12 @@ export default function OverviewPage({
       type: 'Workouts',
       user: 'Elena Rodriguez',
       avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80',
-      action: 'completed Advanced Hypertrophy W3-D4',
-      time: '14m ago',
+      action: t('overview.act1Action'),
+      time: t('overview.act1Time'),
       details: [
-        { label: '54m', icon: Clock },
-        { label: '410 kcal', icon: 'flame' },
-        { label: '★ PR: Deadlift', badge: true },
+        { label: `⏱ ${t('overview.act1Detail1')}`, icon: Clock },
+        { label: `🔥 ${t('overview.act1Detail2')}`, icon: 'flame' },
+        { label: t('overview.act1Detail3'), badge: true },
       ],
     },
     {
@@ -45,10 +45,10 @@ export default function OverviewPage({
       type: 'Nutrition',
       user: 'David Chen',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
-      action: 'logged a nutrition entry: "High protein breakfast"',
-      time: '2h ago',
+      action: t('overview.act2Action'),
+      time: t('overview.act2Time'),
       progress: {
-        text: 'Proteins: 45g / 55g target',
+        text: t('overview.act2Progress'),
         pct: 82,
       },
     },
@@ -57,10 +57,17 @@ export default function OverviewPage({
       type: 'Check-ins',
       user: 'Mike Harrison',
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80',
-      action: 'sent a check-in photo',
-      time: '5h ago',
+      action: t('overview.act3Action'),
+      time: t('overview.act3Time'),
       photo: '/mike_checkin.png',
     },
+  ];
+
+  const filterTabs = [
+    { key: 'All', label: t('overview.filterAll') },
+    { key: 'Workouts', label: t('overview.filterWorkouts') },
+    { key: 'Nutrition', label: t('overview.filterNutrition') },
+    { key: 'Check-ins', label: t('overview.filterCheckins') },
   ];
 
   const filteredActivities = activities.filter((act) =>
@@ -73,10 +80,10 @@ export default function OverviewPage({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="font-serif-header text-3xl font-bold text-white tracking-tight">
-            Dashboard Overview
+            {t('overview.dashboardOverview')}
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Real-time client telemetry, critical alerts, and facility bookings.
+            {t('overview.dashboardSubtitle')}
           </p>
         </div>
 
@@ -85,7 +92,7 @@ export default function OverviewPage({
           className="w-full sm:w-auto flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-r from-blue-300 via-sky-200 to-blue-200 hover:from-blue-200 hover:to-sky-100 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer"
         >
           <Megaphone className="w-4 h-4 text-slate-950" />
-          <span>Send Announcement to All Clients</span>
+          <span>{t('overview.sendAnnouncement')}</span>
         </button>
       </div>
 
@@ -94,7 +101,7 @@ export default function OverviewPage({
         {/* Card 1: Active Clients */}
         <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-lg space-y-3">
           <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
-            <span className="tracking-wider uppercase">ACTIVE CLIENTS</span>
+            <span className="tracking-wider uppercase">{t('overview.activeClients')}</span>
             <div className="w-8 h-8 rounded-lg bg-blue-950/60 border border-blue-800/50 flex items-center justify-center text-blue-400">
               <Users className="w-4 h-4" />
             </div>
@@ -102,7 +109,7 @@ export default function OverviewPage({
           <div className="flex items-baseline justify-between">
             <span className="text-3xl font-extrabold text-white">128</span>
             <span className="text-[10px] font-bold text-slate-300 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">
-              +12% vs LY
+              {t('overview.vsLy', { pct: '+12%' })}
             </span>
           </div>
         </div>
@@ -110,7 +117,7 @@ export default function OverviewPage({
         {/* Card 2: Sessions (This Week) */}
         <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-lg space-y-3">
           <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
-            <span className="tracking-wider uppercase">SESSIONS (THIS WEEK)</span>
+            <span className="tracking-wider uppercase">{t('overview.sessionsThisWeek')}</span>
             <div className="w-8 h-8 rounded-lg bg-blue-950/60 border border-blue-800/50 flex items-center justify-center text-blue-400">
               <Calendar className="w-4 h-4" />
             </div>
@@ -118,7 +125,7 @@ export default function OverviewPage({
           <div className="flex items-baseline justify-between">
             <span className="text-3xl font-extrabold text-white">342</span>
             <span className="text-[10px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">
-              Target: 400
+              {t('overview.targetCount', { count: 400 })}
             </span>
           </div>
         </div>
@@ -126,7 +133,7 @@ export default function OverviewPage({
         {/* Card 3: Monthly Revenue */}
         <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-lg space-y-3">
           <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
-            <span className="tracking-wider uppercase">MONTHLY REVENUE</span>
+            <span className="tracking-wider uppercase">{t('overview.monthlyRevenue')}</span>
             <div className="w-8 h-8 rounded-lg bg-blue-950/60 border border-blue-800/50 flex items-center justify-center text-blue-400">
               <Banknote className="w-4 h-4" />
             </div>
@@ -134,7 +141,7 @@ export default function OverviewPage({
           <div className="flex items-baseline justify-between">
             <span className="text-3xl font-extrabold text-white">$12.4k</span>
             <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/70 px-2 py-0.5 rounded-full border border-emerald-800/60">
-              Record High
+              {t('overview.recordHigh')}
             </span>
           </div>
         </div>
@@ -142,7 +149,7 @@ export default function OverviewPage({
         {/* Card 4: Adherence Rate */}
         <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-lg space-y-3">
           <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
-            <span className="tracking-wider uppercase">ADHERENCE RATE</span>
+            <span className="tracking-wider uppercase">{t('overview.adherenceRate')}</span>
             <div className="w-8 h-8 rounded-lg bg-blue-950/60 border border-blue-800/50 flex items-center justify-center text-blue-400">
               <TrendingUp className="w-4 h-4" />
             </div>
@@ -161,19 +168,19 @@ export default function OverviewPage({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
           <div>
             <h2 className="font-serif-header text-2xl font-bold tracking-tight text-white">
-              Business <span className="italic font-normal text-blue-300">&</span> Progress Analytics
+              {t('overview.businessAnalyticsTitle1')} <span className="italic font-normal text-blue-300">&</span> {t('overview.businessAnalyticsTitle2')}
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">
-              Strategic overview of revenue metrics and client transformation data.
+              {t('overview.businessAnalyticsSubtitle')}
             </p>
           </div>
 
           <button
-            onClick={() => showToast && showToast('Exporting Business & Progress PDF Report...')}
+            onClick={() => showToast && showToast(t('overview.toastExportPdf'))}
             className="flex items-center justify-center gap-2 py-2 px-3.5 bg-[#121826] hover:bg-[#182033] text-slate-200 border border-slate-700/80 rounded-xl text-xs font-semibold shadow-md transition-all cursor-pointer shrink-0"
           >
             <FileText className="w-4 h-4 text-blue-400" />
-            <span>Export PDF Report</span>
+            <span>{t('overview.exportPdfReport')}</span>
           </button>
         </div>
 
@@ -183,7 +190,7 @@ export default function OverviewPage({
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-                  MONTHLY RECURRING REVENUE (MRR)
+                  {t('overview.mrrTitle')}
                 </span>
                 <div className="font-serif-header text-4xl font-extrabold text-white mt-1">
                   $42,850.00
@@ -240,13 +247,13 @@ export default function OverviewPage({
 
               {/* Month X-Axis Labels */}
               <div className="flex justify-between text-xs text-slate-500 font-mono pt-1">
-                <span>Jan</span>
-                <span>Feb</span>
-                <span>Mar</span>
-                <span>Apr</span>
-                <span>May</span>
-                <span>Jun</span>
-                <span>Jul</span>
+                <span>{t('months.jan')}</span>
+                <span>{t('months.feb')}</span>
+                <span>{t('months.mar')}</span>
+                <span>{t('months.apr')}</span>
+                <span>{t('months.may')}</span>
+                <span>{t('months.jun')}</span>
+                <span>{t('months.jul')}</span>
               </div>
             </div>
           </div>
@@ -256,7 +263,7 @@ export default function OverviewPage({
             {/* Card 1: Churn Rate */}
             <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-6 shadow-xl space-y-4">
               <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-                CHURN RATE
+                {t('overview.churnRateTitle')}
               </span>
               <div className="text-3xl font-extrabold text-white">
                 2.4%
@@ -268,21 +275,21 @@ export default function OverviewPage({
 
               <p className="text-xs text-emerald-400 font-semibold flex items-center gap-1 pt-1">
                 <ArrowDownRight className="w-3.5 h-3.5" />
-                <span>-0.8% from last month</span>
+                <span>{t('overview.fromLastMonth', { val: '-0.8%' })}</span>
               </p>
             </div>
 
             {/* Card 2: ARPU */}
             <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-6 shadow-xl space-y-4">
               <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-                ARPU (AVG. REVENUE PER USER)
+                {t('overview.arpuTitle')}
               </span>
               <div className="font-serif-header text-3xl font-extrabold text-white">
                 $185.00
               </div>
 
               <p className="text-xs text-slate-400 pt-1">
-                Consistent with growth target
+                {t('overview.consistentWithTarget')}
               </p>
             </div>
           </div>
@@ -304,11 +311,11 @@ export default function OverviewPage({
                   <h2 className="font-serif-header text-lg font-bold text-slate-100">
                     {t('overview.actionRequiredTitle')}
                   </h2>
-                  <p className="text-[11px] text-slate-400">Immediate attention needed for client retention & billing</p>
+                  <p className="text-[11px] text-slate-400">{t('overview.actionRequiredSub')}</p>
                 </div>
               </div>
               <span className="bg-rose-950/90 text-rose-300 border border-rose-800/80 font-extrabold text-[10px] tracking-wider px-3 py-1 rounded-full uppercase shrink-0 shadow-sm">
-                2 Critical Alerts
+                {t('overview.criticalAlertsCount', { count: 2 })}
               </span>
             </div>
 
@@ -326,19 +333,19 @@ export default function OverviewPage({
                     <div>
                       <h4 className="text-xs font-bold text-slate-100 group-hover:text-rose-300 transition-colors">Jason Stark</h4>
                       <span className="text-[9px] font-extrabold text-rose-400 bg-rose-950/80 px-2 py-0.5 rounded border border-rose-800/60 uppercase tracking-widest">
-                        {t('common.atRisk')} • MISSING LOGS
+                        {t('common.atRisk')} • {t('overview.missingLogs')}
                       </span>
                     </div>
                   </div>
                 </div>
 
                 <p className="text-xs text-slate-300 leading-relaxed">
-                  No activity logs for <strong className="text-rose-300 font-bold">4 consecutive days</strong>. Last check-in: Monday.
+                  {t('overview.jasonStarkAlert')}
                 </p>
 
                 <div className="grid grid-cols-2 gap-2 pt-1">
                   <button
-                    onClick={() => showToast && showToast('Nudge notification sent to Jason Stark', 'info')}
+                    onClick={() => showToast && showToast(t('overview.toastNudgeSent', { name: 'Jason Stark' }), 'info')}
                     className="py-2 bg-rose-950/60 hover:bg-rose-900/90 border border-rose-800/80 text-rose-200 font-bold text-[11px] rounded-xl transition-all cursor-pointer shadow-sm text-center"
                   >
                     {t('overview.nudgeClient')}
@@ -360,24 +367,24 @@ export default function OverviewPage({
                       <CreditCard className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-slate-100 group-hover:text-amber-300 transition-colors">Renewal Pending</h4>
+                      <h4 className="text-xs font-bold text-slate-100 group-hover:text-amber-300 transition-colors">{t('overview.renewalPending')}</h4>
                       <span className="text-[9px] font-extrabold text-amber-400 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-800/60 uppercase tracking-wider">
-                        SARAH JENKINS • 3 DAYS LEFT
+                        SARAH JENKINS • {t('overview.daysLeft', { count: 3 })}
                       </span>
                     </div>
                   </div>
                 </div>
 
                 <p className="text-xs text-slate-300 leading-relaxed">
-                  Pro Athlete Plan subscription expires on Friday. Automatic renewal pending confirmation.
+                  {t('overview.renewalAlertDesc')}
                 </p>
 
                 <div className="pt-1">
                   <button
-                    onClick={() => showToast && showToast('Invoice preview opened for Sarah Jenkins', 'info')}
+                    onClick={() => showToast && showToast(t('overview.toastInvoiceOpened', { name: 'Sarah Jenkins' }), 'info')}
                     className="w-full py-2 bg-amber-950/60 hover:bg-amber-900/80 border border-amber-800/80 text-amber-200 font-bold text-[11px] rounded-xl transition-all cursor-pointer shadow-sm text-center"
                   >
-                    Review Invoice & Remind
+                    {t('overview.reviewInvoiceAndRemind')}
                   </button>
                 </div>
               </div>
@@ -395,24 +402,24 @@ export default function OverviewPage({
                   <h2 className="font-serif-header text-lg font-bold text-slate-100">
                     {t('overview.recentActivityTitle')}
                   </h2>
-                  <p className="text-[11px] text-slate-400">Real-time workout & check-in feed</p>
+                  <p className="text-[11px] text-slate-400">{t('overview.realtimeFeed')}</p>
                 </div>
               </div>
 
               {/* Filter Pills */}
               <div className="flex items-center gap-2 text-xs overflow-x-auto scrollbar-none max-w-full pb-1 sm:pb-0">
                 <div className="flex items-center bg-[#131926] p-1 rounded-xl border border-slate-800 font-semibold shrink-0">
-                  {['All', 'Workouts', 'Nutrition', 'Check-ins'].map((tab) => (
+                  {filterTabs.map((tab) => (
                     <button
-                      key={tab}
-                      onClick={() => setActivityFilter(tab)}
+                      key={tab.key}
+                      onClick={() => setActivityFilter(tab.key)}
                       className={`px-3 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
-                        activityFilter === tab
+                        activityFilter === tab.key
                           ? 'bg-blue-600/40 text-blue-200 border border-blue-500/40'
                           : 'text-slate-400 hover:text-slate-200'
                       }`}
                     >
-                      {tab}
+                      {tab.label}
                     </button>
                   ))}
                 </div>
@@ -420,7 +427,7 @@ export default function OverviewPage({
                 <button
                   onClick={() => {
                     if (onNavigate) onNavigate('notifications');
-                    if (showToast) showToast('Opening Notifications & Activity Log', 'info');
+                    if (showToast) showToast(t('overview.toastNotificationsOpened'), 'info');
                   }}
                   className="text-[11px] text-slate-300 hover:text-blue-300 font-bold bg-[#171e2e] hover:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700/60 flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ms-1"
                 >
@@ -455,22 +462,25 @@ export default function OverviewPage({
 
                   {/* Workout Details */}
                   {act.details && (
-                    <div className="flex items-center gap-3 text-[11px] pl-12">
-                      <span className="bg-[#1c2538] text-slate-300 px-2.5 py-0.5 rounded-md border border-slate-700">
-                        ⏱ 54m
-                      </span>
-                      <span className="bg-[#1c2538] text-slate-300 px-2.5 py-0.5 rounded-md border border-slate-700">
-                        🔥 410 kcal
-                      </span>
-                      <span className="bg-blue-950 text-blue-300 font-bold px-2.5 py-0.5 rounded-md border border-blue-800">
-                        ★ PR: Deadlift
-                      </span>
+                    <div className="flex items-center gap-3 text-[11px] pl-12 rtl:pl-0 rtl:pr-12">
+                      {act.details.map((dt, idx) => (
+                        <span
+                          key={idx}
+                          className={`${
+                            dt.badge
+                              ? 'bg-blue-950 text-blue-300 font-bold border border-blue-800'
+                              : 'bg-[#1c2538] text-slate-300 border border-slate-700'
+                          } px-2.5 py-0.5 rounded-md`}
+                        >
+                          {dt.label}
+                        </span>
+                      ))}
                     </div>
                   )}
 
                   {/* Nutrition Progress */}
                   {act.progress && (
-                    <div className="space-y-1.5 pl-12">
+                    <div className="space-y-1.5 pl-12 rtl:pl-0 rtl:pr-12">
                       <div className="flex justify-between text-[11px] text-slate-400 font-medium">
                         <span>{act.progress.text}</span>
                       </div>
@@ -485,7 +495,7 @@ export default function OverviewPage({
 
                   {/* Photo Check-in */}
                   {act.photo && (
-                    <div className="pl-12 pt-1">
+                    <div className="pl-12 rtl:pl-0 rtl:pr-12 pt-1">
                       <div className="w-24 h-24 rounded-xl overflow-hidden border border-slate-700/60">
                         <img
                           src={act.photo}
@@ -507,10 +517,10 @@ export default function OverviewPage({
           <div className="bg-[#121724] border border-slate-800/90 rounded-2xl p-5 shadow-xl space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
               <h3 className="font-serif-header text-lg font-semibold text-slate-100">
-                Upcoming Sessions
+                {t('overview.upcomingSessionsTitle')}
               </h3>
               <span className="bg-slate-800 text-slate-300 font-bold text-[10px] tracking-wider px-2 py-0.5 rounded-full border border-slate-700 uppercase">
-                TODAY
+                {t('overview.today')}
               </span>
             </div>
 
@@ -521,14 +531,14 @@ export default function OverviewPage({
                 <span className="text-xs font-mono font-bold text-slate-300">14:00</span>
                 <div className="bg-[#161c2a] border border-slate-700/60 rounded-xl p-3 space-y-1">
                   <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                    1:1 PERSONAL TRAINING
+                    {t('overview.session1Type')}
                   </span>
                   <h4 className="text-xs font-bold text-slate-100">
-                    Marcus Vane x Jason Stark
+                    {t('overview.session1Title')}
                   </h4>
                   <div className="flex items-center gap-1 text-[11px] text-slate-400 pt-0.5">
                     <MapPin className="w-3 h-3 text-blue-400" />
-                    <span>Central Park Gym</span>
+                    <span>{t('overview.session1Location')}</span>
                   </div>
                 </div>
               </div>
@@ -538,14 +548,14 @@ export default function OverviewPage({
                 <span className="text-xs font-mono font-bold text-slate-300">15:30</span>
                 <div className="bg-[#161c2a] border border-slate-700/60 rounded-xl p-3 space-y-1">
                   <span className="text-[9px] font-bold text-blue-300 uppercase tracking-widest">
-                    VIDEO CHECK-IN
+                    {t('overview.session2Type')}
                   </span>
                   <h4 className="text-xs font-bold text-slate-100">
-                    Remote Session: Sarah J.
+                    {t('overview.session2Title')}
                   </h4>
                   <div className="flex items-center gap-1 text-[11px] text-slate-400 pt-0.5">
                     <Video className="w-3 h-3 text-blue-400" />
-                    <span>Zoom: fit-meet-293</span>
+                    <span>{t('overview.session2Location')}</span>
                   </div>
                 </div>
               </div>
@@ -555,14 +565,14 @@ export default function OverviewPage({
                 <span className="text-xs font-mono font-bold text-slate-300">17:00</span>
                 <div className="bg-[#161c2a] border border-slate-700/60 rounded-xl p-3 space-y-1">
                   <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                    SMALL GROUP
+                    {t('overview.session3Type')}
                   </span>
                   <h4 className="text-xs font-bold text-slate-100">
-                    Late Afternoon Strength
+                    {t('overview.session3Title')}
                   </h4>
                   <div className="flex items-center gap-1 text-[11px] text-slate-400 pt-0.5">
                     <UserCheck className="w-3 h-3 text-blue-400" />
-                    <span>4/6 Clients Confirmed</span>
+                    <span>{t('overview.session3Location')}</span>
                   </div>
                 </div>
               </div>

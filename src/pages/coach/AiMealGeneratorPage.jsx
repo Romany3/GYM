@@ -226,7 +226,7 @@ export default function AiMealGeneratorPage({ showToast, onOpenNutritionPdf }) {
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-bold text-red-400 bg-red-950 px-2.5 py-0.5 rounded border border-red-800/60 uppercase tracking-widest flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-red-400" /> AI AUTOMATED ENGINE
+              <Sparkles className="w-3 h-3 text-red-400" /> {t('aiMeal.badge')}
             </span>
           </div>
           <h1 className="font-serif-header text-3xl font-bold text-white tracking-tight mt-1">
@@ -242,11 +242,11 @@ export default function AiMealGeneratorPage({ showToast, onOpenNutritionPdf }) {
           className="w-full md:w-auto py-2.5 px-5 bg-gradient-to-r from-blue-400 via-sky-300 to-blue-300 hover:from-blue-300 hover:to-sky-200 text-slate-950 font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
         >
           <Save className="w-4 h-4" />
-          <span>Save as Template</span>
+          <span>{t('aiMeal.saveAsTemplate')}</span>
         </button>
       </div>
 
-      {/* Main Top 2-Column Section (Matching Screenshot) */}
+      {/* Main Top 2-Column Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column (Col 4): Recent AI Generations History */}
         <div className="lg:col-span-4 bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
@@ -254,10 +254,12 @@ export default function AiMealGeneratorPage({ showToast, onOpenNutritionPdf }) {
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-red-400" />
               <h3 className="font-serif-header text-sm font-bold text-slate-100">
-                Recent AI Generations
+                {t('aiMeal.recentGenerations')}
               </h3>
             </div>
-            <span className="text-[10px] text-slate-400 font-mono">{generationHistory.length} Saved</span>
+            <span className="text-[10px] text-slate-400 font-mono">
+              {t('aiMeal.savedCount', { count: generationHistory.length })}
+            </span>
           </div>
 
           <div className="space-y-2.5">
@@ -273,7 +275,7 @@ export default function AiMealGeneratorPage({ showToast, onOpenNutritionPdf }) {
                   <span className="text-[10px] font-mono text-slate-500">{item.date}</span>
                 </div>
                 <div className="flex items-center justify-between text-[11px] text-slate-400">
-                  <span>{item.meals} Meals Split</span>
+                  <span>{t('aiMeal.mealsSplit', { count: item.meals })}</span>
                   <span className="text-emerald-400 font-bold">{item.kcal} kcal</span>
                 </div>
               </div>
@@ -286,14 +288,14 @@ export default function AiMealGeneratorPage({ showToast, onOpenNutritionPdf }) {
           <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
             <Sliders className="w-4 h-4 text-red-400" />
             <h3 className="font-serif-header text-base font-bold text-slate-100">
-              AI Generation Settings
+              {t('aiMeal.settingsTitle')}
             </h3>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
             {/* Target Calories */}
             <div>
-              <label className="block text-slate-400 font-semibold mb-1.5">Target Calories (kcal)</label>
+              <label className="block text-slate-400 font-semibold mb-1.5">{t('aiMeal.targetKcal')}</label>
               <input
                 type="number"
                 step="50"
@@ -305,31 +307,31 @@ export default function AiMealGeneratorPage({ showToast, onOpenNutritionPdf }) {
 
             {/* Goal Preset */}
             <div>
-              <label className="block text-slate-400 font-semibold mb-1.5">Goal Preset</label>
+              <label className="block text-slate-400 font-semibold mb-1.5">{t('aiMeal.goalPreset')}</label>
               <select
                 value={goalPreset}
                 onChange={(e) => setGoalPreset(e.target.value)}
-                className="w-full bg-[#171e2e] text-slate-200 font-bold p-2.5 rounded-xl border border-slate-700/60 focus:outline-none focus:border-red-500"
+                className="w-full bg-[#171e2e] text-slate-200 font-bold p-2.5 rounded-xl border border-slate-700/60 focus:outline-none focus:border-red-500 cursor-pointer"
               >
-                <option value="Balanced">Balanced Split</option>
-                <option value="Fat Loss">Fat Loss / Cutting</option>
-                <option value="Hypertrophy">Hypertrophy / Muscle Mass</option>
-                <option value="High Protein">High Protein Protocol</option>
+                <option value="Balanced">{t('aiMeal.presets.balanced')}</option>
+                <option value="Fat Loss">{t('aiMeal.presets.fatLoss')}</option>
+                <option value="Hypertrophy">{t('aiMeal.presets.hypertrophy')}</option>
+                <option value="High Protein">{t('aiMeal.presets.highProtein')}</option>
               </select>
             </div>
 
             {/* Meal Count */}
             <div>
-              <label className="block text-slate-400 font-semibold mb-1.5">Meals per Day</label>
+              <label className="block text-slate-400 font-semibold mb-1.5">{t('aiMeal.mealsPerDay')}</label>
               <select
                 value={mealCount}
                 onChange={(e) => setMealCount(Number(e.target.value))}
-                className="w-full bg-[#171e2e] text-slate-200 font-bold p-2.5 rounded-xl border border-slate-700/60 focus:outline-none focus:border-red-500"
+                className="w-full bg-[#171e2e] text-slate-200 font-bold p-2.5 rounded-xl border border-slate-700/60 focus:outline-none focus:border-red-500 cursor-pointer"
               >
-                <option value={3}>3 Meals / Day</option>
-                <option value={4}>4 Meals / Day</option>
-                <option value={5}>5 Meals / Day</option>
-                <option value={6}>6 Meals / Day</option>
+                <option value={3}>{t('aiMeal.mealsPerDayFormat', { count: 3 })}</option>
+                <option value={4}>{t('aiMeal.mealsPerDayFormat', { count: 4 })}</option>
+                <option value={5}>{t('aiMeal.mealsPerDayFormat', { count: 5 })}</option>
+                <option value={6}>{t('aiMeal.mealsPerDayFormat', { count: 6 })}</option>
               </select>
             </div>
           </div>
@@ -337,40 +339,40 @@ export default function AiMealGeneratorPage({ showToast, onOpenNutritionPdf }) {
           {/* Custom Macro Percentages Inputs */}
           <div className="space-y-2 pt-2 border-t border-slate-800">
             <span className="text-xs font-semibold text-slate-400 block">
-              Macro Distribution Percentages (Protein / Carbs / Fats)
+              {t('aiMeal.macroDist')}
             </span>
             <div className="grid grid-cols-3 gap-4 text-xs">
               <div className="bg-[#171e2e] p-3 rounded-xl border border-slate-800 space-y-1">
-                <span className="text-[10px] text-blue-400 font-bold uppercase">PROTEIN %</span>
+                <span className="text-[10px] text-blue-400 font-bold uppercase">% {t('aiMeal.protein')}</span>
                 <input
                   type="number"
                   value={proteinPct}
                   onChange={(e) => setProteinPct(Number(e.target.value))}
                   className="w-full bg-slate-900 text-slate-100 font-mono font-bold p-2 rounded-lg border border-slate-700/50"
                 />
-                <span className="text-[10px] text-slate-500 block">Target: {targetProteinGrams}g</span>
+                <span className="text-[10px] text-slate-500 block">{t('aiMeal.targetGrams', { grams: targetProteinGrams })}</span>
               </div>
 
               <div className="bg-[#171e2e] p-3 rounded-xl border border-slate-800 space-y-1">
-                <span className="text-[10px] text-sky-400 font-bold uppercase">CARBS %</span>
+                <span className="text-[10px] text-sky-400 font-bold uppercase">% {t('aiMeal.carbs')}</span>
                 <input
                   type="number"
                   value={carbPct}
                   onChange={(e) => setCarbPct(Number(e.target.value))}
                   className="w-full bg-slate-900 text-slate-100 font-mono font-bold p-2 rounded-lg border border-slate-700/50"
                 />
-                <span className="text-[10px] text-slate-500 block">Target: {targetCarbGrams}g</span>
+                <span className="text-[10px] text-slate-500 block">{t('aiMeal.targetGrams', { grams: targetCarbGrams })}</span>
               </div>
 
               <div className="bg-[#171e2e] p-3 rounded-xl border border-slate-800 space-y-1">
-                <span className="text-[10px] text-amber-400 font-bold uppercase">FAT %</span>
+                <span className="text-[10px] text-amber-400 font-bold uppercase">% {t('aiMeal.fats')}</span>
                 <input
                   type="number"
                   value={fatPct}
                   onChange={(e) => setFatPct(Number(e.target.value))}
                   className="w-full bg-slate-900 text-slate-100 font-mono font-bold p-2 rounded-lg border border-slate-700/50"
                 />
-                <span className="text-[10px] text-slate-500 block">Target: {targetFatGrams}g</span>
+                <span className="text-[10px] text-slate-500 block">{t('aiMeal.targetGrams', { grams: targetFatGrams })}</span>
               </div>
             </div>
           </div>
@@ -384,7 +386,7 @@ export default function AiMealGeneratorPage({ showToast, onOpenNutritionPdf }) {
                 className="w-full sm:w-auto px-5 py-3 bg-[#171e2e] hover:bg-slate-800 text-slate-200 border border-slate-700/60 font-bold rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md"
               >
                 <FileText className="w-4 h-4 text-red-400" />
-                <span>Export Program PDF</span>
+                <span>{t('aiMeal.exportPdf')}</span>
               </button>
             )}
 
@@ -396,12 +398,12 @@ export default function AiMealGeneratorPage({ showToast, onOpenNutritionPdf }) {
               {isGenerating ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>Generating AI Template...</span>
+                  <span>{t('aiMeal.generateAiTemplate')}...</span>
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  <span>Generate AI Template</span>
+                  <span>{t('aiMeal.generateAiTemplate')}</span>
                 </>
               )}
             </button>
@@ -409,52 +411,52 @@ export default function AiMealGeneratorPage({ showToast, onOpenNutritionPdf }) {
         </div>
       </div>
 
-      {/* Macro Telemetry Summary Bar (Matching Screenshot) */}
+      {/* Macro Telemetry Summary Bar */}
       <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2">
           <h3 className="font-serif-header text-sm font-bold text-slate-200 uppercase tracking-wider">
-            AI Generated Plan Macro Summary
+            {t('aiMeal.macroSummary')}
           </h3>
           <span className="text-xs font-bold text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-800/60 flex items-center gap-1">
-            <CheckCircle2 className="w-3.5 h-3.5" /> Near Target — Fully Editable
+            <CheckCircle2 className="w-3.5 h-3.5" /> {t('aiMeal.nearTarget')}
           </span>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
           {/* Calories */}
           <div className="bg-[#171e2e] p-3 rounded-xl border border-slate-800">
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">CALORIES</span>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">{t('aiMeal.calories')}</span>
             <div className="font-serif-header text-2xl font-extrabold text-white mt-1">
               {Math.round(calculatedMacros.kcal * 10) / 10}
             </div>
-            <span className="text-[10px] text-slate-500 block mt-0.5">Target: {targetKcal} kcal</span>
+            <span className="text-[10px] text-slate-500 block mt-0.5">{t('aiMeal.targetKcal')}: {targetKcal}</span>
           </div>
 
           {/* Protein */}
           <div className="bg-[#171e2e] p-3 rounded-xl border border-slate-800">
-            <span className="text-[10px] text-blue-400 font-bold uppercase tracking-wider block">PROTEIN</span>
+            <span className="text-[10px] text-blue-400 font-bold uppercase tracking-wider block">{t('aiMeal.protein')}</span>
             <div className="font-serif-header text-2xl font-extrabold text-blue-300 mt-1">
               {Math.round(calculatedMacros.protein * 10) / 10}g
             </div>
-            <span className="text-[10px] text-slate-500 block mt-0.5">Target: {targetProteinGrams}g</span>
+            <span className="text-[10px] text-slate-500 block mt-0.5">{t('aiMeal.targetGrams', { grams: targetProteinGrams })}</span>
           </div>
 
           {/* Carbs */}
           <div className="bg-[#171e2e] p-3 rounded-xl border border-slate-800">
-            <span className="text-[10px] text-sky-400 font-bold uppercase tracking-wider block">CARBS</span>
+            <span className="text-[10px] text-sky-400 font-bold uppercase tracking-wider block">{t('aiMeal.carbs')}</span>
             <div className="font-serif-header text-2xl font-extrabold text-sky-300 mt-1">
               {Math.round(calculatedMacros.carbs * 10) / 10}g
             </div>
-            <span className="text-[10px] text-slate-500 block mt-0.5">Target: {targetCarbGrams}g</span>
+            <span className="text-[10px] text-slate-500 block mt-0.5">{t('aiMeal.targetGrams', { grams: targetCarbGrams })}</span>
           </div>
 
           {/* Fat */}
           <div className="bg-[#171e2e] p-3 rounded-xl border border-slate-800">
-            <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider block">FATS</span>
+            <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider block">{t('aiMeal.fats')}</span>
             <div className="font-serif-header text-2xl font-extrabold text-amber-300 mt-1">
               {Math.round(calculatedMacros.fat * 10) / 10}g
             </div>
-            <span className="text-[10px] text-slate-500 block mt-0.5">Target: {targetFatGrams}g</span>
+            <span className="text-[10px] text-slate-500 block mt-0.5">{t('aiMeal.targetGrams', { grams: targetFatGrams })}</span>
           </div>
         </div>
       </div>
@@ -526,7 +528,7 @@ export default function AiMealGeneratorPage({ showToast, onOpenNutritionPdf }) {
 
                           <button
                             onClick={() => handleRemoveItem(mealIdx, itemIdx)}
-                            className="p-1.5 text-slate-400 hover:text-red-400 rounded-lg hover:bg-slate-800 transition-colors"
+                            className="p-1.5 text-slate-400 hover:text-red-400 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
                             title="Remove Food"
                           >
                             <Trash2 className="w-4 h-4" />

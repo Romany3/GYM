@@ -384,7 +384,15 @@ export default function ClientDetailsPage({
                     ? 'bg-emerald-950/80 text-emerald-400 border-emerald-800/60' 
                     : 'bg-rose-950/80 text-rose-400 border-rose-800/60'
                 }`}>
-                  {activeClient.status}
+                  {activeClient.status === 'AT RISK' || activeClient.status === 'AT_RISK'
+                    ? t('common.atRisk')
+                    : activeClient.status === 'ACTIVE'
+                    ? t('common.active')
+                    : activeClient.status === 'ONBOARDING'
+                    ? t('common.onboarding')
+                    : activeClient.status === 'FROZEN'
+                    ? t('common.frozen')
+                    : activeClient.status}
                 </span>
               </div>
               <p className="text-xs text-slate-400 mt-1 flex flex-wrap items-center gap-1.5 min-w-0">

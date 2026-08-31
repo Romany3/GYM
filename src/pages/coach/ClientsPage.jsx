@@ -32,6 +32,55 @@ export default function ClientsPage({
   const [selectedClientIndex, setSelectedClientIndex] = useState(0);
   const [isNoteEditing, setIsNoteEditing] = useState(false);
 
+  const getGoalTranslation = (goalStr) => {
+    if (!goalStr) return '';
+    if (goalStr === 'Hypertrophy Phase 2') return t('clients.goals.hypertrophy2');
+    if (goalStr === 'Endurance Prep') return t('clients.goals.endurancePrep');
+    if (goalStr === 'Weight Loss') return t('clients.goals.weightLoss');
+    if (goalStr === 'Strength Building') return t('clients.goals.strengthBuilding');
+    if (goalStr === 'Marathon Prep') return t('clients.goals.marathonPrep');
+    return goalStr;
+  };
+
+  const getPlanTranslation = (planStr) => {
+    if (!planStr) return '';
+    if (planStr === 'Pro Tier - 12 Wk') return t('clients.plans.pro12Wk');
+    if (planStr === 'Basic - 4 Wk') return t('clients.plans.basic4Wk');
+    if (planStr === 'Basic - 8 Wk') return t('clients.plans.basic8Wk');
+    if (planStr === 'Onboarding') return t('clients.plans.onboarding');
+    return planStr;
+  };
+
+  const getLastActiveTranslation = (lastActiveStr) => {
+    if (!lastActiveStr) return '';
+    if (lastActiveStr === 'Today') return t('clients.today');
+    if (lastActiveStr === 'Yesterday') return t('clients.yesterday');
+    if (lastActiveStr === 'Just now') return t('clients.justNow');
+    if (lastActiveStr === '2 days ago') return t('clients.daysAgo', { count: 2 });
+    if (lastActiveStr === '3 days ago') return t('clients.daysAgo', { count: 3 });
+    if (lastActiveStr === '4 days ago') return t('clients.daysAgo', { count: 4 });
+    return lastActiveStr;
+  };
+
+  const getJoinedTranslation = (joinedStr) => {
+    if (!joinedStr) return '';
+    if (joinedStr === 'Active since Jan 2024') return t('clients.activeSince', { date: `${t('months.jan')} 2024` });
+    if (joinedStr === 'Active since Feb 2024') return t('clients.activeSince', { date: `${t('months.feb')} 2024` });
+    if (joinedStr === 'Active since Nov 2023') return t('clients.activeSince', { date: 'Nov 2023' });
+    if (joinedStr === 'Active since Dec 2023') return t('clients.activeSince', { date: 'Dec 2023' });
+    if (joinedStr === 'Joined Today') return t('clients.joinedToday');
+    return joinedStr;
+  };
+
+  const getLastUpdatedTranslation = (lastUpdatedStr) => {
+    if (!lastUpdatedStr) return '';
+    if (lastUpdatedStr === 'Today') return t('clients.today');
+    if (lastUpdatedStr === 'Yesterday') return t('clients.yesterday');
+    if (lastUpdatedStr === '3 days ago') return t('clients.daysAgo', { count: 3 });
+    if (lastUpdatedStr === '4 days ago') return t('clients.daysAgo', { count: 4 });
+    return lastUpdatedStr;
+  };
+
   const defaultClientData = [
     {
       id: 'c1',
@@ -155,7 +204,7 @@ export default function ClientsPage({
     if (onUpdateClients) onUpdateClients(updatedList);
     setIsNoteEditing(false);
     setActiveEditingIndex(null);
-    if (showToast) showToast('Updated trainer note');
+    if (showToast) showToast(t('clients.toastUpdatedNote', 'Updated trainer note'));
   };
 
   return (
@@ -207,7 +256,7 @@ export default function ClientsPage({
         <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-lg flex items-center justify-between">
           <div>
             <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase">
-              TOTAL CLIENTS
+              {t('clients.totalClients')}
             </span>
             <div className="text-3xl font-extrabold text-white mt-1">42</div>
           </div>
@@ -220,7 +269,7 @@ export default function ClientsPage({
         <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-lg flex items-center justify-between">
           <div>
             <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase">
-              ACTIVE SUBSCRIPTIONS
+              {t('clients.activeSubscriptions')}
             </span>
             <div className="text-3xl font-extrabold text-white mt-1">35</div>
           </div>
@@ -233,7 +282,7 @@ export default function ClientsPage({
         <div className="bg-[#121724] border border-slate-800 rounded-2xl p-5 shadow-lg flex items-center justify-between">
           <div>
             <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase">
-              AT RISK
+              {t('clients.atRiskTitle')}
             </span>
             <div className="text-3xl font-extrabold text-red-400 mt-1">3</div>
           </div>
@@ -308,6 +357,10 @@ export default function ClientsPage({
                           ? t('common.atRisk') 
                           : client.status === 'ACTIVE' 
                           ? t('common.active') 
+                          : client.status === 'ONBOARDING'
+                          ? t('common.onboarding')
+                          : client.status === 'FROZEN'
+                          ? t('common.frozen')
                           : client.status}
                       </span>
                     </div>
@@ -316,11 +369,17 @@ export default function ClientsPage({
                   {/* Client Details Grid */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-3 border-t border-slate-800/80">
                     <div className="min-w-0">
-                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Goal</span>
-                      <span className="font-semibold text-slate-200 truncate block mt-0.5">{client.goal}</span>
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        {t('clients.goalLabel')}
+                      </span>
+                      <span className="font-semibold text-slate-200 truncate block mt-0.5">
+                        {getGoalTranslation(client.goal)}
+                      </span>
                     </div>
                     <div className="min-w-0">
-                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Current Plan</span>
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        {t('clients.currentPlanLabel')}
+                      </span>
                       <span
                         className={`font-semibold truncate block mt-0.5 ${
                           client.planType === 'pro'
@@ -330,11 +389,13 @@ export default function ClientsPage({
                             : 'text-slate-400'
                         }`}
                       >
-                        {client.plan}
+                        {getPlanTranslation(client.plan)}
                       </span>
                     </div>
                     <div className="min-w-0">
-                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Compliance</span>
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        {t('clients.compliance')}
+                      </span>
                       {client.compliance !== null ? (
                         <div className="flex items-center gap-2 mt-1">
                           <div className="w-16 bg-slate-800 rounded-full h-1.5 overflow-hidden shrink-0">
@@ -352,8 +413,12 @@ export default function ClientsPage({
                       )}
                     </div>
                     <div className="min-w-0">
-                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Last Active</span>
-                      <span className="text-slate-300 font-semibold block mt-0.5">{client.lastActive}</span>
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        {t('clients.lastActiveLabel')}
+                      </span>
+                      <span className="text-slate-300 font-semibold block mt-0.5">
+                        {getLastActiveTranslation(client.lastActive)}
+                      </span>
                     </div>
                   </div>
 
@@ -369,7 +434,7 @@ export default function ClientsPage({
                       title="View Client Details, Programs & Daily Reviews"
                     >
                       <Eye className="w-3.5 h-3.5" />
-                      <span>Details</span>
+                      <span>{t('clients.detailsButton')}</span>
                     </button>
                     <button
                       onClick={(e) => {
@@ -384,7 +449,7 @@ export default function ClientsPage({
                       title="View Client Passkey & Invite Link"
                     >
                       <Key className="w-3.5 h-3.5 text-blue-400" />
-                      <span>Passkey</span>
+                      <span>{t('clients.passkeyButton')}</span>
                     </button>
 
                     {/* Cancel / Restore Passkey Action Button */}
@@ -404,12 +469,12 @@ export default function ClientsPage({
                       {revokedPasskeys[client.passkey || 'FA-9B2X71'] ? (
                         <>
                           <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                          <span>Restore Passkey</span>
+                          <span>{t('clients.restorePasskey')}</span>
                         </>
                       ) : (
                         <>
                           <Ban className="w-3.5 h-3.5 text-rose-400" />
-                          <span>Cancel Passkey</span>
+                          <span>{t('clients.cancelPasskey')}</span>
                         </>
                       )}
                     </button>
@@ -424,7 +489,7 @@ export default function ClientsPage({
                       title="Chat with Athlete"
                     >
                       <MessageSquare className="w-3.5 h-3.5 text-blue-400" />
-                      <span>Message</span>
+                      <span>{t('clients.messageButton')}</span>
                     </button>
                   </div>
                 </div>
@@ -434,19 +499,19 @@ export default function ClientsPage({
 
           {/* Table Footer Pagination */}
           <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-            <span>Showing 1-5 of 42 clients</span>
+            <span>{t('clients.showingPagination', { start: 1, end: 5, total: 42 })}</span>
             <div className="flex items-center gap-2">
               <button 
                 onClick={() => showToast && showToast('Previous Page', 'info')}
                 className="px-3 py-1 bg-[#171e2e] hover:bg-slate-800 border border-slate-700/60 rounded-lg font-semibold flex items-center gap-1 cursor-pointer"
               >
-                <ChevronLeft className="w-3.5 h-3.5" /> Prev
+                <ChevronLeft className="w-3.5 h-3.5 rtl:rotate-180" /> {t('common.prev')}
               </button>
               <button 
                 onClick={() => showToast && showToast('Next Page', 'info')}
                 className="px-3 py-1 bg-[#171e2e] hover:bg-slate-800 border border-slate-700/60 rounded-lg font-semibold flex items-center gap-1 cursor-pointer"
               >
-                Next <ChevronRight className="w-3.5 h-3.5" />
+                {t('common.next')} <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180" />
               </button>
             </div>
           </div>
@@ -474,9 +539,9 @@ export default function ClientsPage({
                 </h3>
                 <div className="flex items-center gap-2 text-[10px] mt-0.5">
                   <span className="bg-blue-950 text-blue-300 font-bold px-2 py-0.5 rounded uppercase border border-blue-800/60">
-                    PRO TIER
+                    {t('clients.proTierBadge')}
                   </span>
-                  <span className="text-slate-400">{selectedClient.joined}</span>
+                  <span className="text-slate-400">{getJoinedTranslation(selectedClient.joined)}</span>
                 </div>
               </div>
             </div>
@@ -486,7 +551,7 @@ export default function ClientsPage({
           <div className="grid grid-cols-3 gap-3 text-center">
             <div className="bg-[#171e2e] border border-slate-700/50 rounded-xl p-3">
               <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">
-                COMPLIANCE
+                {t('clients.compliance')}
               </span>
               <span className="text-xl font-extrabold text-blue-400 mt-1 block">
                 {selectedClient.compliance ? `${selectedClient.compliance}%` : '--'}
@@ -495,7 +560,7 @@ export default function ClientsPage({
 
             <div className="bg-[#171e2e] border border-slate-700/50 rounded-xl p-3">
               <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">
-                STREAK
+                {t('clients.streak')}
               </span>
               <span className="text-xl font-extrabold text-blue-400 mt-1 block">
                 {selectedClient.streak}
@@ -504,7 +569,7 @@ export default function ClientsPage({
 
             <div className="bg-[#171e2e] border border-slate-700/50 rounded-xl p-3">
               <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">
-                SESSIONS
+                {t('clients.sessions')}
               </span>
               <span className="text-xl font-extrabold text-blue-400 mt-1 block">
                 {selectedClient.sessions}
@@ -517,11 +582,11 @@ export default function ClientsPage({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <TrendingDown className="w-4 h-4 text-blue-400" />
-                <h4 className="text-xs font-bold text-slate-200">Weight Progress</h4>
+                <h4 className="text-xs font-bold text-slate-200">{t('clients.weightProgress')}</h4>
               </div>
-              <select className="bg-[#111622] text-slate-300 text-[10px] font-semibold rounded-lg px-2 py-1 border border-slate-700/60">
-                <option>Last 3 Months</option>
-                <option>Last 6 Months</option>
+              <select className="bg-[#111622] text-slate-300 text-[10px] font-semibold rounded-lg px-2 py-1 border border-slate-700/60 cursor-pointer">
+                <option>{t('clients.last3Months')}</option>
+                <option>{t('clients.last6Months')}</option>
               </select>
             </div>
 
@@ -556,18 +621,18 @@ export default function ClientsPage({
 
               {/* X-Axis Labels */}
               <div className="flex justify-between text-[10px] text-slate-500 pt-1 font-mono px-2">
-                <span>Jan</span>
-                <span>Feb</span>
-                <span>Mar</span>
-                <span>Apr</span>
-                <span>May</span>
+                <span>{t('months.jan')}</span>
+                <span>{t('months.feb')}</span>
+                <span>{t('months.mar')}</span>
+                <span>{t('months.apr')}</span>
+                <span>{t('months.may')}</span>
               </div>
             </div>
           </div>
 
           {/* Progress Photos Card */}
           <div className="bg-[#161c2a] border border-slate-700/60 rounded-xl p-4 space-y-3">
-            <h4 className="text-xs font-bold text-slate-200">Progress Photos</h4>
+            <h4 className="text-xs font-bold text-slate-200">{t('clients.progressPhotos')}</h4>
             <div className="grid grid-cols-2 gap-3">
               {/* Photo 1 */}
               <div className="relative rounded-xl overflow-hidden border border-slate-700/60 aspect-square group">
@@ -577,7 +642,7 @@ export default function ClientsPage({
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <span className="absolute bottom-2 left-2 text-[10px] font-bold text-slate-100 bg-slate-950/80 px-2 py-0.5 rounded">
-                  Jan 12, 2024
+                  {t('clients.photoDate1')}
                 </span>
               </div>
 
@@ -589,10 +654,10 @@ export default function ClientsPage({
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <span className="absolute top-2 right-2 text-[9px] font-extrabold text-slate-950 bg-blue-300 px-2 py-0.5 rounded-full uppercase">
-                  LATEST
+                  {t('clients.latestBadge')}
                 </span>
                 <span className="absolute bottom-2 left-2 text-[10px] font-bold text-slate-100 bg-slate-950/80 px-2 py-0.5 rounded">
-                  May 05, 2024
+                  {t('clients.photoDate2')}
                 </span>
               </div>
             </div>
@@ -601,7 +666,7 @@ export default function ClientsPage({
           {/* Trainer Notes Card */}
           <div className="bg-[#161c2a] border border-slate-700/60 rounded-xl p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold text-slate-200">Trainer Notes</h4>
+              <h4 className="text-xs font-bold text-slate-200">{t('clients.trainerNotes')}</h4>
               <button
                 onClick={() => {
                   if (isNoteEditing) {
@@ -613,7 +678,7 @@ export default function ClientsPage({
                 }}
                 className="text-[11px] font-semibold text-blue-400 hover:text-blue-300 transition-colors"
               >
-                {isNoteEditing ? 'Cancel' : 'Edit Note'}
+                {isNoteEditing ? t('common.cancel') : t('clients.editNote')}
               </button>
             </div>
 
@@ -629,7 +694,7 @@ export default function ClientsPage({
                   onClick={handleSaveNote}
                   className="py-1.5 px-3 bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs rounded-lg transition-all"
                 >
-                  Save Note
+                  {t('clients.saveNote')}
                 </button>
               </div>
             ) : (
@@ -639,7 +704,7 @@ export default function ClientsPage({
             )}
 
             <div className="text-[10px] text-slate-500 pt-1">
-              Last updated: {selectedClient.lastUpdated}
+              {t('clients.lastUpdatedLabel')}: {getLastUpdatedTranslation(selectedClient.lastUpdated)}
             </div>
           </div>
 
@@ -652,7 +717,7 @@ export default function ClientsPage({
               }}
               className="py-2.5 bg-[#171e2e] hover:bg-[#1f293d] border border-slate-700 text-slate-200 font-semibold text-xs rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
-              <MessageSquare className="w-3.5 h-3.5" /> Message
+              <MessageSquare className="w-3.5 h-3.5 text-blue-400" /> {t('clients.messageButton')}
             </button>
 
             <button
@@ -662,7 +727,7 @@ export default function ClientsPage({
               }}
               className="py-2.5 bg-gradient-to-r from-blue-300 via-sky-200 to-blue-200 hover:from-blue-200 hover:to-sky-100 text-slate-950 font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
             >
-              <Calendar className="w-3.5 h-3.5 text-slate-950" /> Adjust Plan
+              <Calendar className="w-3.5 h-3.5 text-slate-950" /> {t('clients.adjustPlan')}
             </button>
           </div>
         </div>
