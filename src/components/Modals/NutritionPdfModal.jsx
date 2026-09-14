@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
-import { X, FileText, Download, Loader2, User, Target, Sparkles, BookOpen, HelpCircle, ShieldAlert } from 'lucide-react';
-import html2canvas from 'html2canvas';
+import { X, FileText, Download, Loader2, User, Target, Sparkles, BookOpen, HelpCircle, ShieldAlert, Plus, Trash2 } from 'lucide-react';
+import html2canvas from 'html2canvas-pro';
 import { jsPDF } from 'jspdf';
 
 export default function NutritionPdfModal({
@@ -533,9 +533,25 @@ export default function NutritionPdfModal({
                   />
                 </div>
 
-                <span className="font-bold text-red-400 text-xs block pt-2 border-t border-slate-800">
-                  النصائح الذهبية (7 بنود):
-                </span>
+                <div className="flex items-center justify-between pt-2 border-t border-slate-800">
+                  <span className="font-bold text-red-400 text-xs">
+                    النصائح الذهبية ({nutritionInfoText.rules.length} بنود):
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNutritionInfoText({
+                        ...nutritionInfoText,
+                        rules: [...nutritionInfoText.rules, 'نصيحة جديدة...']
+                      });
+                    }}
+                    className="flex items-center gap-1.5 text-xs font-bold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 px-3 py-1.5 rounded-xl transition-all cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>إضافة نصيحة</span>
+                  </button>
+                </div>
+
                 {nutritionInfoText.rules.map((rule, idx) => (
                   <div key={idx} className="flex items-center gap-2">
                     <span className="w-6 h-6 rounded-lg bg-red-950 text-red-400 border border-red-800/60 flex items-center justify-center font-bold shrink-0">
@@ -551,8 +567,33 @@ export default function NutritionPdfModal({
                       }}
                       className="w-full bg-[#1c2438] border border-slate-700/60 rounded-xl p-2.5 text-slate-200 font-arabic"
                     />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newRules = nutritionInfoText.rules.filter((_, i) => i !== idx);
+                        setNutritionInfoText({ ...nutritionInfoText, rules: newRules });
+                      }}
+                      className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer shrink-0"
+                      title="حذف النصيحة"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
                 ))}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNutritionInfoText({
+                      ...nutritionInfoText,
+                      rules: [...nutritionInfoText.rules, 'نصيحة جديدة...']
+                    });
+                  }}
+                  className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-dashed border-red-500/40 rounded-xl text-xs font-bold transition-all cursor-pointer mt-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>إضافة نصيحة جديدة</span>
+                </button>
               </div>
             </div>
           )}
@@ -762,27 +803,58 @@ export default function NutritionPdfModal({
           {/* TAB 6: FAQ QUESTIONS */}
           {activeFormTab === 'faq' && (
             <div className="space-y-4 animate-in fade-in duration-200">
-              <h3 className="font-bold text-sm text-red-400 uppercase tracking-wider">
-                صفحة أسئلة شائعة عن الدايت (Page 9)
-              </h3>
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-sm text-red-400 uppercase tracking-wider">
+                  صفحة أسئلة شائعة عن الدايت (Page 9)
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFaqs([
+                      ...faqs,
+                      { q: 'سؤال جديد؟', a: 'اكتب الإجابة هنا...' }
+                    ]);
+                  }}
+                  className="flex items-center gap-1.5 text-xs font-bold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 px-3 py-1.5 rounded-xl transition-all cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>إضافة سؤال وجواب</span>
+                </button>
+              </div>
+
               <div className="space-y-3 bg-[#141a2a] p-4 rounded-2xl border border-slate-800">
                 {faqs.map((faq, idx) => (
                   <div key={idx} className="p-3 bg-[#101522] rounded-xl border border-slate-800 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-red-500 text-sm">؟</span>
-                      <input
-                        type="text"
-                        value={faq.q}
-                        onChange={(e) => {
-                          const updated = [...faqs];
-                          updated[idx].q = e.target.value;
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 flex-1">
+                        <span className="font-bold text-red-500 text-sm">؟</span>
+                        <input
+                          type="text"
+                          placeholder="السؤال..."
+                          value={faq.q}
+                          onChange={(e) => {
+                            const updated = [...faqs];
+                            updated[idx].q = e.target.value;
+                            setFaqs(updated);
+                          }}
+                          className="w-full bg-[#1c2438] border border-slate-700/60 rounded-xl p-2 text-white font-bold font-arabic"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = faqs.filter((_, i) => i !== idx);
                           setFaqs(updated);
                         }}
-                        className="w-full bg-[#1c2438] border border-slate-700/60 rounded-xl p-2 text-white font-bold font-arabic"
-                      />
+                        className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer shrink-0"
+                        title="حذف السؤال"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                     <textarea
                       rows={2}
+                      placeholder="الإجابة..."
                       value={faq.a}
                       onChange={(e) => {
                         const updated = [...faqs];
@@ -793,6 +865,20 @@ export default function NutritionPdfModal({
                     />
                   </div>
                 ))}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFaqs([
+                      ...faqs,
+                      { q: 'سؤال جديد؟', a: 'اكتب الإجابة هنا...' }
+                    ]);
+                  }}
+                  className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-dashed border-red-500/40 rounded-xl text-xs font-bold transition-all cursor-pointer mt-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>إضافة سؤال جديد وإجابته</span>
+                </button>
               </div>
             </div>
           )}

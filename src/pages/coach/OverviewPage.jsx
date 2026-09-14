@@ -14,8 +14,7 @@ import {
   Video, 
   UserCheck,
   ArrowUpRight,
-  ArrowDownRight,
-  FileText
+  ArrowDownRight
 } from 'lucide-react';
 
 export default function OverviewPage({ 
@@ -174,14 +173,6 @@ export default function OverviewPage({
               {t('overview.businessAnalyticsSubtitle')}
             </p>
           </div>
-
-          <button
-            onClick={() => showToast && showToast(t('overview.toastExportPdf'))}
-            className="flex items-center justify-center gap-2 py-2 px-3.5 bg-[#121826] hover:bg-[#182033] text-slate-200 border border-slate-700/80 rounded-xl text-xs font-semibold shadow-md transition-all cursor-pointer shrink-0"
-          >
-            <FileText className="w-4 h-4 text-blue-400" />
-            <span>{t('overview.exportPdfReport')}</span>
-          </button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">

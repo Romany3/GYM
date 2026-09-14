@@ -505,13 +505,13 @@ export default function ClientsPage({
                 onClick={() => showToast && showToast('Previous Page', 'info')}
                 className="px-3 py-1 bg-[#171e2e] hover:bg-slate-800 border border-slate-700/60 rounded-lg font-semibold flex items-center gap-1 cursor-pointer"
               >
-                <ChevronLeft className="w-3.5 h-3.5 rtl:rotate-180" /> {t('common.prev')}
+                <ChevronLeft className="w-3.5 h-3.5 rtl:rotate-180" /> {t('common.prev', 'Prev')}
               </button>
               <button 
                 onClick={() => showToast && showToast('Next Page', 'info')}
                 className="px-3 py-1 bg-[#171e2e] hover:bg-slate-800 border border-slate-700/60 rounded-lg font-semibold flex items-center gap-1 cursor-pointer"
               >
-                {t('common.next')} <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180" />
+                {t('common.next', 'Next')} <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180" />
               </button>
             </div>
           </div>

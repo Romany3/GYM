@@ -9,7 +9,6 @@ import {
   Trash2, 
   Pencil,
   X,
-  Users,
   FileText
 } from 'lucide-react';
 import WatchVideoModal from '@/components/modals/WatchVideoModal';
@@ -260,14 +259,6 @@ export default function WorkoutBuilderPage({
           >
             <FileText className="w-4 h-4" />
             <span>{t('common.exportWorkoutPdf')}</span>
-          </button>
-
-          <button
-            onClick={() => onOpenBatchAssignModal && onOpenBatchAssignModal('Hypertrophy Split 4-Day Protocol')}
-            className="flex-1 md:flex-initial flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 text-xs font-semibold transition-all cursor-pointer shadow-sm"
-          >
-            <Users className="w-4 h-4 text-blue-400" />
-            <span>Batch Copy Routine</span>
           </button>
         </div>
       </div>

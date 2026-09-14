@@ -36,7 +36,9 @@
     "date": "Date",
     "notes": "Notes",
     "logout": "Log Out",
-    "allStatus": "All Status"
+    "allStatus": "All Status",
+    "prev": "Prev",
+    "next": "Next"
   },
   "nav": {
     "overview": "Performance Overview",
