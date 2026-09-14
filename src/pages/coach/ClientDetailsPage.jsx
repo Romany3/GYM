@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   ArrowLeft, 
   User, 
@@ -36,6 +37,7 @@ export default function ClientDetailsPage({
   revokedPasskeys = {},
   onToggleRevokePasskey
 }) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'workout' | 'nutrition' | 'daily-logs' | 'swaps'
   const [selectedPhotoModal, setSelectedPhotoModal] = useState(null);
 
