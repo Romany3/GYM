@@ -78,6 +78,6 @@ input::-webkit-inner-spin-button {
 
 /* Remove Firefox number input arrows */
 input[type=number] {
-  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
